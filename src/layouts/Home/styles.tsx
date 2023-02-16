@@ -89,28 +89,24 @@ export const Button = styled.button`
 `
 
 export const Workspaces = styled.div`
-  height: 100%;  
   display: inline-flex;
   flex-direction: column;
   border-right: 5px solid black;
-  // vertical-align: top;
-  // text-align: center;
-  margin: 0 10vw 0 0;
+  margin-right: 10vw;
+  box-sizing: border-box;
 `;
 
 export const AddButton = styled.button`
   color: white;
-  font-size: 3vw;
+  font-size: 50px;
   display: inline-block;
-  width: 40px;
-  height: 40px;
   background: transparent;
   border: none;
   cursor: pointer;
 
   &:hover {
-    opacity: 0.9;
-    transform: scale(0.98);
+    opacity: 0.8;
+    transform: scale(0.85);
   }
 `;
 
