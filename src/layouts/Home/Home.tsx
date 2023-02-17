@@ -2,8 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import loadable from '@loadable/component';
 import { useNavigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import { Container, InnerContainer, Button, Nav, Label, Input, Workspaces, WorkspaceButton, AddButton, Div } from './styles';
+import { Container, MainContainer, ProfileContainer, Button, Nav, Label, Input, Workspaces, WorkspaceButton, AddButton, Div } from './styles';
 import GlobalStyles from '../../styles/global';
+import home from '../../assets/home.svg';
+import game from '../../assets/game.svg';
+import chat from '../../assets/chat.svg';
+import logout from '../../assets/logout.svg';
+import setting from '../../assets/setting.svg';
 
 // const Channel = loadable(() => import('@pages/Channel'));
 const Channel = loadable(() => import('../../pages/Channel/Channel'));
@@ -40,19 +45,28 @@ const Home = () => {
       <GlobalStyles />
       <Container bg='#00E5FF'>
         <Nav>○ ○ ○</Nav>
-        <h1>Main Page!</h1>
+        {/* <h1>Main Page!</h1> */}
         <Div>
           <Workspaces>
-            <WorkspaceButton onClick={onClickLogOut}>LogOut</WorkspaceButton>
-            <WorkspaceButton onClick={onClickGame}>Play Game</WorkspaceButton>
-            <WorkspaceButton onClick={onClickChat}>Chat</WorkspaceButton>
-            <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
+            <WorkspaceButton><img src={home}></img></WorkspaceButton>
+            <WorkspaceButton onClick={onClickGame}><img src={game}></img></WorkspaceButton>
+            <WorkspaceButton onClick={onClickChat}><img src={chat}></img></WorkspaceButton>
+            <WorkspaceButton><img src={setting}></img></WorkspaceButton>
+            <WorkspaceButton onClick={onClickLogOut}><img src={logout}></img></WorkspaceButton>
+            <WorkspaceButton onClick={onClickCreateWorkspace}>+</WorkspaceButton>
           </Workspaces>
-          <InnerContainer bg='#00E5FF'>
+          <MainContainer bg='#00E5FF'>
             <Nav>○ ○ ○</Nav>
-            <h1>Window!</h1>
+            <h1>전적 /</h1>
+            <h1>승률 /</h1>
+            <h1>친구 목록 등</h1>
             <Channel />
-          </InnerContainer>
+          </MainContainer>
+          <ProfileContainer bg='#00E5FF'>
+            <Nav>○ ○ ○</Nav>
+            <h1>Profile!</h1>
+            <Channel />
+          </ProfileContainer>
         </Div>
       </Container>
     </div>

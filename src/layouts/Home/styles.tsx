@@ -7,18 +7,19 @@ export const Div = styled.div`
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   background-color: ${({ bg }) => bg};
   border: 0.5rem solid black;
-  margin: 10vh 15vw;
+  margin: 8vh 10vw;
+  height: 42em;
   box-shadow: 20px 20px;
+  position: relative;
 
   h1 {
     color: #FFFFFF;
     font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
     font-size: 8vw;
-    line-height: 24px;
+    line-height: 0.2;
     align-items: center;
     text-align: center;
     // padding: 5% 0;
@@ -28,21 +29,52 @@ export const Container = styled.div`
     }
 `
 
-export const InnerContainer = styled.div`
+export const MainContainer = styled.div`
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   background-color: ${({ bg }) => bg};
   border: 0.5rem solid black;
-  margin-bottom: 6vh;
-  margin-right: 3vw;
-  box-shadow: 20px 20px;
+  width: 55%;
+  height: 88%;
+  box-shadow: 15px 15px;
+  position: absolute;
+  top: 6%;
+  left: 11%;
+
+  h1 {
+    color: #FFFFFF;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 4vw;
+    // align-items: center;
+    // justify-content: center;
+    // text-align: center;
+    padding: 5% 0;
+    text-transform: uppercase;
+    &:hover {
+      color: black;
+    }
+`
+
+export const ProfileContainer = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: ${({ bg }) => bg};
+  border: 0.5rem solid black;
+  width: 27%;
+  height: 88%;
+  box-shadow: 15px 15px;
+  position: absolute;
+  top: 6%;
+  right: 4%;
 
   h1 {
     color: #FFFFFF;
     font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
-    font-size: 10vw;
+    font-size: 3vw;
     line-height: 24px;
     align-items: center;
     text-align: center;
@@ -56,7 +88,7 @@ export const InnerContainer = styled.div`
 export const Nav = styled.nav`
   background-color: black;
   color: white;
-  font-size: 18px;
+  font-size: 1em;
   font-weight: 800;
   padding: 0 9em 0 1em;
   width: 100%;
@@ -92,17 +124,21 @@ export const Workspaces = styled.div`
   display: inline-flex;
   flex-direction: column;
   border-right: 5px solid black;
-  margin-right: 10vw;
   box-sizing: border-box;
+  position: absolute;
+  top: 8%;
+  left: 2%;
 `;
 
-export const AddButton = styled.button`
+export const WorkspaceButton = styled.button`
   color: white;
-  font-size: 50px;
+  font-size: 40px;
+  line-height: 70px;
   display: inline-block;
   background: transparent;
   border: none;
   cursor: pointer;
+  margin-right: 10px;
 
   &:hover {
     opacity: 0.8;
@@ -110,23 +146,6 @@ export const AddButton = styled.button`
   }
 `;
 
-export const WorkspaceButton = styled.button`
-  display: inline-flex;
-  border-radius: 10px;
-  background: white;
-  border: 3px solid #3f0e40;
-  margin-bottom: 15px;
-  margin-right 20px;
-  font-size: 1.5vw;
-  font-weight: 700;
-  color: black;
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.9;
-    transform: scale(0.98);
-  }
-`;
 
 
 
