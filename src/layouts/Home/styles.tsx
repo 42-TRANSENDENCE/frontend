@@ -6,6 +6,7 @@ export const Div = styled.div`
 
 export const Container = styled.div`
   display: flex;
+  justifiy-content: space-around;
   flex-direction: column;
   background-color: ${({ bg }) => bg};
   border: 0.5rem solid black;
@@ -31,6 +32,7 @@ export const Container = styled.div`
 
 export const MainContainer = styled.div`
   display: inline-flex;
+  flex-grow: 3;
   flex-direction: column;
   align-items: center;
   background-color: ${({ bg }) => bg};
@@ -59,6 +61,7 @@ export const MainContainer = styled.div`
 
 export const ProfileContainer = styled.div`
   display: inline-flex;
+  flex-grow: 2;
   flex-direction: column;
   align-items: center;
   background-color: ${({ bg }) => bg};
@@ -122,6 +125,7 @@ export const Button = styled.button`
 
 export const Workspaces = styled.div`
   display: inline-flex;
+  flex-grow: 1;
   flex-direction: column;
   border-right: 5px solid black;
   box-sizing: border-box;

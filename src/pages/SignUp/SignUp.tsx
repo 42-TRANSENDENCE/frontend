@@ -5,23 +5,45 @@ import useInput from '../../hooks/useInput';
 import { Container, Button, Nav, Label, Input } from './styles';
 import GlobalStyles from '../../styles/global';
 
-
 const SignUp = () => {
-  const maxLen = (value: string) => value.length < 12;
-  const nickname = useInput('', maxLen);
   const navigate = useNavigate();
 
-  const onSubmit = useCallback((e: any) => {
-    e.preventDefault();
-    fetch('/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(nickname),
-    });
-    navigate('/home');
-  }, [nickname]);
+  const isValidUsername = (username: string): boolean => {
+    const consecutivePeriodsRegex = /\.{2,}/;
+    const invalidCharactersRegex = /[^\w-.']/;
+  
+    // lowercase the username
+    username = username.toLowerCase();
+  
+    // check for consecutive periods and invalid characters
+    if (consecutivePeriodsRegex.test(username) || invalidCharactersRegex.test(username)) {
+      return false;
+    }
+  
+    // check the length
+    if (username.length > 12) {
+      return false;
+    }
+  
+    return true;
+  };
+  
+  const nickname = useInput('', isValidUsername);
+
+  const onSubmit = useCallback(
+    (e: any) => {
+      e.preventDefault();
+      fetch(url + '/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nickname),
+      });
+      navigate('/home');
+    },
+    [nickname]
+  );
 
   return (
     <div>
@@ -30,15 +52,15 @@ const SignUp = () => {
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <form onSubmit={onSubmit}>
-          <Label id="nickname-label">
+          <Label id='nickname-label'>
             <span>Nickname</span>
-            <Input placeholder="nickname" {...nickname}/>
+            <Input placeholder='nickname' {...nickname} />
           </Label>
           <Button type='submit'>Sign Up</Button>
         </form>
       </Container>
     </div>
-  )
-}
+  );
+};
 
 export default SignUp;
