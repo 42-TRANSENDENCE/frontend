@@ -9,14 +9,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "@loadable/component": "^5.15.3",
     "@types/loadable__component": "^5.13.4",
     "@types/prop-types": "^15.7.5",
     "react": "^18.2.0",
+    "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router": "^6.8.1",
     "react-router-dom": "^6.8.1",
+    "react-toastify": "^9.1.1",
+    "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.6",
     "switch": "^0.0.0"
   },
