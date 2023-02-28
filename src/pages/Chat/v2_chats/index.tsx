@@ -27,11 +27,7 @@ async function postChat(roomId: string, data: any): Promise<string> {
   return res;
 }
 
-const socket = io(`${chat_backurl}/v2_chat`, {
-  transports: ["websocket"],
-});
-
-export default function V2chats() {
+export default function V2chats({ socket }: { socket: any }) {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
   const location = useLocation();
@@ -40,7 +36,9 @@ export default function V2chats() {
   const [chat, setChat] = useState("");
   const scrollbarRef = useRef<Scrollbars>(null);
 
-  console.log(roomId, password);
+  console.log(
+    `현재 roomId: ${roomId}, password: ${password} 에 있는 상태입니다.`
+  );
 
   const {
     data: chatDatas,
@@ -62,7 +60,7 @@ export default function V2chats() {
       retryOnMount: true,
     }
   );
-  console.log("chatDatas: ", chatDatas);
+  // console.log("chatDatas: ", chatDatas);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -77,7 +75,7 @@ export default function V2chats() {
 
   const onMessage = useCallback(
     async (data: any) => {
-      console.log("데이터: ", data);
+      // console.log("데이터: ", data);
       queryClient.setQueryData(["chat", roomId], (chatData: any) => {
         return [...chatData, data];
       });
@@ -117,31 +115,26 @@ export default function V2chats() {
   }, []);
 
   useEffect(() => {
-    // if (chatDatas === undefined) return;
-    console.log("소켓 연결되어라!");
-    socket?.on("message", onMessage);
+    if (onMessage && onJoin && onExit) {
+      console.log("소켓 기능이 on 되었습니다! (join, exit, message)");
+      socket?.on("message", onMessage);
+      socket?.on("join", onJoin);
+      socket?.on("exit", onExit);
+      socket?.emit("join", roomId);
+    }
     return () => {
+      console.log("소켓 기능이 off 되었습니다! (join, exit, message)");
       socket?.off("message", onMessage);
-    };
-  }, [onMessage]);
-
-  useEffect(() => {
-    // if (chatDatas === undefined) return;
-    console.log("소켓 연결되어라! (join)");
-    socket?.on("join", onJoin);
-    socket?.on("exit", onExit);
-    return () => {
-      console.log("이게 왜 실행되지?");
       socket?.off("join", onJoin);
       socket?.emit("leave", roomId);
       socket?.off("exit", onExit);
     };
-  }, [roomId, onJoin, onExit]);
+  }, [roomId, onJoin, onExit, onMessage]);
 
-  useEffect(() => {
-    // if (chatDatas === undefined) return;
-    socket?.emit("join", roomId);
-  }, [roomId]);
+  // useEffect(() => {
+  //   // if (chatDatas === undefined) return;
+  //   socket?.emit("join", roomId);
+  // }, [roomId]);
 
   const onSubmitForm = (e: any) => {
     e.preventDefault();

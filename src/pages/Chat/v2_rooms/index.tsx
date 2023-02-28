@@ -11,11 +11,11 @@ import io from "socket.io-client";
 
 const chat_backurl = "http://127.0.0.1:3095";
 
-const socket = io(`${chat_backurl}/v2_room`, {
-  transports: ["websocket"],
-});
+// const socket = io(`${chat_backurl}/v2_room`, {
+//   transports: ["websocket"],
+// });
 
-function V2rooms() {
+function V2rooms({ socket }: { socket: any }) {
   const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
@@ -26,13 +26,13 @@ function V2rooms() {
   } = useQuery<any>(["roomlist"], () =>
     fetch(chat_backurl + `/api/room_list/`).then((res) => res.json())
   );
-  console.log(rooms);
+  // console.log(rooms);
 
   const queryClient = useQueryClient();
 
   const onNewRoom = useCallback(
     async (data: any) => {
-      console.log("데이터: ", data);
+      // console.log("데이터: ", data);
       queryClient.setQueryData(["roomlist"], () => {
         return { data: [...rooms.data, data] };
       });
@@ -43,9 +43,13 @@ function V2rooms() {
   const onRemoveRoom = useCallback((data: any) => refetch(), [refetch]);
 
   useEffect(() => {
-    socket?.on("newRoom", onNewRoom);
-    socket?.on("removeRoom", onRemoveRoom);
+    if (onNewRoom && onRemoveRoom) {
+      console.log("v2_rooms에 진입하셨습니다.");
+      socket?.on("newRoom", onNewRoom);
+      socket?.on("removeRoom", onRemoveRoom);
+    }
     return () => {
+      console.log("v2_rooms에서 나가셨습니다.");
       socket?.off("newRoom", onNewRoom);
       socket?.off("removeRoom", onRemoveRoom);
     };
@@ -86,30 +90,26 @@ function V2rooms() {
             <tr>
               <th>방 제목</th>
               <th>종류</th>
-              <th>허용 인원</th>
               <th>방장</th>
             </tr>
           </thead>
           <tbody>
             {rooms.data.map((room: any) => {
               return (
-                <div>
-                  <th data-id={room.id}>
-                    <td>{room.title}</td>
-                    <td>{room.password ? "비밀방" : "공개방"}</td>
-                    <td>{room.max}</td>
-                    <td>{room.owner}</td>
-                    <td>
-                      <button
-                        data-password={room.password ? "true" : "false"}
-                        data-id={room.id}
-                        onClick={onEnterEvent}
-                      >
-                        입장
-                      </button>
-                    </td>
-                  </th>
-                </div>
+                <tr data-id={room.id} key={room.id}>
+                  <td>{room.title}</td>
+                  <td>{room.password ? "비밀방" : "공개방"}</td>
+                  <td>{room.owner}</td>
+                  <td>
+                    <button
+                      data-password={room.password ? "true" : "false"}
+                      data-id={room.id}
+                      onClick={onEnterEvent}
+                    >
+                      입장
+                    </button>
+                  </td>
+                </tr>
               );
             })}
           </tbody>
@@ -117,7 +117,8 @@ function V2rooms() {
         <div className="error-message"></div>
         <Link to="create_room">방 만들기</Link>
       </fieldset>
-      {passwordError && <div style={{ color: "red" }}>{passwordError}</div>}
+      {passwordError && <div style={{ color: "red" }}>{passwordError}</div>}\
+      <Link to="/">홈으로</Link>
     </>
   );
 }
