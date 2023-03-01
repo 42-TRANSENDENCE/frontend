@@ -1,3 +1,4 @@
+import Modal from "../../../components/Modal";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
@@ -8,6 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 import io from "socket.io-client";
+import CreateRoomModal from "../../../components/CreateRoomModal";
 
 const chat_backurl = "http://127.0.0.1:3095";
 
@@ -18,6 +20,7 @@ const chat_backurl = "http://127.0.0.1:3095";
 function V2rooms({ socket }: { socket: any }) {
   const navigate = useNavigate();
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
   const {
     data: rooms,
@@ -79,6 +82,12 @@ function V2rooms({ socket }: { socket: any }) {
       });
   }, []);
 
+  const onCloseModal = useCallback(() => {
+    setShowCreateRoomModal(
+      (prevShowCreateRoomModal) => !prevShowCreateRoomModal
+    );
+  }, []);
+
   if (isLoading) return <div>isLoading...</div>;
   return (
     <>
@@ -115,7 +124,14 @@ function V2rooms({ socket }: { socket: any }) {
           </tbody>
         </table>
         <div className="error-message"></div>
-        <Link to="create_room">방 만들기</Link>
+        {/* <Link to="create_room">방 만들기</Link> */}
+        <button style={{ display: "block" }} onClick={onCloseModal}>
+          방 만들기
+        </button>
+        <CreateRoomModal
+          show={showCreateRoomModal}
+          onCloseModal={onCloseModal}
+        />
       </fieldset>
       {passwordError && <div style={{ color: "red" }}>{passwordError}</div>}\
       <Link to="/">홈으로</Link>

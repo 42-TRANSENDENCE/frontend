@@ -5,7 +5,6 @@ import { Navigate, Route, Routes } from "react-router";
 import V2rooms from "./v2_rooms";
 import V2dms from "./v2_dms";
 import V2chats from "./v2_chats";
-import CreateRoom from "./v2_create_room";
 import useSocket from "../../hooks/useSocket";
 
 const Chat = () => {
@@ -27,7 +26,6 @@ const Chat = () => {
     <Routes>
       <Route path="/" element={<Navigate replace to="v2_rooms" />} />
       <Route path="v2_rooms/*">
-        <Route path="create_room" element={<CreateRoom />} />
         <Route path=":roomId/chat" element={<V2chats socket={chat_socket} />} />
         <Route path="*" element={<V2rooms socket={room_socket} />} />
       </Route>
