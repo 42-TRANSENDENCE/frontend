@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Modal from "../Modal";
 import { CloseModalButton, CreateModal } from "./styles";
 
@@ -8,7 +8,8 @@ const chat_backurl = "http://127.0.0.1:3095";
 async function postRoom(
   title: string,
   max: number,
-  password: string
+  password: string,
+  owner: string
 ): Promise<string> {
   return await fetch(`${chat_backurl}/api/room_list/room`, {
     method: "POST",
@@ -19,6 +20,7 @@ async function postRoom(
       title,
       max,
       password,
+      owner,
     }),
   }).then((res) => res.text());
 }
@@ -30,6 +32,14 @@ export default function CreateRoomModal({
   onCloseModal: any;
   show: any;
 }) {
+  const token = localStorage.getItem("jwt_token");
+  const options = {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
+    fetch(chat_backurl + "/api/user", options).then((res) => res.json())
+  );
   const stopPropagation = useCallback((e: any) => {
     e.stopPropagation();
   }, []);
@@ -39,7 +49,7 @@ export default function CreateRoomModal({
 
   const queryClient = useQueryClient();
   const { mutate: mutateRoom } = useMutation<unknown, unknown, any, unknown>(
-    ({ title, max, password }) => postRoom(title, max, password),
+    ({ title, max, password, owner }) => postRoom(title, max, password, owner),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["roomlist"]);
@@ -49,7 +59,7 @@ export default function CreateRoomModal({
 
   const onSubmitFunction = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutateRoom({ title, max: 0, password });
+    mutateRoom({ title, max: 0, password, owner: user.username });
     onCloseModal();
   };
 
@@ -63,7 +73,7 @@ export default function CreateRoomModal({
     setPassword(e.target.value);
   };
 
-  if (!show) return null;
+  if (!show || isLoadingUser) return null;
   return (
     <CreateModal onClick={onCloseModal}>
       <div onClick={stopPropagation}>

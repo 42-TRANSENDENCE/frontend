@@ -13,7 +13,11 @@ export const ChatElement = styled.section`
 
 const chat_backurl = "http://127.0.0.1:3095";
 
-async function postChat(roomId: string, data: any): Promise<string> {
+async function postChat(
+  roomId: string,
+  data: any,
+  username: string
+): Promise<string> {
   let res = await fetch(`${chat_backurl}/api/room_list/room/${roomId}/chat`, {
     method: "POST",
     headers: {
@@ -22,6 +26,7 @@ async function postChat(roomId: string, data: any): Promise<string> {
     body: JSON.stringify({
       createdAt: new Date(),
       chat: data,
+      user: username,
     }),
   }).then((res) => res.text());
   return res;
@@ -39,6 +44,11 @@ export default function V2chats({ socket }: { socket: any }) {
   console.log(
     `현재 roomId: ${roomId}, password: ${password} 에 있는 상태입니다.`
   );
+  const token = localStorage.getItem("jwt_token");
+  const options = {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  };
 
   const {
     data: chatDatas,
@@ -60,14 +70,16 @@ export default function V2chats({ socket }: { socket: any }) {
       retryOnMount: true,
     }
   );
+
   const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
     fetch(chat_backurl + "/api/user", options).then((res) => res.json())
   );
+  if (isLoadingUser) return <div>loading</div>;
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { mutate: mutatePost } = useMutation(
-    (chat: string) => postChat(roomId!, chat),
+  const { mutate: mutateChat } = useMutation<unknown, unknown, any, unknown>(
+    ({ chat, user }) => postChat(roomId!, chat, user.username),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["chat", roomId]);
@@ -144,7 +156,7 @@ export default function V2chats({ socket }: { socket: any }) {
       setChat("");
       return;
     }
-    mutatePost(chat);
+    mutateChat({ chat, user });
     setChat("");
   };
 

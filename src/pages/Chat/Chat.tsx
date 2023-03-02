@@ -31,7 +31,9 @@ const Chat = () => {
         <Route path=":roomId/chat" element={<V2chats socket={chat_socket} />} />
         <Route path="*" element={<V2rooms socket={room_socket} />} />
       </Route>
-      <Route path="v2_dms/:dmId" element={<V2dms />} />
+      <Route path="v2_dms/*">
+        <Route path=":dmId" element={<V2dms />} />
+      </Route>
       <Route path="createUsers" element={<Create_fakeUsers />} />
       <Route path="getUsers/:id" element={<Get_fakeUsers />} />
     </Routes>
