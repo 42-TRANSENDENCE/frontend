@@ -1,4 +1,3 @@
-import Modal from "../../../components/Modal";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
@@ -22,6 +21,12 @@ function V2rooms({ socket }: { socket: any }) {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
+  const token = localStorage.getItem("jwt_token");
+  const options = {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  };
+
   const {
     data: rooms,
     isLoading,
@@ -29,7 +34,10 @@ function V2rooms({ socket }: { socket: any }) {
   } = useQuery<any>(["roomlist"], () =>
     fetch(chat_backurl + `/api/room_list/`).then((res) => res.json())
   );
-  // console.log(rooms);
+  const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
+    fetch(chat_backurl + "/api/user", options).then((res) => res.json())
+  );
+  if (user) console.log(user);
 
   const queryClient = useQueryClient();
 
@@ -88,10 +96,11 @@ function V2rooms({ socket }: { socket: any }) {
     );
   }, []);
 
-  if (isLoading) return <div>isLoading...</div>;
+  if (isLoading || isLoadingUser) return <div>isLoading...</div>;
   return (
     <>
       <h1>채팅방</h1>
+      <div>{user.username}님 어서오세요</div>
       <fieldset onClick={() => setPasswordError("")}>
         <legend>채팅방 목록</legend>
         <table>

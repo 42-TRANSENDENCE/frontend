@@ -60,7 +60,9 @@ export default function V2chats({ socket }: { socket: any }) {
       retryOnMount: true,
     }
   );
-  // console.log("chatDatas: ", chatDatas);
+  const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
+    fetch(chat_backurl + "/api/user", options).then((res) => res.json())
+  );
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();

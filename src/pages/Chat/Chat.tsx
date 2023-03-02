@@ -6,6 +6,8 @@ import V2rooms from "./v2_rooms";
 import V2dms from "./v2_dms";
 import V2chats from "./v2_chats";
 import useSocket from "../../hooks/useSocket";
+import Create_fakeUsers from "./create_fakeusers";
+import Get_fakeUsers from "./get_fakeusers";
 
 const Chat = () => {
   const [room_socket, disconnect_room_socket] = useSocket("v2_room");
@@ -30,6 +32,8 @@ const Chat = () => {
         <Route path="*" element={<V2rooms socket={room_socket} />} />
       </Route>
       <Route path="v2_dms/:dmId" element={<V2dms />} />
+      <Route path="createUsers" element={<Create_fakeUsers />} />
+      <Route path="getUsers/:id" element={<Get_fakeUsers />} />
     </Routes>
   );
 };
