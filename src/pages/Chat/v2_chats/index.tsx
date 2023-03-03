@@ -8,7 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export const ChatElement = styled.section`
-  margin: 1rem;
+  /* margin: 1rem; */
 `;
 
 const chat_backurl = "http://127.0.0.1:3095";
@@ -140,8 +140,8 @@ export default function V2chats({ socket }: { socket: any }) {
       console.log("소켓 기능이 off 되었습니다! (join, exit, message)");
       socket?.off("message", onMessage);
       socket?.off("join", onJoin);
-      socket?.emit("leave", roomId);
       socket?.off("exit", onExit);
+      socket?.emit("leave", roomId);
     };
   }, [roomId, onJoin, onExit, onMessage]);
 
@@ -174,17 +174,28 @@ export default function V2chats({ socket }: { socket: any }) {
       </>
     );
   return (
-    <>
+    <div style={{ textAlign: "center" }}>
       <Scrollbars
         autoHide
-        style={{ width: 500, height: 700 }}
+        style={{
+          width: 500,
+          height: 700,
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
         ref={scrollbarRef}
         onScrollFrame={() => {}}
       >
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {chatDatas.map((chat: any) => {
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {chatDatas.map((chat: any, i: any) => {
             return (
-              <ChatElement key={chat.chat}>
+              <ChatElement key={i}>
                 <div>
                   {chat.user}({chat.createdAt})
                 </div>
@@ -199,12 +210,17 @@ export default function V2chats({ socket }: { socket: any }) {
         <textarea placeholder="" value={chat} onChange={onChangeChat} />
         <button
           type="submit"
-          style={{ display: "block", width: "100px", height: "100px" }}
+          style={{
+            display: "block",
+            margin: "auto",
+            width: "100px",
+            height: "100px",
+          }}
         >
           전송
         </button>
       </form>
       <Link to="/chat/v2_rooms">방 목록으로</Link>
-    </>
+    </div>
   );
 }

@@ -7,14 +7,9 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import io from "socket.io-client";
 import CreateRoomModal from "../../../components/CreateRoomModal";
 
 const chat_backurl = "http://127.0.0.1:3095";
-
-// const socket = io(`${chat_backurl}/v2_room`, {
-//   transports: ["websocket"],
-// });
 
 function V2rooms({ socket }: { socket: any }) {
   const navigate = useNavigate();
@@ -37,13 +32,14 @@ function V2rooms({ socket }: { socket: any }) {
   const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
     fetch(chat_backurl + "/api/user", options).then((res) => res.json())
   );
-  if (user) console.log(user);
+  // if (user) console.log(user);
+  console.log("rooms데이터: ", rooms);
 
   const queryClient = useQueryClient();
 
   const onNewRoom = useCallback(
     async (data: any) => {
-      // console.log("데이터: ", data);
+      console.log("newRoom 데이터: ", data);
       queryClient.setQueryData(["roomlist"], () => {
         return { data: [...rooms.data, data] };
       });
@@ -51,7 +47,21 @@ function V2rooms({ socket }: { socket: any }) {
     [queryClient, rooms]
   );
 
-  const onRemoveRoom = useCallback((data: any) => refetch(), [refetch]);
+  // const onRemoveRoom = useCallback((data: any) => refetch(), [refetch]);
+  const onRemoveRoom = useCallback(
+    async (data: any) => {
+      console.log("removeRoom 데이터: ", data);
+      console.log("rooms.data: ", rooms.data);
+      rooms.data = rooms.data.filter(
+        (room: any) => Number(room.id) !== Number(data)
+      );
+      console.log("rooms.data후: ", rooms.data);
+      queryClient.setQueryData(["roomlist"], () => {
+        return { data: rooms.data };
+      });
+    },
+    [queryClient, rooms]
+  );
 
   useEffect(() => {
     if (onNewRoom && onRemoveRoom) {
@@ -112,7 +122,7 @@ function V2rooms({ socket }: { socket: any }) {
             </tr>
           </thead>
           <tbody>
-            {rooms.data.map((room: any) => {
+            {rooms?.data.map((room: any) => {
               return (
                 <tr data-id={room.id} key={room.id}>
                   <td>{room.title}</td>
@@ -133,7 +143,6 @@ function V2rooms({ socket }: { socket: any }) {
           </tbody>
         </table>
         <div className="error-message"></div>
-        {/* <Link to="create_room">방 만들기</Link> */}
         <button style={{ display: "block" }} onClick={onCloseModal}>
           방 만들기
         </button>
