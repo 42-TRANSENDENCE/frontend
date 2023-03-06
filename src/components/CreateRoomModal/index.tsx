@@ -18,7 +18,6 @@ async function postRoom(
     },
     body: JSON.stringify({
       title,
-      max,
       password,
       owner,
     }),
