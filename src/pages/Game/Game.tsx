@@ -1,12 +1,13 @@
 import {useState, useContext, useEffect} from 'react'
 import { GameContext } from '../../contexts/GameSocket';
-import { GameState } from '../../components/Game/enums';
-import { GameLobby } from '../../components/Game/GameLobby';
-import { GameWaiting } from '../../components/Game/GameWaiting';
-import { GamePlay } from '../../components/Game/GamePlay';
+import { GameState } from './components/enums';
+import { GameLobby } from './components/GameLobby';
+import { GameWaiting } from './components/GameWaiting';
+import { GamePlay } from './components/GamePlay';
+import './styles/Game.css'
 
 const Game = () : JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
+  const [gamestate, setGamestate] = useState(GameState.Waiting);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
@@ -40,16 +41,21 @@ const Game = () : JSX.Element => {
     }
   }, [])
 
-  switch (gamestate) {
-    case GameState.Lobby :
-      return (<GameLobby socket={socket}/>);
-    case GameState.Waiting :
-      return (<GameWaiting socket={socket}/>);
-    case GameState.InGame :
-      return (<GamePlay socket={socket} roomId={room} setGamestate={setGamestate}/>);
-    default :
-      return (<>ERROR</>)
-  }
+  return (
+    <div className='game__container'>
+      {
+        (gamestate === GameState.Lobby) ? (
+          <GameLobby socket={socket}/>
+        ) : ( (gamestate === GameState.Waiting) ? (
+          <GameWaiting socket={socket}/>
+        ) : ( (gamestate === GameState.InGame) ? (
+          <GamePlay socket={socket} roomId={room} setGamestate={setGamestate}/>
+        ) : (
+          null
+        )))
+      }
+    </div>
+  )
 }
 
 export default Game
