@@ -1,8 +1,10 @@
-import React from 'react';
 import loadable from '@loadable/component';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
+
 import { QueryClient, QueryClientProvider } from 'react-query';
+import {gameSocket, GameContext} from '../..//contexts/GameSocket'
+
 
 const LogIn = loadable(() => import('../../pages/LogIn/LogIn'));
 const LoginCheck = loadable(() => import('../../pages/LoginCheck/LoginCheck'));
@@ -27,6 +29,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
+      <GameContext.Provider value={gameSocket}> 
         <Router>
           <Routes>
             <Route path="/" element={<Navigate replace to="/login" />} />
@@ -39,8 +42,10 @@ const App = () => {
             <Route path="/game" element={<Game />} />
           </Routes>
         </Router>
+      </GameContext.Provider>
       </div>
     </QueryClientProvider>
+    </div>
   );
 };
 

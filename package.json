@@ -4,19 +4,21 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "tsc && vite build --base=/build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@loadable/component": "^5.15.3",
     "@types/loadable__component": "^5.13.4",
     "@types/prop-types": "^15.7.5",
+    "@types/socket.io-client": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "react-router": "^6.8.1",
     "react-router-dom": "^6.8.2",
+    "socket.io-client": "^4.6.1",
     "styled-components": "^5.3.6",
     "switch": "^0.0.0"
   },
