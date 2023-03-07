@@ -13,7 +13,7 @@ const chat_backurl = "http://127.0.0.1:3095";
 
 function V2rooms({ socket }: { socket: any }) {
   const navigate = useNavigate();
-  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
 
   const token = localStorage.getItem("jwt_token");
@@ -76,30 +76,73 @@ function V2rooms({ socket }: { socket: any }) {
     };
   }, [onNewRoom, onRemoveRoom]);
 
-  const onEnterEvent = useCallback((e: any) => {
-    // let enterApiURL: any, password: any;
-    // if (e.target.dataset.password === "true") {
-    //   password = prompt("비밀번호를 입력하세요");
-    //   e.preventDefault();
-    //   enterApiURL = `/api/room_list/room/${e.target.dataset.id}?password=${password}`;
-    // } else {
-    //   enterApiURL = `/api/room_list/room/${e.target.dataset.id}`;
-    // }
-    // fetch(chat_backurl + enterApiURL)
-    //   .then((res) => res.text())
-    //   .then((data) => {
-    //     if (data === "OK") {
-    //       let navigateURL = `${e.target.dataset.id}/chat`;
-    //       if (e.target.dataset.password === "true") {
-    //         navigateURL = `${e.target.dataset.id}/chat?password=${password}`;
-    //       }
-    //       navigate(navigateURL);
-    //     } else {
-    //       setPasswordError("비밀번호가 틀렸습니다.");
-    //     }
-    //   });
-    fetch("/");
-  }, []);
+  const onEnterEvent = useCallback(
+    (e: any) => {
+      fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          /* 기존 참여자 */
+          console.log("방 입장 데이터: ", data);
+          console.log("error1", user);
+          const is_member = data.memberList.find(
+            (memberName: any) => memberName === user.username
+          );
+          console.log("error2");
+          if (is_member) {
+            navigate(`${e.target.dataset.id}/chat`);
+            return;
+          }
+          const is_kicked = data.kickList.find(
+            (memberName: any) => memberName === user.username
+          );
+          if (is_kicked) {
+            setErrorMessage("강퇴당한 유저입니다.");
+            return;
+          }
+          /* 최초 입장 */
+          if (data.status === 0) {
+            console.log("공개방 최초 입장하십니다");
+            const token = localStorage.getItem("jwt_token");
+            fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({}),
+            }).then((res) => {
+              console.log(res);
+              if (res.status === 200) {
+                navigate(`${e.target.dataset.id}/chat`);
+              } else {
+                setErrorMessage("방에 입장할 수 없습니다.");
+              }
+            });
+            return;
+          } else {
+            /* 비공개방 */
+            const password = prompt("비밀번호를 입력하세요");
+            fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ password }),
+            }).then((res) => {
+              if (res.status === 200) {
+                navigate(`${e.target.dataset.id}/chat`);
+                return "OK";
+              } else {
+                setErrorMessage("비밀번호가 틀렸습니다.");
+              }
+            });
+            return;
+          }
+        });
+    },
+    [user]
+  );
 
   const onCloseModal = useCallback(() => {
     setShowCreateRoomModal(
@@ -112,7 +155,7 @@ function V2rooms({ socket }: { socket: any }) {
     <>
       <h1>채팅방</h1>
       <div>{user.username}님 어서오세요</div>
-      <fieldset onClick={() => setPasswordError("")}>
+      <fieldset onClick={() => setErrorMessage("")}>
         <legend>채팅방 목록</legend>
         <table>
           <thead>
@@ -152,7 +195,7 @@ function V2rooms({ socket }: { socket: any }) {
           onCloseModal={onCloseModal}
         />
       </fieldset>
-      {passwordError && <div style={{ color: "red" }}>{passwordError}</div>}\
+      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}\
       <Link to="/">홈으로</Link>
     </>
   );

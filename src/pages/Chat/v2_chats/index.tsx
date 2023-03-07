@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const ChatElement = styled.section`
   /* margin: 1rem; */
+  position: relative;
 `;
 
 const chat_backurl = "http://127.0.0.1:3095";
@@ -32,18 +33,66 @@ async function postChat(
   return res;
 }
 
+function ChatsMenu({
+  username,
+  roomDatas,
+  myUser,
+}: {
+  username: string;
+  roomDatas: any;
+  myUser: any;
+}) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        backgroundColor: "gray",
+        borderRadius: "10px",
+        padding: "10px",
+        fontSize: "16px",
+        zIndex: 1,
+      }}
+    >
+      {myUser.username === roomDatas.owner ? (
+        myUser.username === username ? (
+          <div>나는 방장입니다</div>
+        ) : (
+          <>
+            <div>관리자 임명하기</div>
+            <div>5분간 kick</div>
+            <div>영원히 ban</div>
+            <div>5분간 mute</div>
+          </>
+        )
+      ) : roomDatas.adminList.includes(myUser.username) ? (
+        myUser.username === username ? (
+          <div>나는 관리자입니다</div>
+        ) : (
+          <>
+            <div>5분간 kick</div>
+            <div>영원히 ban</div>
+            <div>5분간 mute</div>
+          </>
+        )
+      ) : myUser.username === username ? (
+        <div>나는 일반 유저입니다</div>
+      ) : (
+        <>
+          <div>친구로써 차단하기</div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function V2chats({ socket }: { socket: any }) {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const password = queryParams.get("password");
   const [chat, setChat] = useState("");
   const scrollbarRef = useRef<Scrollbars>(null);
 
-  console.log(
-    `현재 roomId: ${roomId}, password: ${password} 에 있는 상태입니다.`
-  );
+  console.log(`현재 roomId: ${roomId} 에 있는 상태입니다.`);
   const token = localStorage.getItem("jwt_token");
   const options = {
     method: "GET",
@@ -58,15 +107,17 @@ export default function V2chats({ socket }: { socket: any }) {
     ["chat", roomId],
     async () => {
       const response = await fetch(
-        `${chat_backurl}/api/room_list/room/${roomId}/chat?password=${password}`
+        `${chat_backurl}/api/room_list/room/${roomId}/chat`,
+        options
       );
+      console.log(response);
       if (!response.ok) {
-        throw new Error("password check Error!");
+        throw new Error("채팅방에 참여하지 않았습니다!");
       }
       return response.json();
     },
     {
-      retry: 0,
+      retry: 3,
       retryOnMount: true,
     }
   );
@@ -74,7 +125,16 @@ export default function V2chats({ socket }: { socket: any }) {
   const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
     fetch(chat_backurl + "/api/user", options).then((res) => res.json())
   );
-  if (isLoadingUser) return <div>loading</div>;
+  // if (isLoadingUser) return <div>loading</div>;
+
+  const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
+    ["room", roomId],
+    () =>
+      fetch(chat_backurl + `/api/room_list/room/${roomId}`).then((res) =>
+        res.json()
+      )
+  );
+  console.log(roomDatas);
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -165,7 +225,21 @@ export default function V2chats({ socket }: { socket: any }) {
     setChat(e.target.value);
   }, []);
 
-  if (isLoading) return <div />;
+  // const [showMenu, setShowMenu] = useState(false);
+  // const handleClick = (e: any) => {
+  //   e.preventDefault();
+  //   setShowMenu(!showMenu);
+  // };
+  const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
+  const handleChatClick = (index: number) => {
+    if (selectedChatIndex === index) {
+      setSelectedChatIndex(-1);
+      return;
+    }
+    setSelectedChatIndex(index);
+  };
+
+  if (isLoading || isLoadingRoom || isLoadingUser) return <div />;
   if (isError)
     return (
       <>
@@ -193,12 +267,22 @@ export default function V2chats({ socket }: { socket: any }) {
             alignItems: "center",
           }}
         >
-          {chatDatas.map((chat: any, i: any) => {
+          {chatDatas.map((chat: any, index: any) => {
             return (
-              <ChatElement key={i}>
+              <ChatElement key={index}>
                 <div>
-                  {chat.user}({chat.createdAt})
+                  <span onClick={() => handleChatClick(index)}>
+                    {chat.user}
+                  </span>
+                  ({chat.createdAt})
                 </div>
+                {selectedChatIndex === index && (
+                  <ChatsMenu
+                    username={chat.user}
+                    roomDatas={roomDatas}
+                    myUser={user}
+                  />
+                )}
                 <div>&emsp;{chat.chat}</div>
               </ChatElement>
             );
