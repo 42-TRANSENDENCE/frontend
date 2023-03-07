@@ -97,3 +97,9 @@ export const Input = styled.input`
     width: 40%;
   }
 `
+
+export const Conflict = styled.div`
+  color: #e01e5a;
+  margin: 8px 0 16px;
+  font-weight: bold;
+`;

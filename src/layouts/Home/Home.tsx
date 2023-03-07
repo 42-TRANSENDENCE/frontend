@@ -2,7 +2,18 @@ import React, { useCallback, useEffect, useState } from 'react';
 import loadable from '@loadable/component';
 import { useNavigate, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import { Container, MainContainer, ProfileContainer, Button, Nav, Label, Input, Workspaces, WorkspaceButton, AddButton, Div } from './styles';
+import {
+  Container,
+  MainContainer,
+  ProfileContainer,
+  Button,
+  Nav,
+  Label,
+  Input,
+  Workspaces,
+  WorkspaceButton,
+  Div,
+} from './styles';
 import GlobalStyles from '../../styles/global';
 import home from '../../assets/home.svg';
 import game from '../../assets/game.svg';
@@ -14,46 +25,75 @@ import setting from '../../assets/setting.svg';
 const Channel = loadable(() => import('../../pages/Channel/Channel'));
 
 const Home = () => {
+  const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
-  const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
+    useState(false);
+
+  const onClickHome = () => {
+    window.location.reload();
+  };
 
   const onClickLogOut = () => {
-    navigate('/');
-  }
+    fetch(awsUrl + '/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify(''),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        window.location.href = 'http://localhost:5173/';
+      } else {
+        throw new Error('Unexpected response status code');
+      }
+    })
+  };
 
   const onClickGame = () => {
     navigate('/game');
-  }
+  };
 
   const onClickChat = () => {
     navigate('/chat');
-  }
+  };
 
   const onClickCreateWorkspace = useCallback(() => {
     setShowCreateWorkspaceModal(true);
   }, []);
 
   const data = () => {
-    fetch("https://jsonplaceholder.typicode.com/posts/1")
+    fetch('https://jsonplaceholder.typicode.com/posts/1')
       .then((response) => response.json())
       .then((data) => console.log(data));
-  }
+  };
 
-
-  return  (
+  return (
     <div>
       <GlobalStyles />
       <Container bg='#00E5FF'>
         <Nav>○ ○ ○</Nav>
-        {/* <h1>Main Page!</h1> */}
         <Div>
           <Workspaces>
-            <WorkspaceButton><img src={home}></img></WorkspaceButton>
-            <WorkspaceButton onClick={onClickGame}><img src={game}></img></WorkspaceButton>
-            <WorkspaceButton onClick={onClickChat}><img src={chat}></img></WorkspaceButton>
-            <WorkspaceButton><img src={setting}></img></WorkspaceButton>
-            <WorkspaceButton onClick={onClickLogOut}><img src={logout}></img></WorkspaceButton>
-            <WorkspaceButton onClick={onClickCreateWorkspace}>+</WorkspaceButton>
+            <WorkspaceButton onClick={onClickHome}>
+              <img src={home}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickGame}>
+              <img src={game}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickChat}>
+              <img src={chat}></img>
+            </WorkspaceButton>
+            <WorkspaceButton>
+              <img src={setting}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickLogOut}>
+              <img src={logout}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickCreateWorkspace}>
+              +
+            </WorkspaceButton>
           </Workspaces>
           <MainContainer bg='#00E5FF'>
             <Nav>○ ○ ○</Nav>
@@ -71,6 +111,5 @@ const Home = () => {
       </Container>
     </div>
   );
-}
-
+};
 export default Home;
