@@ -25,74 +25,30 @@ import setting from '../../assets/setting.svg';
 const Channel = loadable(() => import('../../pages/Channel/Channel'));
 
 const Home = () => {
-  // const clientId = import.meta.env.VITE_CLIENT_ID;
-  // const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
-  // const redirectUri = import.meta.env.VITE_REDIRECT_URI;
-
-  // useEffect(() => {
-  //   const url = new URL(window.location.href);
-  //   const authorizationCode = url.searchParams.get('code');
-
-  //   if (authorizationCode) {
-  //     const data = {
-  //       grant_type: 'authorization_code',
-  //       client_id: clientId,
-  //       client_secret: clientSecret,
-  //       code: authorizationCode,
-  //       redirect_uri: redirectUri,
-  //     };
-
-  //     fetch('https://api.intra.42.fr/oauth/token', {
-  //       method: 'POST',
-  //       body: JSON.stringify(data),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     })
-  //       .then((response) => {
-  //         console.log(response);
-  //         if (!response.ok) {
-  //           throw new Error('Failed to retrieve access token');
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         const refreshToken = data.refresh_token;
-  //         const accessToken = data.access_token;
-  //         console.log(data);
-  //         const headers = {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         };
-  //         fetch('https://api.intra.42.fr/v2/me', {
-  //           headers,
-  //         })
-  //           .then((response) => {
-  //             if (!response.ok) {
-  //               throw new Error('Failed to retrieve user data');
-  //             }
-  //             return response.json();
-  //           })
-  //           .then((data) => console.log(data))
-  //           .catch((error) => console.error(error));
-  //       })
-  //       .catch((error) => console.error(error))
-  //       .finally(() => {
-  //         // Remove the 'code' parameter from the URL
-  //         window.history.replaceState(
-  //           {},
-  //           document.title,
-  //           window.location.pathname
-  //         );
-  //       });
-  //   }
-  // }, [clientId, clientSecret, redirectUri]);
-
+  const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
     useState(false);
 
+  const onClickHome = () => {
+    window.location.reload();
+  };
+
   const onClickLogOut = () => {
-    navigate('/');
+    fetch(awsUrl + '/auth/logout', {
+      method: 'POST',
+      body: JSON.stringify(''),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      if (response.status === 200) {
+        window.location.href = 'http://localhost:5173/';
+      } else {
+        throw new Error('Unexpected response status code');
+      }
+    })
   };
 
   const onClickGame = () => {
@@ -118,10 +74,9 @@ const Home = () => {
       <GlobalStyles />
       <Container bg='#00E5FF'>
         <Nav>○ ○ ○</Nav>
-        {/* <h1>Main Page!</h1> */}
         <Div>
           <Workspaces>
-            <WorkspaceButton>
+            <WorkspaceButton onClick={onClickHome}>
               <img src={home}></img>
             </WorkspaceButton>
             <WorkspaceButton onClick={onClickGame}>

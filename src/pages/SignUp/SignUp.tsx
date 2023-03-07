@@ -2,11 +2,13 @@ import React, { useCallback, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
-import { Container, Button, Nav, Label, Input } from './styles';
+import { Container, Button, Nav, Label, Input, Conflict } from './styles';
 import GlobalStyles from '../../styles/global';
 
 const SignUp = () => {
+  const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
+  const queryClient = new QueryClient();
 
   const isValidUsername = (username: string): boolean => {
     const consecutivePeriodsRegex = /\.{2,}/;
@@ -26,37 +28,62 @@ const SignUp = () => {
     }
   
     return true;
-  };
-  
+  };  
+
   const nickname = useInput('', isValidUsername);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [nicknameConflict, setNicknameConflict] = useState(false);
 
   const onSubmit = useCallback(
-    (e: any) => {
+    (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      fetch(url + '/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nickname),
-      });
-      navigate('/home');
+      setNicknameConflict(false);
+      queryClient
+        .fetchQuery('signup', () =>
+          fetch(awsUrl + '/users/signup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(nickname),
+          })
+        )
+        .then((response) => {
+          if (response.status === 200) {
+            navigate('/home');
+            // window.location.href = 'http://localhost:5173/home';
+          } else if (response.status === 409) {
+            setNicknameConflict(true);
+          } else {
+            throw new Error('Unexpected response status code');
+          }
+        })
     },
-    [nickname]
+    [nickname, navigate, queryClient, awsUrl]
   );
+
+  const onNicknameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    nickname.onChange(e);
+
+    // enable submit button if nickname is valid and has at least 3 characters
+    setIsSubmitDisabled(e.target.value.length < 3);
+  }, [nickname]);
 
   return (
     <div>
-      <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <GlobalStyles/>
+      <Container bg="#00E5FF">
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <form onSubmit={onSubmit}>
-          <Label id='nickname-label'>
+          <Label id="nickname-label">
             <span>Nickname</span>
-            <Input placeholder='nickname' {...nickname} />
+            <Input placeholder="nickname" {...nickname} onChange={onNicknameChange} />
           </Label>
-          <Button type='submit'>Sign Up</Button>
+          {nicknameConflict && <Conflict>Nickname already exist. Try something else.</Conflict>}
+          <Button type="submit" disabled={isSubmitDisabled}>
+            Sign Up
+          </Button>
         </form>
       </Container>
     </div>
