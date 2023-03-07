@@ -43,13 +43,14 @@ const SignUp = () => {
           fetch(awsUrl + '/users/signup', {
             method: 'POST',
             headers: {
+              Authorization: 'Bearer db7fb361334bba9564531304447002407696e175e76b67f2954f656efdc7e557',
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(nickname),
+            body: JSON.stringify({ nickname: nickname.value })
           })
         )
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 201) {
             navigate('/home');
             // window.location.href = 'http://localhost:5173/home';
           } else if (response.status === 409) {
