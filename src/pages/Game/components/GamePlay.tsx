@@ -16,8 +16,9 @@ export const GamePlay = (props : any) => {
   const [color, setColor] = useState("wheat");
   const [isgameover, setIsGameOver] = useState(false);
   let isWin : boolean | undefined = undefined;
-  let up_pressed = false;
-  let down_pressed = false;
+  let up_pressed : boolean = false;
+  let down_pressed : boolean = false;
+  let timeout : ReturnType<typeof setTimeout> | undefined = undefined;
   
   const keyPressed = (e : KeyboardEvent) => {
     if (up_pressed === false && e.code === "ArrowUp") {
@@ -59,10 +60,15 @@ export const GamePlay = (props : any) => {
     setIsGameOver(game_socket.id === winner);
     isWin = (game_socket.id === winner);
     console.log("game_over.",(isgameover)?("you win"):("you lose"));
+    timeout = setTimeout(() => {
+      setState(GameState.Lobby);
+    }, 5000)
   }
 
   const quitGame = () => {
     alert("나가?");
+    if (timeout !== undefined)
+      clearTimeout(timeout);
     game_socket.emit("quit_game");
     setState(GameState.Lobby);
   }
@@ -78,6 +84,8 @@ export const GamePlay = (props : any) => {
       window.removeEventListener("keydown", default_keyoff);
       document.removeEventListener('keydown', keyPressed);
       document.removeEventListener('keyup', keyReleased);
+      if (timeout !== undefined)
+        clearTimeout(timeout);
       console.log("게암 페이지 나감");
     }
 
