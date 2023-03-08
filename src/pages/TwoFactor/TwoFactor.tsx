@@ -88,7 +88,7 @@ import React, { useCallback, useState } from 'react';
 import { QueryClient, QueryClientProvider, useMutation } from 'react-query';
 import useInput from '../../hooks/useInput';
 import { useNavigate } from 'react-router-dom';
-import { Container, Button, Nav, Label, Input, Inputs, Form } from './styles';
+import { Container, Button, Nav, Label, Input, Inputs, Form, Conflict } from './styles';
 import GlobalStyles from '../../styles/global';
 
 const TwoFactor = () => {
@@ -101,6 +101,7 @@ const TwoFactor = () => {
   const p6 = useInput('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [twoFactorError, setTwoFactorError] = useState(false);
 
   const mutation = useMutation((password: string) => {
     return fetch(awsUrl + '/2fa/validate', {
@@ -108,13 +109,13 @@ const TwoFactor = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(password),
+      body: JSON.stringify({ token: password }),
     })
       .then((response) => {
         if (response.status === 200) {
-          window.location.href = 'http://localhost:5173/home';
+          navigate('/home');
         } else if (response.status === 401) {
-          window.location.href = 'http://localhost:5173/twofactor';
+          setTwoFactorError(true);
         } else {
           throw new Error('Unexpected response status code');
         }
@@ -162,6 +163,7 @@ const TwoFactor = () => {
               <Input id='p6' maxLength={1} onChange={(e) => handleInputChange(6, e.target.value)}/>
             </Inputs>
           </Label>
+          {twoFactorError && <Conflict>2FA authentication failed. Please try again.</Conflict>}
           <Button type='submit'>LogIn</Button>
         </Form>
       </Container>

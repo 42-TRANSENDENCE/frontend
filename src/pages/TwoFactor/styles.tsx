@@ -108,3 +108,9 @@ export const Input = styled.input`
     width: 6%;
   }
 `
+
+export const Conflict = styled.div`
+  color: #e01e5a;
+  font-weight: bold;
+  text-align: center;
+`;

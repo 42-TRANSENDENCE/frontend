@@ -192,3 +192,41 @@ export const Input = styled.input`
     width: 40%;
   }
 `
+
+
+export const Modal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ModalContent = styled.div`
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+`;
+
+export const ModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+export const ModalBody = styled.div`
+  margin-bottom: 16px;
+`;
+
+export const ModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
