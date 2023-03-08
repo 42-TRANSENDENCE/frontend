@@ -29,7 +29,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
-      <GameContext.Provider value={gameSocket}> 
+      {/* <GameContext.Provider value={gameSocket}>  */}
         <Router>
           <Routes>
             <Route path="/" element={<Navigate replace to="/login" />} />
@@ -39,13 +39,12 @@ const App = () => {
             <Route path="/twofactor" element={<TwoFactor />} />
             <Route path="/home" element={<Home />} />
             <Route path="/chat" element={<Chat />} />
-            <Route path="/game" element={<Game />} />
+            {/* <Route path="/game" element={<Game />} /> */}
           </Routes>
         </Router>
-      </GameContext.Provider>
+      {/* </GameContext.Provider> */}
       </div>
     </QueryClientProvider>
-    </div>
   );
 };
 
