@@ -13,7 +13,7 @@ const LogIn = () => {
   return (
     <>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <Button onClick={onClick}>42 LogIn</Button>

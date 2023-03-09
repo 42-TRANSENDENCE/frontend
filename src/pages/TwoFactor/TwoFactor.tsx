@@ -157,7 +157,7 @@ const TwoFactor = () => {
   return (
     <div>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <h1>Two-Factor Authentication</h1>
         <Form onSubmit={onSubmit}>
