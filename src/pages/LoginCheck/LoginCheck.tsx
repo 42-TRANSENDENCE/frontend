@@ -49,7 +49,7 @@ const LoginCheck = () => {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
-    
+
     const loginResponse = await fetch(awsUrl + '/auth/login', {
       method: 'POST',
       headers: headers,

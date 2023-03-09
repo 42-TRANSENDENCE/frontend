@@ -19,19 +19,22 @@ const SignUp = () => {
 
     // lowercase the username
     username = username.toLowerCase();
-  
+
     // check for consecutive periods and invalid characters
-    if (consecutivePeriodsRegex.test(username) || invalidCharactersRegex.test(username)) {
+    if (
+      consecutivePeriodsRegex.test(username) ||
+      invalidCharactersRegex.test(username)
+    ) {
       return false;
     }
-  
+
     // check the length
     if (username.length > 12) {
       return false;
     }
-  
+
     return true;
-  };  
+  };
 
   const nickname = useInput('', isValidUsername);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -49,7 +52,7 @@ const SignUp = () => {
               Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ nickname: nickname.value })
+            body: JSON.stringify({ nickname: nickname.value }),
           })
         )
         .then((response) => {
@@ -62,31 +65,40 @@ const SignUp = () => {
           } else {
             throw new Error('Unexpected response status code');
           }
-        })
+        });
     },
     [nickname, navigate, queryClient, awsUrl]
   );
 
-  const onNicknameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    nickname.onChange(e);
+  const onNicknameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      nickname.onChange(e);
 
-    // enable submit button if nickname is valid and has at least 3 characters
-    setIsSubmitDisabled(e.target.value.length < 3);
-  }, [nickname]);
+      // enable submit button if nickname is valid and has at least 3 characters
+      setIsSubmitDisabled(e.target.value.length < 3);
+    },
+    [nickname]
+  );
 
   return (
     <div>
-      <GlobalStyles/>
-      <Container bg="#00E5FF">
+      <GlobalStyles />
+      <Container bg='#00E5FF'>
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <form onSubmit={onSubmit}>
-          <Label id="nickname-label">
+          <Label id='nickname-label'>
             <span>Nickname</span>
-            <Input placeholder="nickname" {...nickname} onChange={onNicknameChange} />
+            <Input
+              placeholder='nickname'
+              {...nickname}
+              onChange={onNicknameChange}
+            />
           </Label>
-          {nicknameConflict && <Conflict>Nickname already exist. Try something else.</Conflict>}
-          <Button type="submit" disabled={isSubmitDisabled}>
+          {nicknameConflict && (
+            <Conflict>Nickname already exist. Try something else.</Conflict>
+          )}
+          <Button type='submit' disabled={isSubmitDisabled}>
             Sign Up
           </Button>
         </form>

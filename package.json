@@ -5,10 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    // "dev": "vite --host 0.0.0.0",
-    // "build": "tsc && vite build --base=/build",
-    // "preview": "vite preview"
+    "build": "tsc && vite build"
   },
   "dependencies": {
     "@loadable/component": "^5.15.3",
