@@ -4,16 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
 import { Container, Button, Nav, Label, Input, Conflict } from './styles';
 import GlobalStyles from '../../styles/global';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '../../recoil/authState';
 
 const SignUp = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
   const queryClient = new QueryClient();
+  const accessToken = useRecoilValue(accessTokenState);
 
   const isValidUsername = (username: string): boolean => {
     const consecutivePeriodsRegex = /\.{2,}/;
     const invalidCharactersRegex = /[^\w-.']/;
-  
+
     // lowercase the username
     username = username.toLowerCase();
   
@@ -43,16 +46,18 @@ const SignUp = () => {
           fetch(awsUrl + '/users/signup', {
             method: 'POST',
             headers: {
+              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(nickname),
+            body: JSON.stringify({ nickname: nickname.value })
           })
         )
         .then((response) => {
-          if (response.status === 200) {
+          if (response.status === 201) {
             navigate('/home');
-            // window.location.href = 'http://localhost:5173/home';
-          } else if (response.status === 409) {
+          } else if (response.status === 401) {
+            console.log('accessToken expired');
+          } else if (response.status === 400) {
             setNicknameConflict(true);
           } else {
             throw new Error('Unexpected response status code');

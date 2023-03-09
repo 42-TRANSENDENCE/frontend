@@ -1,17 +1,24 @@
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { Container, Nav } from '../../styles/styles';
+import { accessTokenState } from '../../recoil/authState';
+import { useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router';
 import GlobalStyles from '../../styles/global';
 
 const LoginCheck = () => {
+  const navigate = useNavigate();
   const clientId = import.meta.env.VITE_CLIENT_ID;
   const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
   const redirectUri = import.meta.env.VITE_REDIRECT_URI;
   const awsUrl = import.meta.env.VITE_AWS_URL;
 
+  const setAccessToken = useSetRecoilState(accessTokenState);
+
   const loginCheckQuery = useQuery('loginCheck', async () => {
     const url = new URL(window.location.href);
     const authorizationCode = url.searchParams.get('code');
+    window.history.replaceState({}, document.title, window.location.pathname);
 
     if (!authorizationCode) {
       throw new Error('Authorization code not found');
@@ -32,7 +39,6 @@ const LoginCheck = () => {
         'Content-Type': 'application/json',
       },
     });
-
     if (!response.ok) {
       throw new Error('Failed to retrieve access token');
     }
@@ -43,18 +49,19 @@ const LoginCheck = () => {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     };
-
+    
     const loginResponse = await fetch(awsUrl + '/auth/login', {
-      method: 'GET',
+      method: 'POST',
       headers: headers,
     });
 
+    setAccessToken(accessToken);
     if (loginResponse.status === 200) {
-      window.location.href = 'http://localhost:5173/home';
+      navigate('/home');
     } else if (loginResponse.status === 401) {
-      window.location.href = 'http://localhost:5173/twofactor';
+      navigate('/twofactor');
     } else if (loginResponse.status === 404) {
-      window.location.href = 'http://localhost:5173/signUp';
+      navigate('/signup');
     } else {
       throw new Error('Unexpected response status code');
     }
