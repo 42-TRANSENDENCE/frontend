@@ -13,7 +13,11 @@ import {
   Workspaces,
   WorkspaceButton,
   Div,
-  Modal, ModalContent, ModalHeader, ModalBody, ModalFooter
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from './styles';
 import GlobalStyles from '../../styles/global';
 import home from '../../assets/home.svg';
@@ -56,18 +60,17 @@ const Home = () => {
   const onClickLogOut = () => {
     fetch(awsUrl + '/auth/logout', {
       method: 'POST',
-      body: JSON.stringify(''),
+      // body: JSON.stringify(''),
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-    .then((response) => {
+    }).then((response) => {
       if (response.status === 200) {
         window.location.href = 'http://localhost:5173/';
       } else {
         throw new Error('Unexpected response status code');
       }
-    })
+    });
   };
 
   const onClickGame = () => {
@@ -100,7 +103,9 @@ const Home = () => {
             <WorkspaceButton onClick={onClickLogOut}>
               <img src={logout}></img>
             </WorkspaceButton>
-            <WorkspaceButton onClick={onClickCreateWorkspace}>+</WorkspaceButton>
+            <WorkspaceButton onClick={onClickCreateWorkspace}>
+              +
+            </WorkspaceButton>
           </Workspaces>
           <MainContainer bg='#00E5FF'>
             <Nav>○ ○ ○</Nav>
@@ -122,7 +127,7 @@ const Home = () => {
             <ModalHeader>Create Workspace</ModalHeader>
             <ModalBody>
               <Label>Workspace Name</Label>
-              <Input type="text" />
+              <Input type='text' />
             </ModalBody>
             <ModalFooter>
               <Button>Create</Button>
@@ -139,7 +144,11 @@ const Home = () => {
             <ModalHeader>Two Factor Authentication</ModalHeader>
             <ModalBody>
               <Label>Enable two factor authentication:</Label>
-              <Input type="checkbox" checked={twoFactorEnabled} onChange={toggleTwoFactor} />
+              <Input
+                type='checkbox'
+                checked={twoFactorEnabled}
+                onChange={toggleTwoFactor}
+              />
             </ModalBody>
             <ModalFooter>
               <Button onClick={onCloseTwoFactorModal}>Close</Button>
@@ -151,7 +160,6 @@ const Home = () => {
   );
 };
 export default Home;
-
 
 // import React, { useCallback, useEffect, useState } from 'react';
 // import loadable from '@loadable/component';
