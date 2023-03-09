@@ -84,7 +84,7 @@ const Home = () => {
   return (
     <div>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <Div>
           <Workspaces>
@@ -107,14 +107,14 @@ const Home = () => {
               +
             </WorkspaceButton>
           </Workspaces>
-          <MainContainer bg='#00E5FF'>
+          <MainContainer>
             <Nav>○ ○ ○</Nav>
             <h1>전적 /</h1>
             <h1>승률 /</h1>
             <h1>친구 목록 등</h1>
             <Channel />
           </MainContainer>
-          <ProfileContainer bg='#00E5FF'>
+          <ProfileContainer>
             <Nav>○ ○ ○</Nav>
             <h1>Profile!</h1>
             <Channel />

@@ -8,7 +8,7 @@ export const Container = styled.div`
   display: flex;
   justifiy-content: space-around;
   flex-direction: column;
-  background-color: ${({ bg }) => bg};
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   margin: 8vh 10vw;
   height: 42em;
@@ -35,7 +35,7 @@ export const MainContainer = styled.div`
   flex-grow: 3;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ bg }) => bg};
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   width: 55%;
   height: 88%;
@@ -64,7 +64,7 @@ export const ProfileContainer = styled.div`
   flex-grow: 2;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ bg }) => bg};
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   width: 27%;
   height: 88%;
@@ -109,8 +109,8 @@ export const Button = styled.button`
   font-weight: 800;
   margin: 2em 8em;
   padding: 30px 30px;
-  background-color: ${({ bg }) => bg || '#7C4DFF'};
-  color: ${({ color }) => color || 'white'};
+  background-color: #7C4DFF};
+  color: white;
   box-sizing: border-box;
 
   &:hover {

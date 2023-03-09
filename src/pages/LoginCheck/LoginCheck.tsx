@@ -82,7 +82,7 @@ const LoginCheck = () => {
   return (
     <div>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <h1>Loading...</h1>
       </Container>

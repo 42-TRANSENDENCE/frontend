@@ -83,7 +83,7 @@ const SignUp = () => {
   return (
     <div>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <form onSubmit={onSubmit}>

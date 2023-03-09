@@ -43,7 +43,7 @@ const Chat = () => {
   return (
     <div>
       <GlobalStyles />
-      <Container bg='#00E5FF'>
+      <Container>
         <Nav>○ ○ ○</Nav>
         <Div>
           <Workspaces>
