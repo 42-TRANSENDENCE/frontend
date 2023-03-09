@@ -7,7 +7,7 @@ import { GamePlay } from './components/GamePlay';
 import './styles/Game.css'
 
 const Game = () : JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Waiting);
+  const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
