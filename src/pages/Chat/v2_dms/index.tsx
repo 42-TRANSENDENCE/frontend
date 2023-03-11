@@ -9,39 +9,50 @@ async function getUser() {
   return fetch(chat_backurl + `/api/user/`).then((res) => res.json());
 }
 async function getDms(id: any) {
-  return fetch(chat_backurl + `/api/dms/${id}`).then((res) => res.json());
+  const token = localStorage.getItem("jwt_token");
+  const options = {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  return fetch(chat_backurl + `/api/dms/${id}`, options).then((res) =>
+    res.json()
+  );
 }
 async function postDM(dmId: any, chat: any, user: any) {
+  const token = localStorage.getItem("jwt_token");
   fetch(chat_backurl + `/api/dms/${dmId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       createdAt: new Date(),
-      // SenderId: user.sessionID,
-      ReceiverId: dmId,
       content: chat,
     }),
   }).then((res) => res.text());
 }
 
-const socket = io(`${chat_backurl}/v2_dm`, {
-  transports: ["websocket"],
-});
-
-export default function V2dms() {
+export default function V2dms({ socket }: { socket: any }) {
   const params = useParams<{ dmId?: string }>();
   const { dmId } = params;
   const [chat, setChat] = useState("");
 
-  const { data: user, isLoading: isLoadingUser } = useQuery<any>(
-    ["user"],
-    getUser
+  // const { data: user, isLoading: isLoadingUser } = useQuery<any>(
+  //   ["user"],
+  //   getUser
+  // );
+  const token = localStorage.getItem("jwt_token");
+  const options = {
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}` },
+  };
+  const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
+    fetch(chat_backurl + "/api/user", options).then((res) => res.json())
   );
   const { data: dms, isLoading: isLoadingDms } = useQuery<any>(
     ["dms", dmId],
-    () => fetch(`${chat_backurl}/api/dms`).then((res) => res.json())
+    getDms
     // getDms
   );
   const queryClient = useQueryClient();
@@ -71,31 +82,6 @@ export default function V2dms() {
       queryClient.setQueryData(["dms", dmId], (dmData: any) => {
         return [...dmData, data];
       });
-      // if (data.SenderId === "hyoslee") {
-      //   setTimeout(() => {
-      //     scrollbarRef.current?.scrollToBottom();
-      //   }, 10);
-      //   return;
-      // }
-      //   if (
-      //     scrollbarRef.current &&
-      //     scrollbarRef.current.getScrollHeight() <
-      //       scrollbarRef.current.getClientHeight() +
-      //         scrollbarRef.current.getScrollTop() +
-      //         150
-      //   ) {
-      //     setTimeout(() => {
-      //       scrollbarRef.current?.scrollToBottom();
-      //     }, 50);
-      //   } else {
-      //     toast.success("새 메시지가 도착했습니다.", {
-      //       onClick() {
-      //         scrollbarRef.current?.scrollToBottom();
-      //       },
-      //       closeOnClick: true,
-      //     });
-      //     toast.clearWaitingQueue();
-      //   }
     },
     [queryClient, dmId]
   );
@@ -122,7 +108,7 @@ export default function V2dms() {
         );
       })}
       <form onSubmit={onSubmitForm}>
-        <textarea placeholder="" value={chat} onChange={onChangeChat} />
+        <input placeholder="" value={chat} onChange={onChangeChat} />
         <button
           type="submit"
           style={{ display: "block", width: "100px", height: "100px" }}

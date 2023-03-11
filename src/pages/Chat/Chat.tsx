@@ -32,10 +32,13 @@ const Chat = () => {
         <Route path="*" element={<V2rooms socket={chat_socket} />} />
       </Route>
       <Route path="v2_dms/*">
-        <Route path=":dmId" element={<V2dms />} />
+        <Route path=":dmId" element={<V2dms socket={chat_socket} />} />
       </Route>
       <Route path="createUsers" element={<Create_fakeUsers />} />
-      <Route path="getUsers/:id" element={<Get_fakeUsers />} />
+      <Route
+        path="getUsers/:id"
+        element={<Get_fakeUsers socket={chat_socket} />}
+      />
     </Routes>
   );
 };

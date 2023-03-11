@@ -19,10 +19,12 @@ async function postChat(
   data: any,
   username: string
 ): Promise<string> {
+  const token = localStorage.getItem("jwt_token");
   let res = await fetch(`${chat_backurl}/api/room_list/room/${roomId}/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       createdAt: new Date(),
@@ -37,11 +39,78 @@ function ChatsMenu({
   username,
   roomDatas,
   myUser,
+  roomId,
+  refetch,
 }: {
   username: string;
   roomDatas: any;
   myUser: any;
+  roomId: string;
+  refetch: any;
 }) {
+  console.log(roomDatas);
+  const token = localStorage.getItem("jwt_token");
+  const onkick = async () => {
+    let res = await fetch(
+      `${chat_backurl}/api/room/${roomId}/kick/${username}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          // room_id: roomId,
+          // user_me: myUser.username,
+          // user_you: username,
+        }),
+      }
+    ).then((res) => {
+      // refetch();
+    });
+  };
+  const onBan = async () => {
+    let res = await fetch(
+      `${chat_backurl}/api/room/${roomId}/ban/${username}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    ).then((res) => {});
+  };
+
+  const onAdmin = async () => {
+    let res = await fetch(
+      `${chat_backurl}/api/room/${roomId}/admin/${username}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    ).then((res) => {});
+  };
+
+  const onMute = async () => {
+    let res = await fetch(
+      `${chat_backurl}/api/room/${roomId}/mute/${username}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    ).then((res) => {});
+  };
+
   return (
     <div
       style={{
@@ -58,19 +127,21 @@ function ChatsMenu({
           <div>나는 방장입니다</div>
         ) : (
           <>
-            <div>관리자 임명하기</div>
-            <div>5분간 kick</div>
-            <div>영원히 ban</div>
-            <div>5분간 mute</div>
+            <div onClick={onAdmin}>관리자 임명하기</div>
+            <div onClick={onkick}>5분간 kick</div>
+            <div onClick={onBan}>영원히 ban</div>
+            <div onClick={onMute}>5분간 mute</div>
           </>
         )
       ) : roomDatas.adminList.includes(myUser.username) ? (
         myUser.username === username ? (
           <div>나는 관리자입니다</div>
+        ) : username === roomDatas.owner ? (
+          <div>방장님 입니다</div>
         ) : (
           <>
-            <div>5분간 kick</div>
-            <div>영원히 ban</div>
+            <div onClick={onkick}>5분간 kick</div>
+            <div onClick={onBan}>영원히 ban</div>
             <div>5분간 mute</div>
           </>
         )
@@ -103,6 +174,8 @@ export default function V2chats({ socket }: { socket: any }) {
     data: chatDatas,
     isLoading,
     isError,
+    error,
+    refetch,
   } = useQuery<any>(
     ["chat", roomId],
     async () => {
@@ -187,6 +260,19 @@ export default function V2chats({ socket }: { socket: any }) {
   const onExit = useCallback(function (data: any) {
     console.log("LeaveData: ", data);
   }, []);
+  const onKick = useCallback(function (data: any) {
+    console.log("KickData: ", data);
+    if (data === user.username) {
+      console.log("강퇴당하셨습니다");
+      refetch();
+      navigate("/chat/v2_rooms");
+    } else {
+      console.log(`${data}님이 강퇴당햇습니다`);
+    }
+  }, []);
+  const onRole = useCallback(function (data: any) {
+    refetch();
+  }, []);
 
   useEffect(() => {
     if (onMessage && onJoin && onExit) {
@@ -195,12 +281,16 @@ export default function V2chats({ socket }: { socket: any }) {
       socket?.on("join", onJoin);
       socket?.on("exit", onExit);
       socket?.emit("join", roomId);
+      socket?.on("kick", onKick);
+      socket?.on("role", onRole);
     }
     return () => {
       console.log("소켓 기능이 off 되었습니다! (join, exit, message)");
       socket?.off("message", onMessage);
       socket?.off("join", onJoin);
       socket?.off("exit", onExit);
+      socket?.off("kick", onKick);
+      socket?.off("role", onRole);
       socket?.emit("leave", roomId);
     };
   }, [roomId, onJoin, onExit, onMessage]);
@@ -240,13 +330,16 @@ export default function V2chats({ socket }: { socket: any }) {
   };
 
   if (isLoading || isLoadingRoom || isLoadingUser) return <div />;
-  if (isError)
+  if (isError) {
+    const response = error as Response;
     return (
       <>
-        <div>비밀번호 틀렸어</div>
+        <div>방에 대한 권한이 없습니다</div>
+        <div>{response && response.statusText}</div>
         <Link to="/chat/v2_rooms">방 목록으로</Link>
       </>
     );
+  }
   return (
     <div style={{ textAlign: "center" }}>
       <Scrollbars
@@ -281,6 +374,8 @@ export default function V2chats({ socket }: { socket: any }) {
                     username={chat.user}
                     roomDatas={roomDatas}
                     myUser={user}
+                    roomId={roomId}
+                    refetch={refetch}
                   />
                 )}
                 <div>&emsp;{chat.chat}</div>
@@ -291,7 +386,7 @@ export default function V2chats({ socket }: { socket: any }) {
         <ToastContainer limit={1} />
       </Scrollbars>
       <form onSubmit={onSubmitForm}>
-        <textarea placeholder="" value={chat} onChange={onChangeChat} />
+        <input placeholder="" value={chat} onChange={onChangeChat} />
         <button
           type="submit"
           style={{

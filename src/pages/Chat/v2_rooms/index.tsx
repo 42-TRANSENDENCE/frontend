@@ -8,6 +8,13 @@ import {
   useParams,
 } from "react-router-dom";
 import CreateRoomModal from "../../../components/CreateRoomModal";
+import {
+  BrowserHeader,
+  Container,
+  DotThree,
+  InnerWindow,
+  OuterWindow,
+} from "./style";
 
 const chat_backurl = "http://127.0.0.1:3095";
 
@@ -152,52 +159,78 @@ function V2rooms({ socket }: { socket: any }) {
 
   if (isLoading || isLoadingUser) return <div>isLoading...</div>;
   return (
-    <>
+    <Container
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <h1>채팅방</h1>
-      <div>{user.username}님 어서오세요</div>
-      <fieldset onClick={() => setErrorMessage("")}>
-        <legend>채팅방 목록</legend>
-        <table>
-          <thead>
-            <tr>
-              <th>방 제목</th>
-              <th>종류</th>
-              <th>방장</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rooms?.map((room: any) => {
-              return (
-                <tr data-id={room.id} key={room.id}>
-                  <td>{room.title}</td>
-                  <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
-                  <td>{room.owner}</td>
-                  <td>
-                    <button
-                      data-password={room.status !== 0 ? "true" : "false"}
-                      data-id={room.id}
-                      onClick={onEnterEvent}
-                    >
-                      입장
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div className="error-message"></div>
-        <button style={{ display: "block" }} onClick={onCloseModal}>
-          방 만들기
-        </button>
-        <CreateRoomModal
-          show={showCreateRoomModal}
-          onCloseModal={onCloseModal}
-        />
-      </fieldset>
-      {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}\
-      <Link to="/">홈으로</Link>
-    </>
+      <span>{user.username}님 어서오세요</span>
+      <InnerWindow>
+        <BrowserHeader>
+          <DotThree>
+            <div className="outer">
+              <div className="dot red"></div>
+              <div className="dot amber"></div>
+              <div className="dot green"></div>
+            </div>
+          </DotThree>
+        </BrowserHeader>
+        <fieldset
+          onClick={() => setErrorMessage("")}
+          style={{ border: "none" }}
+        >
+          {/* <legend>채팅방 목록</legend> */}
+          <table>
+            <thead>
+              <tr>
+                <th>방 제목</th>
+                <th>종류</th>
+                <th>방장</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rooms?.map((room: any) => {
+                return (
+                  <tr data-id={room.id} key={room.id}>
+                    <td>{room.title}</td>
+                    <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
+                    <td>{room.owner}</td>
+                    <td>
+                      <button
+                        data-password={room.status !== 0 ? "true" : "false"}
+                        data-id={room.id}
+                        onClick={onEnterEvent}
+                      >
+                        입장
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+          <button
+            style={{ display: "block", margin: "0 auto" }}
+            onClick={onCloseModal}
+          >
+            방 만들기
+          </button>
+          <CreateRoomModal
+            show={showCreateRoomModal}
+            onCloseModal={onCloseModal}
+          />
+        </fieldset>
+      </InnerWindow>
+
+      <Link to="/">
+        <span>홈으로</span>
+      </Link>
+      {/* </OuterWindow> */}
+    </Container>
   );
 }
 

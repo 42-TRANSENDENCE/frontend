@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 
-export default function Get_fakeUsers() {
+export default function Get_fakeUsers({ socket }: { socket: any }) {
   const params = useParams<{ id?: string }>();
   const { id } = params;
 
@@ -13,6 +13,9 @@ export default function Get_fakeUsers() {
       localStorage.setItem("jwt_token", data.token);
       //   localStorage.setItem("username", data.username);
       setDs(data.token);
+
+      socket.emit("login", data.token);
     });
+
   return <>{ds}</>;
 }

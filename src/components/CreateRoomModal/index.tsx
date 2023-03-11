@@ -77,7 +77,7 @@ export default function CreateRoomModal({
     <CreateModal onClick={onCloseModal}>
       <div onClick={stopPropagation}>
         <CloseModalButton onClick={onCloseModal}>&times;</CloseModalButton>
-        <fieldset>
+        <fieldset style={{ border: "none" }}>
           <legend>방 만들기</legend>
           <form onSubmit={onSubmitFunction}>
             <div>
