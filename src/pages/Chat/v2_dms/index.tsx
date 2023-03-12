@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router";
@@ -52,8 +53,7 @@ export default function V2dms({ socket }: { socket: any }) {
   );
   const { data: dms, isLoading: isLoadingDms } = useQuery<any>(
     ["dms", dmId],
-    getDms
-    // getDms
+    () => getDms(dmId)
   );
   const queryClient = useQueryClient();
 
@@ -77,7 +77,7 @@ export default function V2dms({ socket }: { socket: any }) {
   };
 
   const onDM = useCallback(
-    async (data: any) => {
+    (data: any) => {
       console.log("데이터: ", data);
       queryClient.setQueryData(["dms", dmId], (dmData: any) => {
         return [...dmData, data];
@@ -87,22 +87,26 @@ export default function V2dms({ socket }: { socket: any }) {
   );
 
   useEffect(() => {
-    socket?.on("DM", onDM);
+    console.log("DM 이벤트 등록");
+    socket?.on("dm", onDM);
     return () => {
-      socket?.off("DM", onDM);
+      console.log("DM 이벤트 해제");
+      socket?.off("dm", onDM);
     };
-  }, [onDM]);
+  }, [dmId, onDM]);
 
   if (isLoadingUser || isLoadingDms) return <div>로딩중</div>;
   return (
     <>
       <div>{user.sessionID}</div>
       {dms.map((dm: any) => {
+        console.log(dm);
         return (
-          <div style={{ marginTop: "2rem" }}>
-            <div>{dm.createdAt}</div>
-            <div>{dm.SenderId}</div>
-            <div>{dm.ReceiverId}</div>
+          <div style={{ marginTop: "2rem" }} key={randomUUID()}>
+            <div>
+              {dm.createdAt} From <span>{dm.SenderID}</span> to{" "}
+              <span>{dm.ReceiverID}</span>
+            </div>
             <div>{dm.content}</div>
           </div>
         );
