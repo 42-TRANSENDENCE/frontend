@@ -1,7 +1,7 @@
-import { randomUUID } from "crypto";
 import { useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
 const chat_backurl = "http://127.0.0.1:3095";
@@ -102,7 +102,7 @@ export default function V2dms({ socket }: { socket: any }) {
       {dms.map((dm: any) => {
         console.log(dm);
         return (
-          <div style={{ marginTop: "2rem" }} key={randomUUID()}>
+          <div style={{ marginTop: "2rem" }}>
             <div>
               {dm.createdAt} From <span>{dm.SenderID}</span> to{" "}
               <span>{dm.ReceiverID}</span>
@@ -120,6 +120,7 @@ export default function V2dms({ socket }: { socket: any }) {
           전송
         </button>
       </form>
+      <Link to={"/chat"}>홈으로</Link>
     </>
   );
 }

@@ -230,6 +230,11 @@ function V2rooms({ socket }: { socket: any }) {
         <span>홈으로</span>
       </Link>
       {/* </OuterWindow> */}
+      <Link to="/chat/createUsers">유저들 만들기</Link>
+      <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
+      <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
+      <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
+      <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
     </Container>
   );
 }

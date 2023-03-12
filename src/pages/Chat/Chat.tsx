@@ -10,15 +10,11 @@ import Create_fakeUsers from "./create_fakeusers";
 import Get_fakeUsers from "./get_fakeusers";
 
 const Chat = () => {
-  // const [room_socket, disconnect_room_socket] = useSocket("v2_room");
-  // console.log("connecting room_socket: ", room_socket);
   const [chat_socket, disconnect_chat_socket] = useSocket("v2_chat");
   console.log("connecting chat_socket: ", chat_socket);
 
   useEffect(() => {
     return () => {
-      // console.log("disconnecting room socket");
-      // disconnect_room_socket();
       console.log("disconnecting chat socket");
       disconnect_chat_socket();
     };
