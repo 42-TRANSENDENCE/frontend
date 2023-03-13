@@ -1,3 +1,9 @@
+import GlobalStyles from "../../../styles/global";
+import home from "../../../assets/home.svg";
+import game from "../../../assets/game.svg";
+import chat from "../../../assets/chat.svg";
+import logout from "../../../assets/logout.svg";
+import setting from "../../../assets/setting.svg";
 import { useCallback, useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import {
@@ -15,6 +21,7 @@ import {
   InnerWindow,
   OuterWindow,
 } from "./style";
+import styled from "styled-components";
 
 const chat_backurl = "http://127.0.0.1:3095";
 
@@ -71,11 +78,9 @@ function V2rooms({ socket }: { socket: any }) {
   );
 
   useEffect(() => {
-    if (onNewRoom && onRemoveRoom) {
-      console.log("v2_rooms에 진입하셨습니다.");
-      socket?.on("newRoom", onNewRoom);
-      socket?.on("removeRoom", onRemoveRoom);
-    }
+    console.log("v2_rooms에 진입하셨습니다.");
+    socket?.on("newRoom", onNewRoom);
+    socket?.on("removeRoom", onRemoveRoom);
     return () => {
       console.log("v2_rooms에서 나가셨습니다.");
       socket?.off("newRoom", onNewRoom);
@@ -157,86 +162,276 @@ function V2rooms({ socket }: { socket: any }) {
     );
   }, []);
 
+  const onClickHome = () => {
+    navigate("/home");
+  };
+
+  const onClickLogOut = () => {
+    // fetch(awsUrl + "/auth/logout", {
+    //   method: "POST",
+    //   body: JSON.stringify(""),
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // }).then((response) => {
+    //   if (response.status === 200) {
+    //     window.location.href = "http://localhost:5173/";
+    //   } else {
+    //     throw new Error("Unexpected response status code");
+    //   }
+    // });
+  };
+
+  const onClickGame = () => {
+    navigate("/game");
+  };
+
+  const onClickChat = () => {
+    window.location.reload();
+  };
+
   if (isLoading || isLoadingUser) return <div>isLoading...</div>;
   return (
-    <Container
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <h1>채팅방</h1>
-      <span>{user.username}님 어서오세요</span>
-      <InnerWindow>
-        <BrowserHeader>
-          <DotThree>
-            <div className="outer">
-              <div className="dot red"></div>
-              <div className="dot amber"></div>
-              <div className="dot green"></div>
-            </div>
-          </DotThree>
-        </BrowserHeader>
-        <fieldset
-          onClick={() => setErrorMessage("")}
-          style={{ border: "none" }}
-        >
-          {/* <legend>채팅방 목록</legend> */}
-          <table>
-            <thead>
-              <tr>
-                <th>방 제목</th>
-                <th>종류</th>
-                <th>방장</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rooms?.map((room: any) => {
-                return (
-                  <tr data-id={room.id} key={room.id}>
-                    <td>{room.title}</td>
-                    <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
-                    <td>{room.owner}</td>
-                    <td>
-                      <button
-                        data-password={room.status !== 0 ? "true" : "false"}
-                        data-id={room.id}
-                        onClick={onEnterEvent}
-                      >
-                        입장
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-          <button
-            style={{ display: "block", margin: "0 auto" }}
-            onClick={onCloseModal}
+    <div>
+      <GlobalStyles />
+      <Containers>
+        {/* <BrowserHeader> */}
+        <DotThree>
+          <div className="outer">
+            <div className="dot red"></div>
+            <div className="dot amber"></div>
+            <div className="dot green"></div>
+            <div style={{ display: "inline-block" }}>채팅방</div>
+            <span>{user.username}님 어서오세요</span>
+          </div>
+        </DotThree>
+        {/* </BrowserHeader> */}
+        <div style={{ display: "flex" }}>
+          <Workspaces>
+            <WorkspaceButton onClick={onClickHome}>
+              <img src={home}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickGame}>
+              <img src={game}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickChat}>
+              <img src={chat}></img>
+            </WorkspaceButton>
+            <WorkspaceButton>
+              <img src={setting}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickLogOut}>
+              <img src={logout}></img>
+            </WorkspaceButton>
+          </Workspaces>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              margin: "0 auto",
+              marginTop: "1rem",
+            }}
           >
-            방 만들기
-          </button>
-          <CreateRoomModal
-            show={showCreateRoomModal}
-            onCloseModal={onCloseModal}
-          />
-        </fieldset>
-      </InnerWindow>
+            <fieldset
+              onClick={() => setErrorMessage("")}
+              style={{ border: "none" }}
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>방 제목</th>
+                    <th>종류</th>
+                    <th>방장</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rooms?.map((room: any) => {
+                    return (
+                      <tr data-id={room.id} key={room.id}>
+                        <td>
+                          {room.title.length > 10
+                            ? room.title.slice(0, 10) + "..."
+                            : room.title}
+                        </td>
+                        <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
+                        <td>{room.owner}</td>
+                        <td>
+                          <button
+                            data-password={room.status !== 0 ? "true" : "false"}
+                            data-id={room.id}
+                            onClick={onEnterEvent}
+                          >
+                            입장
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              {errorMessage && (
+                <div style={{ color: "red" }}>{errorMessage}</div>
+              )}
+              <button
+                style={{ display: "block", margin: "0 auto" }}
+                onClick={onCloseModal}
+              >
+                방 만들기
+              </button>
+              <CreateRoomModal
+                show={showCreateRoomModal}
+                onCloseModal={onCloseModal}
+              />
+            </fieldset>
+            <Link to="/">
+              <span>홈으로</span>
+            </Link>
+            {/* </OuterWindow> */}
+            <Link to="/chat/createUsers">유저들 만들기</Link>
+            <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
+            <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
+            <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
+            <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
+          </div>
+        </div>
+      </Containers>
+    </div>
 
-      <Link to="/">
-        <span>홈으로</span>
-      </Link>
-      {/* </OuterWindow> */}
-      <Link to="/chat/createUsers">유저들 만들기</Link>
-      <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
-      <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
-      <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
-      <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
-    </Container>
+    // <Container
+    //   style={{
+    //     display: "flex",
+    //     flexDirection: "column",
+    //     alignItems: "center",
+    //   }}
+    // >
+    //   <h1>채팅방</h1>
+    //   <span>{user.username}님 어서오세요</span>
+    //   <InnerWindow>
+    // <BrowserHeader>
+    //   <DotThree>
+    //     <div className="outer">
+    //       <div className="dot red"></div>
+    //       <div className="dot amber"></div>
+    //       <div className="dot green"></div>
+    //     </div>
+    //   </DotThree>
+    // </BrowserHeader>
+    //     <fieldset
+    //       onClick={() => setErrorMessage("")}
+    //       style={{ border: "none" }}
+    //     >
+    //       {/* <legend>채팅방 목록</legend> */}
+    //       <table>
+    //         <thead>
+    //           <tr>
+    //             <th>방 제목</th>
+    //             <th>종류</th>
+    //             <th>방장</th>
+    //           </tr>
+    //         </thead>
+    //         <tbody>
+    //           {rooms?.map((room: any) => {
+    //             return (
+    //               <tr data-id={room.id} key={room.id}>
+    //                 <td>{room.title}</td>
+    //                 <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
+    //                 <td>{room.owner}</td>
+    //                 <td>
+    //                   <button
+    //                     data-password={room.status !== 0 ? "true" : "false"}
+    //                     data-id={room.id}
+    //                     onClick={onEnterEvent}
+    //                   >
+    //                     입장
+    //                   </button>
+    //                 </td>
+    //               </tr>
+    //             );
+    //           })}
+    //         </tbody>
+    //       </table>
+    //       {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+    //       <button
+    //         style={{ display: "block", margin: "0 auto" }}
+    //         onClick={onCloseModal}
+    //       >
+    //         방 만들기
+    //       </button>
+    //       <CreateRoomModal
+    //         show={showCreateRoomModal}
+    //         onCloseModal={onCloseModal}
+    //       />
+    //     </fieldset>
+    //   </InnerWindow>
+
+    //   <Link to="/">
+    //     <span>홈으로</span>
+    //   </Link>
+    //   {/* </OuterWindow> */}
+    //   <Link to="/chat/createUsers">유저들 만들기</Link>
+    //   <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
+    //   <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
+    //   <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
+    //   <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
+    // </Container>
   );
 }
+
+export const Containers = styled.div`
+  display: flex;
+  justifiy-content: space-around;
+  flex-direction: column;
+  background-color: #00e5ff;
+  border: 0.5rem solid black;
+  margin: 8vh 10vw;
+  height: 42em;
+  box-shadow: 20px 20px;
+  position: relative;
+
+  // h1 {
+  //   color: #FFFFFF;
+  //   font-family: 'IBM Plex Mono', monospace;
+  //   font-weight: 700;
+  //   font-size: 8vw;
+  //   line-height: 0.2;
+  //   align-items: center;
+  //   text-align: center;
+  //   // padding: 5% 0;
+  //   text-transform: uppercase;
+  //   &:hover {
+  //     color: black;
+  //   }
+`;
+
+export const Div = styled.div`
+  display: flex;
+`;
+
+export const Workspaces = styled.div`
+  display: inline-flex;
+  flex-grow: 1;
+  flex-direction: column;
+  border-right: 5px solid black;
+  box-sizing: border-box;
+  position: absolute;
+  top: 8%;
+  left: 2%;
+`;
+
+export const WorkspaceButton = styled.button`
+  color: white;
+  font-size: 40px;
+  line-height: 70px;
+  display: inline-block;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+
+  &:hover {
+    opacity: 0.8;
+    transform: scale(0.85);
+  }
+`;
 
 export default V2rooms;
