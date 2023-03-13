@@ -1,4 +1,5 @@
-import loadable from '@loadable/component';
+import React from "react";
+import loadable from "@loadable/component";
 import {
   BrowserRouter as Router,
   Route,
@@ -8,6 +9,8 @@ import {
 
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { gameSocket, GameContext } from '../..//contexts/GameSocket';
+
+const queryClient = new QueryClient();
 
 const LogIn = loadable(() => import('../../pages/LogIn/LogIn'));
 const LoginCheck = loadable(() => import('../../pages/LoginCheck/LoginCheck'));
