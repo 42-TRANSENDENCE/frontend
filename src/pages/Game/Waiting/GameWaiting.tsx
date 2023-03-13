@@ -1,5 +1,7 @@
-import '../styles/GameWaiting.css'
+import {LoadingText, CancelButton} from './styles'
 import { useEffect } from 'react'
+import { Window } from '../../../styles/Window'
+
 
 export const GameWaiting = (props : any) => {
   const game_socket = props.socket;
@@ -16,11 +18,14 @@ export const GameWaiting = (props : any) => {
   }, [])
 
   return (
-    <div className='waiting__container'>
-      <img src='spinner.gif'/>
-      <div className='cancel_button' onClick={quit_queue}>
-        <p className='cancel'>Cancel</p>
-      </div>
-    </div>
+      <>
+      <Window height="400px" title="Searching game" max_width="40px">
+        <LoadingText>LOADING...</LoadingText>
+      </Window>
+      
+      <CancelButton onClick={quit_queue}>
+        <h1>CANGLE</h1>
+      </CancelButton>
+    </>
   )
 }

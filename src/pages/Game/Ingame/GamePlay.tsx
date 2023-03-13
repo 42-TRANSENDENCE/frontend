@@ -2,6 +2,8 @@ import '../styles/GamePlay.css'
 import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { GameState } from '../components/enums';
+import { Window } from '../../..//styles/Window';
+import { PlayContainer } from './styles';
 
 import Canvas__background from './Canvas__background';
 import Canvas__foreground from './Canvas__foreground';
@@ -91,17 +93,33 @@ export const GamePlay = (props : any) => {
 
   }, []);
 
+  //return (
+  //    <div className='game__body'>
+  //      <div className='container__canvas'>
+  //        <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
+  //        <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
+  //      </div>
+  //      <div className='quit_button' onClick={quitGame}>
+  //        <p>나가기</p>
+  //      </div>
+  //    </div>
+  //)
   return (
-      <div className='game__body'>
-        <div className='container__canvas'>
-          <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
-          <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
-        </div>
+    <PlayContainer>
+      <Window title="Player1" width="25%">
+      </Window>
+      <Window title="Pong">
+        <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
+        <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
         <div className='quit_button' onClick={quitGame}>
           <p>나가기</p>
         </div>
-      </div>
+      </Window>
+      <Window title="Player2" width="25%">
+      </Window>
+    </PlayContainer>
   )
+
 }
 
 

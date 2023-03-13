@@ -5,12 +5,12 @@ import { GameLobby } from './Lobby/GameLobby';
 import { GameWaiting } from './Waiting/GameWaiting';
 import { GamePlay } from './Ingame/GamePlay';
 
-//import { Container, Button, Nav } from './styles';
 import GlobalStyles from '../../styles/global';
-import './styles/Game.css'
+import {Window} from '../../styles/Window'; 
+import {GameContainer} from './styles';
 
 const Game = () : JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
+  const [gamestate, setGamestate] = useState(GameState.InGame);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
@@ -55,10 +55,12 @@ const Game = () : JSX.Element => {
   }
 
   return (
-    <div className='game__container'>
+    <GameContainer>
       <GlobalStyles />
-      <GameByState />
-    </div>
+      <Window title="Pong Game" width="95%" height="95%">
+        <GameByState />
+      </Window>
+    </GameContainer>
   );
 
 }
