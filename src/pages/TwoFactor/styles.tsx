@@ -4,7 +4,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ bg }) => bg};
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   // margin: 5% 15%;
   margin: 7vh 15vw;
@@ -51,8 +51,8 @@ export const Button = styled.button`
   font-weight: 800;
   margin: 2em 8em;
   padding: 30px 30px;
-  background-color: ${({ bg }) => bg || '#7C4DFF'};
-  color: ${({ color }) => color || 'white'};
+  background-color: #7C4DFF;
+  color: white;
   box-sizing: border-box;
 
   &:hover {
@@ -108,3 +108,9 @@ export const Input = styled.input`
     width: 6%;
   }
 `
+
+export const Conflict = styled.div`
+  color: #e01e5a;
+  font-weight: bold;
+  text-align: center;
+`;
