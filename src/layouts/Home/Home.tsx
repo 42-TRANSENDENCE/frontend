@@ -29,7 +29,13 @@ import setting from '../../assets/setting.svg';
 // const Channel = loadable(() => import('@pages/Channel'));
 const Channel = loadable(() => import('../../pages/Channel/Channel'));
 
+interface Profile {
+  name: string;
+  photo: Blob;
+}
+
 const Home = () => {
+  // const value = `cookie : ${document.cookie}`;
   const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
@@ -60,10 +66,7 @@ const Home = () => {
   const onClickLogOut = () => {
     fetch(awsUrl + '/auth/logout', {
       method: 'POST',
-      // body: JSON.stringify(''),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      credentials: 'include',
     }).then((response) => {
       if (response.status === 200) {
         window.location.href = 'http://localhost:5173/';
@@ -80,6 +83,27 @@ const Home = () => {
   const onClickChat = () => {
     navigate('/chat');
   };
+
+  const [profile, setProfile] = useState<Profile>({ name: '', photo: new Blob() });
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      // const nameResponse = await fetch(`${awsUrl}/users`);
+      // const name = await nameResponse.text();
+      const name = 'keokim';
+
+      const photoResponse = await fetch('https://images.unsplash.com/5/unsplash-kitsune-4.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjEyMDd9&s=fb86e2e09fceac9b363af536b93a1275');
+      const photo = await photoResponse.blob();
+
+      setProfile({ name, photo });
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  }, [awsUrl]);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   return (
     <div>
@@ -116,7 +140,9 @@ const Home = () => {
           </MainContainer>
           <ProfileContainer>
             <Nav>○ ○ ○</Nav>
-            <h1>Profile!</h1>
+            <h1>Profile</h1>
+            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '60%', maxWidth: '200px', maxHeight: '200px' }} />
+            <h2>{profile.name}</h2>
             <Channel />
           </ProfileContainer>
         </Div>
@@ -160,95 +186,3 @@ const Home = () => {
   );
 };
 export default Home;
-
-// import React, { useCallback, useEffect, useState } from 'react';
-// import loadable from '@loadable/component';
-// import { useNavigate, Link } from 'react-router-dom';
-// import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-// import { Container, MainContainer, ProfileContainer, Button, Nav, Label, Input, Workspaces,
-//  WorkspaceButton, Div, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from './styles';
-// import GlobalStyles from '../../styles/global';
-
-// const Channel = loadable(() => import('../../pages/Channel/Channel'));
-
-// const Home = () => {
-//   const awsUrl = import.meta.env.VITE_AWS_URL;
-//   const navigate = useNavigate();
-//   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
-//     useState(false);
-//   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
-//   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-
-//   const onClickCreateWorkspace = useCallback(() => {
-//     setShowCreateWorkspaceModal(true);
-//   }, []);
-
-//   const toggleTwoFactor = useCallback(() => {
-//     setTwoFactorEnabled(!twoFactorEnabled);
-//   }, [twoFactorEnabled]);
-
-//   const onCloseTwoFactorModal = useCallback(() => {
-//     setShowTwoFactorModal(false);
-//   }, []);
-
-//   const onOpenTwoFactorModal = useCallback(() => {
-//     setShowTwoFactorModal(true);
-//   }, []);
-
-//   return (
-//     <div>
-//       <GlobalStyles />
-//       <Container bg='#00E5FF'>
-//         <Nav>○ ○ ○</Nav>
-//         <Div>
-//           <Workspaces>
-//             <WorkspaceButton onClick={onClickCreateWorkspace}>
-//               +
-//             </WorkspaceButton>
-//             <WorkspaceButton onClick={onOpenTwoFactorModal}>
-//               Two Factor Auth
-//             </WorkspaceButton>
-//           </Workspaces>
-//           <MainContainer bg='#00E5FF'>
-//             <Nav>○ ○ ○</Nav>
-//           </MainContainer>
-//           <ProfileContainer bg='#00E5FF'>
-//             <Nav>○ ○ ○</Nav>
-//           </ProfileContainer>
-//         </Div>
-//       </Container>
-//       {showCreateWorkspaceModal && (
-//         <Modal>
-//           <ModalContent>
-//             <ModalHeader>Create Workspace</ModalHeader>
-//             <ModalBody>
-//               <Label>Workspace Name</Label>
-//               <Input type="text" />
-//             </ModalBody>
-//             <ModalFooter>
-//               <Button>Create</Button>
-//               <Button onClick={() => setShowCreateWorkspaceModal(false)}>
-//                 Cancel
-//               </Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       )}
-//       {showTwoFactorModal && (
-//         <Modal>
-//           <ModalContent>
-//             <ModalHeader>Two Factor Authentication</ModalHeader>
-//             <ModalBody>
-//               <Label>Enable two factor authentication:</Label>
-//               <Input type="checkbox" checked={twoFactorEnabled} onChange={toggleTwoFactor} />
-//             </ModalBody>
-//             <ModalFooter>
-//               <Button onClick={onCloseTwoFactorModal}>Close</Button>
-//             </ModalFooter>
-//           </ModalContent>
-//         </Modal>
-//       )}
-//     </div>
-//   );
-// };
-// export default Home;
