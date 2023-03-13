@@ -7,7 +7,7 @@
     --title_height: 50px;
     --game_container_padding: min(2vh, 2vw);
     --game_container_width: 96vw;
-    --game_container_height: calc(95vh - 2 * var(--title_height) - 2vh);
+    --game_container_height: calc(95vh - 2vh);
 
     /*  */
     margin : 1vh 3vw 1vh 3vw;

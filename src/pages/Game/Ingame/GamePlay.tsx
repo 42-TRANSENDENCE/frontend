@@ -1,7 +1,7 @@
 import '../styles/GamePlay.css'
 import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
-import { GameState } from './enums';
+import { GameState } from '../components/enums';
 
 import Canvas__background from './Canvas__background';
 import Canvas__foreground from './Canvas__foreground';
