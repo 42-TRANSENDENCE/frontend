@@ -69,7 +69,7 @@ const Home = () => {
       credentials: 'include',
     }).then((response) => {
       if (response.status === 200) {
-        window.location.href = 'http://localhost:5173/';
+        window.location.href = 'http://44.195.129.81:5173/';
       } else {
         throw new Error('Unexpected response status code');
       }
