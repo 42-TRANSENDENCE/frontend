@@ -86,6 +86,7 @@ export const BrowserHeader = styled.div`
 
 export const DotThree = styled.div`
   .outer {
+    position: relative;
     background: #b4b4b4;
     opacity: 0.9;
     // width: 960px;
@@ -116,6 +117,11 @@ export const DotThree = styled.div`
       background: #27c93f;
       border: 1px solid #1dad2b;
     }
+  }
+
+  span {
+    position: absolute;
+    right: 10px;
   }
 `;
 

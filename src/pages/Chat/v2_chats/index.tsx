@@ -6,6 +6,7 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import GlobalStyles from "../../../styles/global";
 
 export const ChatElement = styled.section`
   /* margin: 1rem; */
@@ -342,6 +343,7 @@ export default function V2chats({ socket }: { socket: any }) {
   }
   return (
     <div style={{ textAlign: "center" }}>
+      <GlobalStyles />
       <Scrollbars
         autoHide
         style={{
