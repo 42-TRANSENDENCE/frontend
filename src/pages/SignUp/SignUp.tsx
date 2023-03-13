@@ -46,12 +46,12 @@ const SignUp = () => {
       setNicknameConflict(false);
       queryClient
         .fetchQuery('signup', () =>
-          fetch(awsUrl + '/users/signup', {
+          fetch(awsUrl + '/auth/signup', {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({ nickname: nickname.value }),
           })
         )
