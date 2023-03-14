@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import loadable from '@loadable/component';
-import { useNavigate, Link } from 'react-router-dom';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import React, { useCallback, useEffect, useState } from "react";
+import loadable from "@loadable/component";
+import { useNavigate, Link } from "react-router-dom";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import {
   Container,
   MainContainer,
@@ -18,16 +18,16 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-} from './styles';
-import GlobalStyles from '../../styles/global';
-import home from '../../assets/home.svg';
-import game from '../../assets/game.svg';
-import chat from '../../assets/chat.svg';
-import logout from '../../assets/logout.svg';
-import setting from '../../assets/setting.svg';
+} from "./styles";
+import GlobalStyles from "../../styles/global";
+import home from "../../assets/home.svg";
+import game from "../../assets/game.svg";
+import chat from "../../assets/chat.svg";
+import logout from "../../assets/logout.svg";
+import setting from "../../assets/setting.svg";
 
 // const Channel = loadable(() => import('@pages/Channel'));
-const Channel = loadable(() => import('../../pages/Channel/Channel'));
+const Channel = loadable(() => import("../../pages/Channel/Channel"));
 
 interface Profile {
   name: string;
@@ -65,88 +65,92 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const api = twoFactorEnabled
-      ? '/2fa/turn-on'
-      : '/2fa/turn-off';
+    const api = twoFactorEnabled ? "/2fa/turn-on" : "/2fa/turn-off";
     fetch(awsUrl + api, {
-      method: 'POST',
-      credentials: 'include',
+      method: "POST",
+      credentials: "include",
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      if (response.status === 200 && api === '/2fa/turn-on') {
-        fetch(awsUrl + '/2fa/generate', {
-          method: 'GET',
-          headers: { 'Content-Type': 'img/png' },
-          credentials: 'include',
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            if (response.status === 200 && response.headers.get('Content-Type') === 'img/png') {
-              return response.blob();
-            } else {
-              throw new Error('Invalid QR code image response');
-            }
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        if (response.status === 200 && api === "/2fa/turn-on") {
+          fetch(awsUrl + "/2fa/generate", {
+            method: "GET",
+            headers: { "Content-Type": "img/png" },
+            credentials: "include",
           })
-          .then(blob => {
-            const qrCodeImageUrl = URL.createObjectURL(blob);
-            setQrCodeImage(qrCodeImageUrl);
-          })
-          .catch(error => console.error('Error:', error));
-      }
-      return response.json();
-    })
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-}, [twoFactorEnabled]);
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              if (
+                response.status === 200 &&
+                response.headers.get("Content-Type") === "img/png"
+              ) {
+                return response.blob();
+              } else {
+                throw new Error("Invalid QR code image response");
+              }
+            })
+            .then((blob) => {
+              const qrCodeImageUrl = URL.createObjectURL(blob);
+              setQrCodeImage(qrCodeImageUrl);
+            })
+            .catch((error) => console.error("Error:", error));
+        }
+        return response.json();
+      })
+      .then((data) => console.log(data))
+      .catch((error) => console.error("Error:", error));
+  }, [twoFactorEnabled]);
 
   const onClickLogOut = () => {
-    fetch(awsUrl + '/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
+    fetch(awsUrl + "/auth/logout", {
+      method: "POST",
+      credentials: "include",
     }).then((response) => {
       if (response.status === 200) {
         window.location.href = `${awsUrl}:5173/`;
       } else {
-        throw new Error('Unexpected response status code');
+        throw new Error("Unexpected response status code");
       }
     });
   };
 
   const onClickGame = () => {
-    navigate('/game');
+    navigate("/game");
   };
 
   const onClickChat = () => {
-    navigate('/chat');
+    navigate("/chat");
   };
 
-  const [profile, setProfile] = useState<Profile>({ name: '', photo: new Blob() });
+  const [profile, setProfile] = useState<Profile>({
+    name: "",
+    photo: new Blob(),
+  });
 
   const fetchProfile = useCallback(async () => {
     setTwoFactorEnabled(false);
     try {
       const nameResponse = await fetch(`${awsUrl}/users`, {
-        method: 'GET',
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
       });
       const user = await nameResponse.text();
       const userObj = JSON.parse(user);
-      const name = userObj.nickname.replace(/\"/g, '');
+      const name = userObj.nickname.replace(/\"/g, "");
 
       const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
-        method: 'GET',
-        credentials: 'include',
+        method: "GET",
+        credentials: "include",
       });
       const photo = await photoResponse.blob();
 
       setProfile({ name, photo });
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
     }
   }, [awsUrl]);
 
@@ -156,7 +160,6 @@ const Home = () => {
 
   return (
     <div>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <Div>
@@ -190,7 +193,15 @@ const Home = () => {
           <ProfileContainer>
             <Nav>○ ○ ○</Nav>
             <h1>Profile</h1>
-            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '60%', maxWidth: '100px', maxHeight: '100px' }} />
+            <img
+              src={URL.createObjectURL(profile.photo)}
+              alt="Profile"
+              style={{
+                borderRadius: "60%",
+                maxWidth: "100px",
+                maxHeight: "100px",
+              }}
+            />
             <h2>{profile.name}</h2>
             <Channel />
           </ProfileContainer>
@@ -202,7 +213,7 @@ const Home = () => {
             <ModalHeader>Create Workspace</ModalHeader>
             <ModalBody>
               <Label>Workspace Name</Label>
-              <Input type='text' />
+              <Input type="text" />
             </ModalBody>
             <ModalFooter>
               <Button>Create</Button>
@@ -220,7 +231,7 @@ const Home = () => {
             <ModalBody>
               <Label>Enable two factor authentication:</Label>
               <Input
-                type='checkbox'
+                type="checkbox"
                 checked={twoFactorEnabled}
                 onChange={toggleTwoFactor}
               />

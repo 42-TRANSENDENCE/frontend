@@ -193,7 +193,6 @@ function V2rooms({ socket }: { socket: any }) {
   if (isLoading || isLoadingUser) return <div>isLoading...</div>;
   return (
     <div>
-      <GlobalStyles />
       <Containers>
         {/* <BrowserHeader> */}
         <DotThree>

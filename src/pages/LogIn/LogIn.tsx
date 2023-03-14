@@ -1,5 +1,5 @@
-import { Container, Button, Nav } from './styles';
-import GlobalStyles from '../../styles/global';
+import { Container, Button, Nav } from "./styles";
+import GlobalStyles from "../../styles/global";
 
 const LogIn = () => {
   const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -12,7 +12,6 @@ const LogIn = () => {
 
   return (
     <>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
