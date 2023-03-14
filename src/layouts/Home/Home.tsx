@@ -42,6 +42,7 @@ const Home = () => {
     useState(false);
   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
 
   const onClickCreateWorkspace = useCallback(() => {
     setShowCreateWorkspaceModal(true);
@@ -63,13 +64,53 @@ const Home = () => {
     window.location.reload();
   };
 
+  useEffect(() => {
+    const api = twoFactorEnabled
+      ? '/2fa/turn-on'
+      : '/2fa/turn-off';
+    fetch(awsUrl + api, {
+      method: 'POST',
+      credentials: 'include',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      if (response.status === 200 && api === '/2fa/turn-on') {
+        fetch(awsUrl + '/2fa/generate', {
+          method: 'GET',
+          headers: { 'Content-Type': 'img/png' },
+          credentials: 'include',
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            if (response.status === 200 && response.headers.get('Content-Type') === 'img/png') {
+              return response.blob();
+            } else {
+              throw new Error('Invalid QR code image response');
+            }
+          })
+          .then(blob => {
+            const qrCodeImageUrl = URL.createObjectURL(blob);
+            setQrCodeImage(qrCodeImageUrl);
+          })
+          .catch(error => console.error('Error:', error));
+      }
+      return response.json();
+    })
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+}, [twoFactorEnabled]);
+
   const onClickLogOut = () => {
     fetch(awsUrl + '/auth/logout', {
       method: 'POST',
       credentials: 'include',
     }).then((response) => {
       if (response.status === 200) {
-        window.location.href = 'http://44.195.129.81:5173/';
+        window.location.href = `${awsUrl}:5173/`;
       } else {
         throw new Error('Unexpected response status code');
       }
@@ -88,11 +129,16 @@ const Home = () => {
 
   const fetchProfile = useCallback(async () => {
     try {
-      // const nameResponse = await fetch(`${awsUrl}/users`);
-      // const name = await nameResponse.text();
-      const name = 'keokim';
+      const nameResponse = await fetch(`${awsUrl}/users`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const name = await nameResponse.text();
 
-      const photoResponse = await fetch('https://images.unsplash.com/5/unsplash-kitsune-4.jpg?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&ixid=eyJhcHBfaWQiOjEyMDd9&s=fb86e2e09fceac9b363af536b93a1275');
+      const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
+        method: 'GET',
+        credentials: 'include',
+      });
       const photo = await photoResponse.blob();
 
       setProfile({ name, photo });
@@ -175,6 +221,7 @@ const Home = () => {
                 checked={twoFactorEnabled}
                 onChange={toggleTwoFactor}
               />
+              {qrCodeImage && <img src={qrCodeImage} />}
             </ModalBody>
             <ModalFooter>
               <Button onClick={onCloseTwoFactorModal}>Close</Button>
