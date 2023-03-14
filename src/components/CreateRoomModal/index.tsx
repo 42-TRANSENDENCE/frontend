@@ -98,7 +98,9 @@ export default function CreateRoomModal({
                 onChange={onChangePassword}
               />
             </div>
-            <button type="submit">생성</button>
+            <button type="submit" style={{ margin: "1rem" }}>
+              생성
+            </button>
           </form>
         </fieldset>
       </div>
