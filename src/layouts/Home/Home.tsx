@@ -134,7 +134,8 @@ const Home = () => {
         credentials: 'include',
       });
       const user = await nameResponse.text();
-      const name = JSON.parse(user).nickname.replace(/"/g, '');
+      const userObj = JSON.parse(user);
+      const name = userObj.nickname.replace(/"/g, '');
 
       const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
         method: 'GET',
