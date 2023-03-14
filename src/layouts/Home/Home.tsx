@@ -128,6 +128,7 @@ const Home = () => {
   const [profile, setProfile] = useState<Profile>({ name: '', photo: new Blob() });
 
   const fetchProfile = useCallback(async () => {
+    setTwoFactorEnabled(false);
     try {
       const nameResponse = await fetch(`${awsUrl}/users`, {
         method: 'GET',
@@ -135,7 +136,7 @@ const Home = () => {
       });
       const user = await nameResponse.text();
       const userObj = JSON.parse(user);
-      const name = userObj.nickname.replace(/"/g, '');
+      const name = userObj.nickname.replace(/\"/g, '');
 
       const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
         method: 'GET',
