@@ -1,6 +1,6 @@
 import '../styles/GamePlay.css'
 import React, { useEffect, useRef} from 'react'
-
+import {SingleCanvas} from './styles'
 interface GameDataType {
   ball_pos   : { x : number, y : number };
   paddle_pos : { p1: number, p2: number };
@@ -23,29 +23,17 @@ const Canvas__foreground = (props : any) : JSX.Element => {
     ball_pos   : { x : 0, y : 0 },
     paddle_pos : { p1: 0, p2: 0 },
   }
+
   
   useEffect( () => {
     const canvas : any = canvasRef.current;
     const context = canvas.getContext('2d');
-
+    
     socket.on("update_game", (data : GameDataType ) => {
-      redraw_ball ( context, game_data.ball_pos, data.ball_pos, 'orange' );
-      redraw_paddle (
-        context,
-        [PADDLE_L, game_data.paddle_pos.p1],
-        [PADDLE_L, data.paddle_pos.p1],
-        'red'
-      )
-      redraw_paddle (
-        context,
-        [PADDLE_R, game_data.paddle_pos.p2],
-        [PADDLE_R, data.paddle_pos.p2],
-        'green'
-      )
+      redraw_game(context, game_data, data, {p1 : PADDLE_L, p2 : PADDLE_R});
       game_data = data;
-      //console.log("update!!", game_data);
-      })
-      
+    })
+    redraw_game(context, game_data, game_data, {p1 : PADDLE_L, p2 : PADDLE_R});
     return () => {
       props.socket.off("update_game");
     }
@@ -53,9 +41,33 @@ const Canvas__foreground = (props : any) : JSX.Element => {
 
   return ( 
     <>
-      <canvas ref={canvasRef} width={CANV_W} height={CANV_H}/>
+      <SingleCanvas ref={canvasRef} width={CANV_W} height={CANV_H}/>
     </>
   );
+  
+  function redraw_game(
+    context : any,
+    old_data : GameDataType,
+    new_data : GameDataType,
+    paddle_pos :  { p1 : number, p2 : number },
+  ) : void {
+    
+    redraw_ball( context, old_data.ball_pos, new_data.ball_pos, 'orange' );
+    
+    redraw_paddle (
+      context,
+      [paddle_pos.p1, old_data.paddle_pos.p1],
+      [paddle_pos.p1, new_data.paddle_pos.p1],
+      'red'
+    )
+    
+    redraw_paddle (
+      context,
+      [paddle_pos.p2, old_data.paddle_pos.p2],
+      [paddle_pos.p2, new_data.paddle_pos.p2],
+      'green'
+    )
+  }
 
   function redraw_ball( 
     ctx : any , 
@@ -107,5 +119,7 @@ const Canvas__foreground = (props : any) : JSX.Element => {
     ctx.fill();
   }
 }
+
+
 
 export default Canvas__foreground

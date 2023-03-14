@@ -379,7 +379,7 @@ function V2rooms({ socket }: { socket: any }) {
 
 export const Containers = styled.div`
   display: flex;
-  justifiy-content: space-around;
+  justifiy-contents: space-around;
   flex-direction: column;
   background-color: #00e5ff;
   border: 0.5rem solid black;

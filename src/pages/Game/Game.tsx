@@ -1,13 +1,17 @@
 import {useState, useContext, useEffect} from 'react'
 import { GameContext } from '../../contexts/GameSocket';
 import { GameState } from './components/enums';
-import { GameLobby } from './components/GameLobby';
-import { GameWaiting } from './components/GameWaiting';
-import { GamePlay } from './components/GamePlay';
-import './styles/Game.css'
+import { GameLobby } from './Lobby/GameLobby';
+import { GameSelectMode} from './SelectMode/SelectMode'
+import { GameWaiting } from './Waiting/GameWaiting';
+import { GamePlay } from './Ingame/GamePlay';
+
+import GlobalStyles from '../../styles/global';
+import {Window} from '../../styles/Window'; 
+import {GameContainer} from './styles';
 
 const Game = () : JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
+  const [gamestate, setGamestate] = useState(GameState.SelectMode);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
@@ -41,21 +45,27 @@ const Game = () : JSX.Element => {
     }
   }, [])
 
+  const GameByState = () : JSX.Element => {
+    if (gamestate === GameState.Lobby)
+      return <GameLobby socket={socket}/>
+    else if (gamestate == GameState.SelectMode)
+      return <GameSelectMode socket={socket}/>
+    else if (gamestate === GameState.Waiting)
+      return <GameWaiting socket={socket}/>
+    else if (gamestate === GameState.InGame)
+      return <GamePlay socket={socket} roomId={room} setGamestate={setGamestate}/>
+    return <h1>ERROR</h1>
+  }
+
   return (
-    <div className='game__container'>
-      {
-        (gamestate === GameState.Lobby) ? (
-          <GameLobby socket={socket}/>
-        ) : ( (gamestate === GameState.Waiting) ? (
-          <GameWaiting socket={socket}/>
-        ) : ( (gamestate === GameState.InGame) ? (
-          <GamePlay socket={socket} roomId={room} setGamestate={setGamestate}/>
-        ) : (
-          null
-        )))
-      }
-    </div>
-  )
+    <GameContainer>
+      <GlobalStyles />
+      <Window title="Pong Game" width="95%" height="95%">
+        <GameByState />
+      </Window>
+    </GameContainer>
+  );
+
 }
 
 export default Game
