@@ -1,5 +1,5 @@
-import { Container, Button, Nav } from "./styles";
-import GlobalStyles from "../../styles/global";
+import { LoginContainer, LoginButton } from "./styles";
+import { Window } from "../../components/Window/Window";
 
 const LogIn = () => {
   const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -11,13 +11,19 @@ const LogIn = () => {
   };
 
   return (
-    <>
-      <Container>
-        <Nav>○ ○ ○</Nav>
+    // <>
+    //   <Container>
+    //     <Nav>○ ○ ○</Nav>
+    //     <h1>42 PONG</h1>
+    //     <Button onClick={onClick}>42 LogIn</Button>
+    //   </Container>
+    // </>
+    <Window title="42Pong" width="80%" height="60%" background="#00e5ff">
+      <LoginContainer>
         <h1>42 PONG</h1>
-        <Button onClick={onClick}>42 LogIn</Button>
-      </Container>
-    </>
+        <LoginButton onClick={onClick}>42 LogIn</LoginButton>
+      </LoginContainer>
+    </Window>
   );
 };
 
