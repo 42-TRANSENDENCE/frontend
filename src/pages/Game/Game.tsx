@@ -2,6 +2,7 @@ import {useState, useContext, useEffect} from 'react'
 import { GameContext } from '../../contexts/GameSocket';
 import { GameState } from './components/enums';
 import { GameLobby } from './Lobby/GameLobby';
+import { GameSelectMode} from './SelectMode/SelectMode'
 import { GameWaiting } from './Waiting/GameWaiting';
 import { GamePlay } from './Ingame/GamePlay';
 
@@ -10,7 +11,7 @@ import {Window} from '../../styles/Window';
 import {GameContainer} from './styles';
 
 const Game = () : JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.InGame);
+  const [gamestate, setGamestate] = useState(GameState.SelectMode);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
@@ -47,6 +48,8 @@ const Game = () : JSX.Element => {
   const GameByState = () : JSX.Element => {
     if (gamestate === GameState.Lobby)
       return <GameLobby socket={socket}/>
+    else if (gamestate == GameState.SelectMode)
+      return <GameSelectMode socket={socket}/>
     else if (gamestate === GameState.Waiting)
       return <GameWaiting socket={socket}/>
     else if (gamestate === GameState.InGame)

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
 import { GameState } from '../components/enums';
 import { Window } from '../../..//styles/Window';
-import { PlayContainer } from './styles';
+import { PlayContainer, CanvasContainer, QuitButton } from './styles';
 
 import Canvas__background from './Canvas__background';
 import Canvas__foreground from './Canvas__foreground';
@@ -93,35 +93,30 @@ export const GamePlay = (props : any) => {
 
   }, []);
 
-  //return (
-  //    <div className='game__body'>
-  //      <div className='container__canvas'>
-  //        <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
-  //        <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
-  //      </div>
-  //      <div className='quit_button' onClick={quitGame}>
-  //        <p>나가기</p>
-  //      </div>
-  //    </div>
-  //)
   return (
     <PlayContainer>
-      <Window title="Player1" width="25%">
+      
+      <Window title="Player1" width="min(25%, 180px)" height="max(30%, 300px)">
+          {/* 플레이어 정보 */}
       </Window>
-      <Window title="Pong">
-        <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
-        <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
-        <div className='quit_button' onClick={quitGame}>
+      
+      <Window title="Pong" width="50%" height="fit-content" flex_direction="row-reverse">
+        <CanvasContainer>
+          <Canvas__background socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} color={color} isWin={isWin}/>
+          <Canvas__foreground socket={game_socket} width={CANV_WIDTH} height={CANV_HEIGHT} />
+        </CanvasContainer>
+        <QuitButton onClick={quitGame}>
           <p>나가기</p>
-        </div>
+        </QuitButton>
       </Window>
-      <Window title="Player2" width="25%">
+      
+      <Window title="Player2" width="min(25%, 180px)" height="max(30%, 300px)">
+          {/* 플레이어 정보 */}
       </Window>
+    
     </PlayContainer>
   )
-
 }
-
 
 function default_keyoff( e : KeyboardEvent ) : void {
   if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) { 

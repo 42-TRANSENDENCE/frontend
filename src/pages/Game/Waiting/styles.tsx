@@ -27,5 +27,4 @@ export const CancelButton = styled.button `
   &:hover {
     background: rgb(50,50,50);
   }
-
 `

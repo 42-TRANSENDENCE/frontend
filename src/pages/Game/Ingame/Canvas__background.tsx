@@ -1,5 +1,6 @@
 import '../styles/GamePlay.css'
 import {useEffect, useRef} from 'react'
+import {SingleCanvas} from './styles'
 
 interface CanvasProps {
   context: CanvasRenderingContext2D;
@@ -50,7 +51,7 @@ const Canvas__background = (props : any) : JSX.Element => {
   }, [color]);
 
   return ( 
-    <canvas ref={canvasRef} width={W} height={H}/>
+    <SingleCanvas ref={canvasRef} width={W} height={H}/>
   );
 }
 

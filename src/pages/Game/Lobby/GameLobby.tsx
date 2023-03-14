@@ -1,11 +1,18 @@
-import '../styles/GameLobby.css'
 import { useEffect } from 'react'
 import FriendList from './FriendList'
 import PlayerProfile from './PlayerProfile'
 import JoinButton from './JoinButton'
-import { LobbyContainer, LobbySeperator, LobbyLeft, LobbyRight } from './styles'
+import { Window } from '../../../styles/Window'
+import { LobbyContainer, 
+         LobbyLeft,
+         LobbyRight,
+         PlayButton,
+         PlayerInfo,
+         RightContainer,
+         ListContainer } from './styles'
 
-export const GameLobby = (props : any) => {
+
+export const GameLobby = (props : any) : JSX.Element => {
   const game_socket = props.socket;
 
   useEffect(() => {
@@ -15,37 +22,34 @@ export const GameLobby = (props : any) => {
     }
   }, [])
 
-  //return (
-  //  <LobbyContainer>
-
-  //    <div className='home__left'>
-  //      <FriendList
-  //        socket={game_socket}
-  //      />
-  //    </div>
-      
-  //    <div className='home__seperator'/>
-      
-  //    <div className='home__right'>
-  //      <PlayerProfile/>
-  //      <LobbySeperator/>
-  //      <JoinButton 
-  //        socket={game_socket}
-  //      />
-  //    </div>
-  //  </LobbyContainer>
-  //)
   return (
     <LobbyContainer>
-      <LobbyLeft>
 
+      <LobbyLeft>
+        <Window title="Online" height="100%" width="100%">
+          <ListContainer>
+          <p>접속중인 친구 목록</p>
+          </ListContainer>
+        </Window>
+        <Window title="InGame"height="100%" width="100%"> 
+          <ListContainer>
+            <p>게임중인 친구 목록</p>
+          </ListContainer>
+        </Window>
       </LobbyLeft>
 
-      <LobbySeperator/>
       
       <LobbyRight>
-
+        <Window title="Player Info" width="80%" max_width="700px" height="93%" min_height="400px">
+          <RightContainer>
+            <PlayerInfo><p>플레이어 정보</p></PlayerInfo>
+            <PlayButton>
+              <p>게임하기</p>
+            </PlayButton>
+          </RightContainer>
+        </Window>    
       </LobbyRight>
+      
     </LobbyContainer>
   )
 }
