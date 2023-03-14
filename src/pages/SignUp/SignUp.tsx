@@ -5,13 +5,13 @@ import useInput from '../../hooks/useInput';
 import { Container, Button, Nav, Label, Input, Conflict } from './styles';
 import GlobalStyles from '../../styles/global';
 import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../recoil/authState';
+// import { accessTokenState } from '../../recoil/authState';
 
 const SignUp = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
   const queryClient = new QueryClient();
-  const accessToken = useRecoilValue(accessTokenState);
+  // const accessToken = useRecoilValue(accessTokenState);
 
   const isValidUsername = (username: string): boolean => {
     const consecutivePeriodsRegex = /\.{2,}/;
@@ -46,12 +46,12 @@ const SignUp = () => {
       setNicknameConflict(false);
       queryClient
         .fetchQuery('signup', () =>
-          fetch(awsUrl + '/users/signup', {
+          fetch(awsUrl + '/auth/signup', {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${accessToken}`,
               'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({ nickname: nickname.value }),
           })
         )
