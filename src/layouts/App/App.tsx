@@ -9,6 +9,7 @@ import {
 
 import { QueryClient, QueryClientProvider } from "react-query";
 import { gameSocket, GameContext } from "../..//contexts/GameSocket";
+import { AppContainer } from "./styles";
 
 const queryClient = new QueryClient();
 
@@ -30,8 +31,8 @@ const App = () => {
   //   return ();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="App">
+    <AppContainer>
+      <QueryClientProvider client={queryClient}>
         <GameContext.Provider value={gameSocket}>
           <Router>
             <Routes>
@@ -46,8 +47,8 @@ const App = () => {
             </Routes>
           </Router>
         </GameContext.Provider>
-      </div>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </AppContainer>
   );
 };
 
