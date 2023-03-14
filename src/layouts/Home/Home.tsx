@@ -18,13 +18,14 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
+  HomeContainer,
 } from "./styles";
-import GlobalStyles from "../../styles/global";
 import home from "../../assets/home.svg";
 import game from "../../assets/game.svg";
 import chat from "../../assets/chat.svg";
 import logout from "../../assets/logout.svg";
 import setting from "../../assets/setting.svg";
+import { Window } from "../../components/Window/Window";
 
 // const Channel = loadable(() => import('@pages/Channel'));
 const Channel = loadable(() => import("../../pages/Channel/Channel"));
@@ -118,6 +119,7 @@ const Home = () => {
     });
   };
 
+  // TODO : Workspace onClick함수들 Window컴포넌트안으로 넣기
   const onClickGame = () => {
     navigate("/game");
   };
@@ -158,40 +160,108 @@ const Home = () => {
     fetchProfile();
   }, [fetchProfile]);
 
+  // return (
+  //   <>
+  //     <Container>
+  //       <Nav>○ ○ ○</Nav>
+  //       <Div>
+  //         <Workspaces>
+  //           <WorkspaceButton onClick={onClickHome}>
+  //             <img src={home}></img>
+  //           </WorkspaceButton>
+  //           <WorkspaceButton onClick={onClickGame}>
+  //             <img src={game}></img>
+  //           </WorkspaceButton>
+  //           <WorkspaceButton onClick={onClickChat}>
+  //             <img src={chat}></img>
+  //           </WorkspaceButton>
+  //           <WorkspaceButton onClick={onOpenTwoFactorModal}>
+  //             <img src={setting}></img>
+  //           </WorkspaceButton>
+  //           <WorkspaceButton onClick={onClickLogOut}>
+  //             <img src={logout}></img>
+  //           </WorkspaceButton>
+  //           <WorkspaceButton onClick={onClickCreateWorkspace}>
+  //             +
+  //           </WorkspaceButton>
+  //         </Workspaces>
+  //         <MainContainer>
+  //           <Nav>○ ○ ○</Nav>
+  //           <h1>전적 /</h1>
+  //           <h1>승률 /</h1>
+  //           <h1>친구 목록 등</h1>
+  //           <Channel />
+  //         </MainContainer>
+  //         <ProfileContainer>
+  //           <Nav>○ ○ ○</Nav>
+  //           <h1>Profile</h1>
+  //           <img
+  //             src={URL.createObjectURL(profile.photo)}
+  //             alt="Profile"
+  //             style={{
+  //               borderRadius: "60%",
+  //               maxWidth: "100px",
+  //               maxHeight: "100px",
+  //             }}
+  //           />
+  //           <h2>{profile.name}</h2>
+  //           <Channel />
+  //         </ProfileContainer>
+  //       </Div>
+  //     </Container>
+
+  //     {/* ==============[ MODAL ]============== */}
+  //     {showCreateWorkspaceModal && (
+  //       <Modal>
+  //         <ModalContent>
+  //           <ModalHeader>Create Workspace</ModalHeader>
+  //           <ModalBody>
+  //             <Label>Workspace Name</Label>
+  //             <Input type="text" />
+  //           </ModalBody>
+  //           <ModalFooter>
+  //             <Button>Create</Button>
+  //             <Button onClick={() => setShowCreateWorkspaceModal(false)}>
+  //               Cancel
+  //             </Button>
+  //           </ModalFooter>
+  //         </ModalContent>
+  //       </Modal>
+  //     )}
+  //     {showTwoFactorModal && (
+  //       <Modal>
+  //         <ModalContent>
+  //           <ModalHeader>Two Factor Authentication</ModalHeader>
+  //           <ModalBody>
+  //             <Label>Enable two factor authentication:</Label>
+  //             <Input
+  //               type="checkbox"
+  //               checked={twoFactorEnabled}
+  //               onChange={toggleTwoFactor}
+  //             />
+  //             {qrCodeImage && <img src={qrCodeImage} />}
+  //           </ModalBody>
+  //           <ModalFooter>
+  //             <Button onClick={onCloseTwoFactorModal}>Close</Button>
+  //           </ModalFooter>
+  //         </ModalContent>
+  //       </Modal>
+  //     )}
+  //   </>
+  // );
+
+  /* 여기서부터 Window 적용 수정본 */
   return (
-    <div>
-      <Container>
-        <Nav>○ ○ ○</Nav>
-        <Div>
-          <Workspaces>
-            <WorkspaceButton onClick={onClickHome}>
-              <img src={home}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickGame}>
-              <img src={game}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickChat}>
-              <img src={chat}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onOpenTwoFactorModal}>
-              <img src={setting}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickLogOut}>
-              <img src={logout}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickCreateWorkspace}>
-              +
-            </WorkspaceButton>
-          </Workspaces>
-          <MainContainer>
-            <Nav>○ ○ ○</Nav>
+    <>
+      <Window title="Home" sidebarToggle={true} background="gray">
+        <HomeContainer>
+          <Window title="Main" height="70%">
             <h1>전적 /</h1>
             <h1>승률 /</h1>
             <h1>친구 목록 등</h1>
             <Channel />
-          </MainContainer>
-          <ProfileContainer>
-            <Nav>○ ○ ○</Nav>
+          </Window>
+          <Window title="Profile" height="70%">
             <h1>Profile</h1>
             <img
               src={URL.createObjectURL(profile.photo)}
@@ -202,11 +272,9 @@ const Home = () => {
                 maxHeight: "100px",
               }}
             />
-            <h2>{profile.name}</h2>
-            <Channel />
-          </ProfileContainer>
-        </Div>
-      </Container>
+          </Window>
+        </HomeContainer>
+      </Window>
       {showCreateWorkspaceModal && (
         <Modal>
           <ModalContent>
@@ -243,7 +311,7 @@ const Home = () => {
           </ModalContent>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
 export default Home;
