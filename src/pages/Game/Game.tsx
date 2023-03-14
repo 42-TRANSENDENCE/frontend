@@ -10,7 +10,7 @@ import { Window } from "../../components/Window/Window";
 import { GameContainer } from "./styles";
 
 const Game = (): JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.SelectMode);
+  const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
 
@@ -59,7 +59,7 @@ const Game = (): JSX.Element => {
 
   return (
     <GameContainer>
-      <Window title="Pong Game" width="95%" height="95%">
+      <Window title="Pong Game" sidebarToggle={true} width="95%" height="95%">
         <GameByState />
       </Window>
     </GameContainer>
