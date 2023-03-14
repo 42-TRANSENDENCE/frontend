@@ -133,7 +133,8 @@ const Home = () => {
         method: 'GET',
         credentials: 'include',
       });
-      const name = await nameResponse.text();
+      const user = await nameResponse.text();
+      const name = JSON.parse(user).nickname.replace(/"/g, '');
 
       const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
         method: 'GET',
@@ -187,7 +188,7 @@ const Home = () => {
           <ProfileContainer>
             <Nav>○ ○ ○</Nav>
             <h1>Profile</h1>
-            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '60%', maxWidth: '200px', maxHeight: '200px' }} />
+            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '60%', maxWidth: '100px', maxHeight: '100px' }} />
             <h2>{profile.name}</h2>
             <Channel />
           </ProfileContainer>
