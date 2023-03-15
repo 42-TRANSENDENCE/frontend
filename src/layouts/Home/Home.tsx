@@ -65,9 +65,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const api = twoFactorEnabled
-      ? '/2fa/turn-on'
-      : '/2fa/turn-off';
+    const api = twoFactorEnabled ? '/2fa/turn-on' : '/2fa/turn-off';
+  
     fetch(awsUrl + api, {
       method: 'POST',
       credentials: 'include',
@@ -77,32 +76,31 @@ const Home = () => {
         throw new Error('Network response was not ok');
       }
       if (response.status === 200 && api === '/2fa/turn-on') {
-        fetch(awsUrl + '/2fa/generate', {
+        return fetch(awsUrl + '/2fa/generate', {
           method: 'GET',
-          headers: { 'Content-Type': 'img/png' },
           credentials: 'include',
         })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            if (response.status === 200 && response.headers.get('Content-Type') === 'img/png') {
-              return response.blob();
-            } else {
-              throw new Error('Invalid QR code image response');
-            }
-          })
-          .then(blob => {
-            const qrCodeImageUrl = URL.createObjectURL(blob);
-            setQrCodeImage(qrCodeImageUrl);
-          })
-          .catch(error => console.error('Error:', error));
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          if (response.status === 200 && response.headers.get('Content-Type') === 'image/png') {
+            return response.blob();
+          } else {
+            throw new Error('Invalid QR code image response');
+          }
+        })
+        .then(blob => {
+          const qrCodeImageUrl = URL.createObjectURL(blob);
+          setQrCodeImage(qrCodeImageUrl);
+        })
       }
-      return response.json();
     })
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-}, [twoFactorEnabled]);
+    .catch(error => {
+      console.error('Failed to fetch QR code image:', error);
+    });
+  }, [twoFactorEnabled, awsUrl]);
+  
 
   const onClickLogOut = () => {
     fetch(awsUrl + '/auth/logout', {
@@ -128,7 +126,6 @@ const Home = () => {
   const [profile, setProfile] = useState<Profile>({ name: '', photo: new Blob() });
 
   const fetchProfile = useCallback(async () => {
-    setTwoFactorEnabled(false);
     try {
       const nameResponse = await fetch(`${awsUrl}/users`, {
         method: 'GET',
@@ -190,9 +187,8 @@ const Home = () => {
           <ProfileContainer>
             <Nav>○ ○ ○</Nav>
             <h1>Profile</h1>
-            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '60%', maxWidth: '100px', maxHeight: '100px' }} />
+            <img src={URL.createObjectURL(profile.photo)} alt="Profile" style={{ borderRadius: '50%', maxWidth: '150px', maxHeight: '150px' }} />
             <h2>{profile.name}</h2>
-            <Channel />
           </ProfileContainer>
         </Div>
       </Container>
