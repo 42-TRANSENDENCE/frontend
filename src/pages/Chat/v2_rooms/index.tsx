@@ -1,40 +1,68 @@
-import GlobalStyles from "../../../styles/global";
-import home from "../../../assets/home.svg";
-import game from "../../../assets/game.svg";
-import chat from "../../../assets/chat.svg";
-import logout from "../../../assets/logout.svg";
-import setting from "../../../assets/setting.svg";
-import { useCallback, useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useCallback, useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   Link,
   Navigate,
   useLocation,
   useNavigate,
   useParams,
-} from "react-router-dom";
-import CreateRoomModal from "../../../components/CreateRoomModal";
+} from 'react-router-dom';
+import CreateRoomModal from '../../../components/Modal';
 import {
   BrowserHeader,
+  Button,
   Container,
   DotThree,
   InnerWindow,
   OuterWindow,
+  RoomContainer,
   V2roomContainer,
-} from "./style";
-import { Window } from "../../../components/Window/Window";
-import styled from "styled-components";
+} from './style';
+import { Window } from '../../../components/Window/Window';
 
-const chat_backurl = "http://127.0.0.1:3095";
+const chat_backurl = 'http://127.0.0.1:3095';
+
+async function postCreateRoom(
+  title: string,
+  max: number,
+  password: string,
+  owner: string
+): Promise<string> {
+  return await fetch(`${chat_backurl}/rooms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title,
+      password,
+      owner,
+    }),
+  }).then((res) => res.text());
+}
 
 function V2rooms({ socket }: { socket: any }) {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
+  const [title, setTitle] = useState('');
+  const [password, setPassword] = useState('');
 
-  const token = localStorage.getItem("jwt_token");
+  const queryClient = useQueryClient();
+
+  const onChangeTitle = (e: any) => {
+    e.preventDefault();
+    setTitle(e.target.value);
+  };
+
+  const onChangePassword = (e: any) => {
+    e.preventDefault();
+    setPassword(e.target.value);
+  };
+
+  const token = localStorage.getItem('jwt_token');
   const options = {
-    method: "GET",
+    method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
   };
 
@@ -42,21 +70,19 @@ function V2rooms({ socket }: { socket: any }) {
     data: rooms,
     isLoading,
     refetch,
-  } = useQuery<any>(["roomlist"], () =>
-    fetch(chat_backurl + `/api/room_list/`).then((res) => res.json())
+  } = useQuery<any>(['roomlist'], () =>
+    fetch(chat_backurl + `/rooms/`).then((res) => res.json())
   );
-  const { data: user, isLoading: isLoadingUser } = useQuery<any>(["user"], () =>
-    fetch(chat_backurl + "/api/user", options).then((res) => res.json())
+  const { data: user, isLoading: isLoadingUser } = useQuery<any>(['user'], () =>
+    fetch(chat_backurl + '/user', options).then((res) => res.json())
   );
   // if (user) console.log(user);
-  console.log("rooms데이터: ", rooms);
-
-  const queryClient = useQueryClient();
+  console.log('rooms데이터: ', rooms);
 
   const onNewRoom = useCallback(
     async (data: any) => {
-      console.log("newRoom 데이터: ", data);
-      queryClient.setQueryData(["roomlist"], () => {
+      console.log('newRoom 데이터: ', data);
+      queryClient.setQueryData(['roomlist'], () => {
         return [...rooms, data];
       });
     },
@@ -72,7 +98,7 @@ function V2rooms({ socket }: { socket: any }) {
         (room: any) => Number(room.id) !== Number(data)
       );
       // console.log("rooms.data후: ", rooms.data);
-      queryClient.setQueryData(["roomlist"], () => {
+      queryClient.setQueryData(['roomlist'], () => {
         return new_rooms;
       });
     },
@@ -80,28 +106,28 @@ function V2rooms({ socket }: { socket: any }) {
   );
 
   useEffect(() => {
-    console.log("v2_rooms에 진입하셨습니다.");
-    socket?.on("newRoom", onNewRoom);
-    socket?.on("removeRoom", onRemoveRoom);
+    console.log('v2_rooms에 진입하셨습니다.');
+    socket?.on('newRoom', onNewRoom);
+    socket?.on('removeRoom', onRemoveRoom);
     return () => {
-      console.log("v2_rooms에서 나가셨습니다.");
-      socket?.off("newRoom", onNewRoom);
-      socket?.off("removeRoom", onRemoveRoom);
+      console.log('v2_rooms에서 나가셨습니다.');
+      socket?.off('newRoom', onNewRoom);
+      socket?.off('removeRoom', onRemoveRoom);
     };
   }, [onNewRoom, onRemoveRoom]);
 
   const onEnterEvent = useCallback(
     (e: any) => {
-      fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`)
+      fetch(chat_backurl + `/room/${e.target.dataset.id}`)
         .then((res) => res.json())
         .then((data) => {
           /* 기존 참여자 */
-          console.log("방 입장 데이터: ", data);
-          console.log("error1", user);
+          console.log('방 입장 데이터: ', data);
+          console.log('error1', user);
           const is_member = data.memberList.find(
             (memberName: any) => memberName === user.username
           );
-          console.log("error2");
+          console.log('error2');
           if (is_member) {
             navigate(`${e.target.dataset.id}/chat`);
             return;
@@ -110,17 +136,17 @@ function V2rooms({ socket }: { socket: any }) {
             (memberName: any) => memberName === user.username
           );
           if (is_kicked) {
-            setErrorMessage("강퇴당한 유저입니다.");
+            setErrorMessage('강퇴당한 유저입니다.');
             return;
           }
           /* 최초 입장 */
           if (data.status === 0) {
-            console.log("공개방 최초 입장하십니다");
-            const token = localStorage.getItem("jwt_token");
-            fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`, {
-              method: "POST",
+            console.log('공개방 최초 입장하십니다');
+            const token = localStorage.getItem('jwt_token');
+            fetch(chat_backurl + `/room/${e.target.dataset.id}`, {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({}),
@@ -129,26 +155,26 @@ function V2rooms({ socket }: { socket: any }) {
               if (res.status === 200) {
                 navigate(`${e.target.dataset.id}/chat`);
               } else {
-                setErrorMessage("방에 입장할 수 없습니다.");
+                setErrorMessage('방에 입장할 수 없습니다.');
               }
             });
             return;
           } else {
             /* 비공개방 */
-            const password = prompt("비밀번호를 입력하세요");
-            fetch(chat_backurl + `/api/room_list/room/${e.target.dataset.id}`, {
-              method: "POST",
+            const password = prompt('비밀번호를 입력하세요');
+            fetch(chat_backurl + `/room/${e.target.dataset.id}`, {
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ password }),
             }).then((res) => {
               if (res.status === 200) {
                 navigate(`${e.target.dataset.id}/chat`);
-                return "OK";
+                return 'OK';
               } else {
-                setErrorMessage("비밀번호가 틀렸습니다.");
+                setErrorMessage('비밀번호가 틀렸습니다.');
               }
             });
             return;
@@ -162,34 +188,24 @@ function V2rooms({ socket }: { socket: any }) {
     setShowCreateRoomModal(
       (prevShowCreateRoomModal) => !prevShowCreateRoomModal
     );
+    setPassword('');
+    setTitle('');
   }, []);
 
-  const onClickHome = () => {
-    navigate("/home");
-  };
+  const { mutate: mutateRoom } = useMutation<unknown, unknown, any, unknown>(
+    ({ title, max, password, owner }) =>
+      postCreateRoom(title, max, password, owner),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['roomlist']);
+      },
+    }
+  );
 
-  const onClickLogOut = () => {
-    // fetch(awsUrl + "/auth/logout", {
-    //   method: "POST",
-    //   body: JSON.stringify(""),
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    // }).then((response) => {
-    //   if (response.status === 200) {
-    //     window.location.href = "http://localhost:5173/";
-    //   } else {
-    //     throw new Error("Unexpected response status code");
-    //   }
-    // });
-  };
-
-  const onClickGame = () => {
-    navigate("/game");
-  };
-
-  const onClickChat = () => {
-    window.location.reload();
+  const onCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutateRoom({ title, max: 0, password, owner: user.username });
+    onCloseModal();
   };
 
   if (isLoading || isLoadingUser)
@@ -198,175 +214,91 @@ function V2rooms({ socket }: { socket: any }) {
         isLoading...
       </Window>
     );
-  // return (
-  //   <div>
-  //     <Containers>
-  //       {/* <BrowserHeader> */}
-  //       <DotThree>
-  //         <div className="outer">
-  //           <div className="dot red"></div>
-  //           <div className="dot amber"></div>
-  //           <div className="dot green"></div>
-  //           <div style={{ display: "inline-block" }}>채팅방</div>
-  //           <span>{user.username}님 어서오세요</span>
-  //         </div>
-  //       </DotThree>
-  //       {/* </BrowserHeader> */}
-  //       <div style={{ display: "flex" }}>
-  //         <Workspaces>
-  //           <WorkspaceButton onClick={onClickHome}>
-  //             <img src={home}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickGame}>
-  //             <img src={game}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickChat}>
-  //             <img src={chat}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton>
-  //             <img src={setting}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickLogOut}>
-  //             <img src={logout}></img>
-  //           </WorkspaceButton>
-  //         </Workspaces>
-  //         <div
-  //           style={{
-  //             display: "flex",
-  //             flexDirection: "column",
-  //             margin: "0 auto",
-  //             marginTop: "1rem",
-  //           }}
-  //         >
-  //           <fieldset
-  //             onClick={() => setErrorMessage("")}
-  //             style={{ border: "none" }}
-  //           >
-  //             <table>
-  //               <thead>
-  //                 <tr>
-  //                   <th>방 제목</th>
-  //                   <th>종류</th>
-  //                   <th>방장</th>
-  //                 </tr>
-  //               </thead>
-  //               <tbody>
-  //                 {rooms?.map((room: any) => {
-  //                   return (
-  //                     <tr data-id={room.id} key={room.id}>
-  //                       <td>
-  //                         {room.title.length > 10
-  //                           ? room.title.slice(0, 10) + "..."
-  //                           : room.title}
-  //                       </td>
-  //                       <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
-  //                       <td>{room.owner}</td>
-  //                       <td>
-  //                         <button
-  //                           data-password={room.status !== 0 ? "true" : "false"}
-  //                           data-id={room.id}
-  //                           onClick={onEnterEvent}
-  //                         >
-  //                           입장
-  //                         </button>
-  //                       </td>
-  //                     </tr>
-  //                   );
-  //                 })}
-  //               </tbody>
-  //             </table>
-  //             {errorMessage && (
-  //               <div style={{ color: "red" }}>{errorMessage}</div>
-  //             )}
-  //             <button
-  //               style={{ display: "block", margin: "0 auto" }}
-  //               onClick={onCloseModal}
-  //             >
-  //               방 만들기
-  //             </button>
-  //             <CreateRoomModal
-  //               show={showCreateRoomModal}
-  //               onCloseModal={onCloseModal}
-  //             />
-  //           </fieldset>
-  //           <Link to="/">
-  //             <span>홈으로</span>
-  //           </Link>
-  //           {/* </OuterWindow> */}
-  //           <Link to="/chat/createUsers">유저들 만들기</Link>
-  //           <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
-  //           <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
-  //           <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
-  //           <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
-  //         </div>
-  //       </div>
-  //     </Containers>
-  //   </div>
-  // );
+
   return (
     <V2roomContainer>
       <Window title="V2_Rooms" sidebarToggle={true}>
+        <RoomContainer onClick={() => setErrorMessage('')}>
+          {rooms?.map((room: any) => {
+            return (
+              <div data-id={room.id} key={room.id}>
+                <span>
+                  {room.title.length > 10
+                    ? room.title.slice(0, 10) + '...'
+                    : room.title}
+                </span>
+                <span className="openness">
+                  <div style={{ height: '1rem' }}>
+                    {room.status !== 0 ? (
+                      <img
+                        src="../../../public/padlock_locked.png"
+                        style={{ height: '100%' }}
+                      />
+                    ) : (
+                      <img
+                        src="../../../public/padlock_opened.png"
+                        style={{ height: '100%' }}
+                      />
+                    )}
+                  </div>
+                </span>
+                <span className="owner">{room.owner}</span>
+                <span>
+                  <Button
+                    data-password={room.status !== 0 ? 'true' : 'false'}
+                    data-id={room.id}
+                    onClick={onEnterEvent}
+                  >
+                    입장
+                  </Button>
+                </span>
+              </div>
+            );
+          })}
+        </RoomContainer>
+        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+        <Button
+          // style={{ display: "block", margin: "0 auto" }}
+          onClick={onCloseModal}
+        >
+          방 만들기
+        </Button>
+        <CreateRoomModal show={showCreateRoomModal} onCloseModal={onCloseModal}>
+          <form onSubmit={onCreateRoom}>
+            <div>
+              <input
+                type="text"
+                name="title"
+                placeholder="방 제목"
+                value={title}
+                onChange={onChangeTitle}
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호(없으면 공개방)"
+                value={password}
+                onChange={onChangePassword}
+              />
+            </div>
+            <button type="submit" style={{ margin: '1rem' }}>
+              생성
+            </button>
+          </form>
+        </CreateRoomModal>
+
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            margin: "0 auto",
-            marginTop: "1rem",
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          <fieldset
-            onClick={() => setErrorMessage("")}
-            style={{ border: "none" }}
-          >
-            <table>
-              <thead>
-                <tr>
-                  <th>방 제목</th>
-                  <th>종류</th>
-                  <th>방장</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rooms?.map((room: any) => {
-                  return (
-                    <tr data-id={room.id} key={room.id}>
-                      <td>
-                        {room.title.length > 10
-                          ? room.title.slice(0, 10) + "..."
-                          : room.title}
-                      </td>
-                      <td>{room.status !== 0 ? "비밀방" : "공개방"}</td>
-                      <td>{room.owner}</td>
-                      <td>
-                        <button
-                          data-password={room.status !== 0 ? "true" : "false"}
-                          data-id={room.id}
-                          onClick={onEnterEvent}
-                        >
-                          입장
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-            <button
-              style={{ display: "block", margin: "0 auto" }}
-              onClick={onCloseModal}
-            >
-              방 만들기
-            </button>
-            <CreateRoomModal
-              show={showCreateRoomModal}
-              onCloseModal={onCloseModal}
-            />
-          </fieldset>
           <Link to="/">
             <span>홈으로</span>
           </Link>
-          {/* </OuterWindow> */}
           <Link to="/chat/createUsers">유저들 만들기</Link>
           <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
           <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
