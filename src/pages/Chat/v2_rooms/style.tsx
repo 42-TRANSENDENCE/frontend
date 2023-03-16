@@ -132,3 +132,52 @@ export const Container = styled.div`
   height: 100vh;
   background: #42a5f5;
 `;
+
+export const Containers = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #00e5ff;
+  border: 0.5rem solid black;
+  margin: 8vh 10vw;
+  height: 42em;
+  box-shadow: 20px 20px;
+  position: relative;
+`;
+
+export const Div = styled.div`
+  display: flex;
+`;
+
+export const Workspaces = styled.div`
+  display: inline-flex;
+  flex-grow: 1;
+  flex-direction: column;
+  border-right: 5px solid black;
+  box-sizing: border-box;
+  position: absolute;
+  top: 8%;
+  left: 2%;
+`;
+
+export const WorkspaceButton = styled.button`
+  color: white;
+  font-size: 40px;
+  line-height: 70px;
+  display: inline-block;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+
+  &:hover {
+    opacity: 0.8;
+    transform: scale(0.85);
+  }
+`;
+
+/* =========================================================== */
+
+export const V2roomContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;

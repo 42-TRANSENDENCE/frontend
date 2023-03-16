@@ -56,7 +56,6 @@
 
 //   return (
 //     <div>
-//       <GlobalStyles />
 //       <Container bg='#00E5FF'>
 //         <Nav>○ ○ ○</Nav>
 //         <h1>Two-Factor Authentication</h1>
@@ -81,10 +80,10 @@
 
 // export default TwoFactor;
 
-import React, { useCallback, useState } from 'react';
-import { QueryClient, QueryClientProvider, useMutation } from 'react-query';
-import useInput from '../../hooks/useInput';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback, useState } from "react";
+import { QueryClient, QueryClientProvider, useMutation } from "react-query";
+import useInput from "../../hooks/useInput";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Button,
@@ -94,35 +93,35 @@ import {
   Inputs,
   Form,
   Conflict,
-} from './styles';
-import GlobalStyles from '../../styles/global';
+} from "./styles";
+import GlobalStyles from "../../styles/global";
 
 const TwoFactor = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
-  const p1 = useInput('');
-  const p2 = useInput('');
-  const p3 = useInput('');
-  const p4 = useInput('');
-  const p5 = useInput('');
-  const p6 = useInput('');
-  const [password, setPassword] = useState('');
+  const p1 = useInput("");
+  const p2 = useInput("");
+  const p3 = useInput("");
+  const p4 = useInput("");
+  const p5 = useInput("");
+  const p6 = useInput("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [twoFactorError, setTwoFactorError] = useState(false);
 
   const mutation = useMutation((password: string) => {
-    return fetch(awsUrl + '/2fa/validate', {
-      method: 'POST',
+    return fetch(awsUrl + "/2fa/validate", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ token: password }),
     }).then((response) => {
       if (response.status === 200) {
-        navigate('/home');
+        navigate("/home");
       } else if (response.status === 401) {
         setTwoFactorError(true);
       } else {
-        throw new Error('Unexpected response status code');
+        throw new Error("Unexpected response status code");
       }
     });
   });
@@ -156,41 +155,40 @@ const TwoFactor = () => {
 
   return (
     <div>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <h1>Two-Factor Authentication</h1>
         <Form onSubmit={onSubmit}>
-          <Label id='password'>
+          <Label id="password">
             <span>Google Authenticator</span>
             <Inputs>
               <Input
-                id='p1'
+                id="p1"
                 maxLength={1}
                 onChange={(e) => handleInputChange(1, e.target.value)}
               />
               <Input
-                id='p2'
+                id="p2"
                 maxLength={1}
                 onChange={(e) => handleInputChange(2, e.target.value)}
               />
               <Input
-                id='p3'
+                id="p3"
                 maxLength={1}
                 onChange={(e) => handleInputChange(3, e.target.value)}
               />
               <Input
-                id='p4'
+                id="p4"
                 maxLength={1}
                 onChange={(e) => handleInputChange(4, e.target.value)}
               />
               <Input
-                id='p5'
+                id="p5"
                 maxLength={1}
                 onChange={(e) => handleInputChange(5, e.target.value)}
               />
               <Input
-                id='p6'
+                id="p6"
                 maxLength={1}
                 onChange={(e) => handleInputChange(6, e.target.value)}
               />
@@ -199,7 +197,7 @@ const TwoFactor = () => {
           {twoFactorError && (
             <Conflict>2FA authentication failed. Please try again.</Conflict>
           )}
-          <Button type='submit'>LogIn</Button>
+          <Button type="submit">LogIn</Button>
         </Form>
       </Container>
     </div>

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import { useQuery } from 'react-query';
-import { Container, Nav } from '../../styles/styles';
-import { accessTokenState } from '../../recoil/authState';
-import { useSetRecoilState } from 'recoil';
-import { useNavigate } from 'react-router';
-import GlobalStyles from '../../styles/global';
+import { useEffect } from "react";
+import { useQuery } from "react-query";
+import { Container, Nav } from "../../styles/styles";
+import { accessTokenState } from "../../recoil/authState";
+import { useSetRecoilState } from "recoil";
+import { useNavigate } from "react-router";
+import GlobalStyles from "../../styles/global";
 
 const LoginCheck = () => {
   const navigate = useNavigate();
@@ -15,73 +15,72 @@ const LoginCheck = () => {
 
   const setAccessToken = useSetRecoilState(accessTokenState);
 
-  const loginCheckQuery = useQuery('loginCheck', async () => {
+  const loginCheckQuery = useQuery("loginCheck", async () => {
     const url = new URL(window.location.href);
-    const authorizationCode = url.searchParams.get('code');
+    const authorizationCode = url.searchParams.get("code");
     window.history.replaceState({}, document.title, window.location.pathname);
 
     if (!authorizationCode) {
-      throw new Error('Authorization code not found');
+      throw new Error("Authorization code not found");
     }
 
     const data = {
-      grant_type: 'authorization_code',
+      grant_type: "authorization_code",
       client_id: clientId,
       client_secret: clientSecret,
       code: authorizationCode,
       redirect_uri: redirectUri,
     };
 
-    const response = await fetch('https://api.intra.42.fr/oauth/token', {
-      method: 'POST',
+    const response = await fetch("https://api.intra.42.fr/oauth/token", {
+      method: "POST",
       body: JSON.stringify(data),
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
     if (!response.ok) {
-      throw new Error('Failed to retrieve access token');
+      throw new Error("Failed to retrieve access token");
     }
 
     const tokenData = await response.json();
     const accessToken = tokenData.access_token;
     const headers = {
       Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
-    const loginResponse = await fetch(awsUrl + '/auth/login', {
-      method: 'POST',
+    const loginResponse = await fetch(awsUrl + "/auth/login", {
+      method: "POST",
       headers: headers,
     });
 
     setAccessToken(accessToken);
     if (loginResponse.status === 200) {
-      navigate('/home');
+      navigate("/home");
     } else if (loginResponse.status === 401) {
-      navigate('/twofactor');
+      navigate("/twofactor");
     } else if (loginResponse.status === 404) {
-      navigate('/signup');
+      navigate("/signup");
     } else {
-      throw new Error('Unexpected response status code');
+      throw new Error("Unexpected response status code");
     }
   });
 
   useEffect(() => {
     const { status, data, error } = loginCheckQuery;
 
-    if (status === 'error') {
+    if (status === "error") {
       console.error(error);
     }
 
-    if (status === 'success') {
+    if (status === "success") {
       console.log(data);
     }
   }, [loginCheckQuery]);
 
   return (
     <div>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <h1>Loading...</h1>

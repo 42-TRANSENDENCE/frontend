@@ -1,41 +1,43 @@
-import styled from 'styled-components'
-
-export const Div = styled.div`
-  flexbox: row;
-`
+import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  justifiy-content: space-around;
+  justify-content: space-around;
   flex-direction: column;
-  background-color: #00E5FF;
+  background-color: #00e5ff;
   border: 0.5rem solid black;
   margin: 8vh 10vw;
-  height: 42em;
   box-shadow: 20px 20px;
   position: relative;
+  width: 100%;
+  height: 100%;
 
   h1 {
-    color: #FFFFFF;
-    font-family: 'IBM Plex Mono', monospace;
+    color: #ffffff;
+    font-family: "IBM Plex Mono", monospace;
     font-weight: 700;
     font-size: 8vw;
     line-height: 0.2;
     align-items: center;
     text-align: center;
-    // padding: 5% 0;
     text-transform: uppercase;
     &:hover {
       color: black;
     }
-`
+  }
+`;
+
+export const Div = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 export const MainContainer = styled.div`
   display: inline-flex;
   flex-grow: 3;
   flex-direction: column;
   align-items: center;
-  background-color: #00E5FF;
+  background-color: #00e5ff;
   border: 0.5rem solid black;
   width: 55%;
   height: 88%;
@@ -45,8 +47,8 @@ export const MainContainer = styled.div`
   left: 11%;
 
   h1 {
-    color: #FFFFFF;
-    font-family: 'IBM Plex Mono', monospace;
+    color: #ffffff;
+    font-family: "IBM Plex Mono", monospace;
     font-weight: 500;
     font-size: 4vw;
     // align-items: center;
@@ -57,14 +59,15 @@ export const MainContainer = styled.div`
     &:hover {
       color: black;
     }
-`
+  }
+`;
 
 export const ProfileContainer = styled.div`
   display: inline-flex;
   flex-grow: 2;
   flex-direction: column;
   align-items: center;
-  background-color: #00E5FF;
+  background-color: #00e5ff;
   border: 0.5rem solid black;
   width: 27%;
   height: 88%;
@@ -74,8 +77,8 @@ export const ProfileContainer = styled.div`
   right: 4%;
 
   h1 {
-    color: #FFFFFF;
-    font-family: 'IBM Plex Mono', monospace;
+    color: #ffffff;
+    font-family: "IBM Plex Mono", monospace;
     font-weight: 700;
     font-size: 3vw;
     line-height: 24px;
@@ -86,7 +89,8 @@ export const ProfileContainer = styled.div`
     &:hover {
       color: black;
     }
-`
+  }
+`;
 
 export const Nav = styled.nav`
   background-color: black;
@@ -98,7 +102,7 @@ export const Nav = styled.nav`
   @media screen and (max-width: 768px) {
     font-size: 10px;
   }
-`
+`;
 
 export const Button = styled.button`
   border-radius: 10px;
@@ -109,7 +113,7 @@ export const Button = styled.button`
   font-weight: 800;
   margin: 2em 8em;
   padding: 30px 30px;
-  background-color: #7C4DFF};
+  background-color: #7c4dff;
   color: white;
   box-sizing: border-box;
 
@@ -121,7 +125,7 @@ export const Button = styled.button`
   @media screen and (max-width: 768px) {
     font-size: 20px;
   }
-`
+`;
 
 export const Workspaces = styled.div`
   display: inline-flex;
@@ -150,13 +154,7 @@ export const WorkspaceButton = styled.button`
   }
 `;
 
-
-
-
-
-
 export const Label = styled.label`
-
   & > span {
     display: block;
     text-align: center;
@@ -165,7 +163,7 @@ export const Label = styled.label`
     cursor: pointer;
     line-height: 1.46666667;
   }
-`
+`;
 
 export const Input = styled.input`
   display: flex;
@@ -191,8 +189,7 @@ export const Input = styled.input`
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
     width: 40%;
   }
-`
-
+`;
 
 export const Modal = styled.div`
   position: fixed;
@@ -230,3 +227,14 @@ export const ModalFooter = styled.div`
   justify-content: flex-end;
 `;
 
+/* 여기서부터 Window 적용 수정본 */
+export const HomeContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  align-items: top;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.75rem;
+  padding: 1rem;
+  padding-top: 4rem;
+`;

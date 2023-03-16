@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import useInput from '../../hooks/useInput';
-import { Container, Button, Nav, Label, Input, Conflict } from './styles';
-import GlobalStyles from '../../styles/global';
-import { useRecoilValue } from 'recoil';
+import React, { useCallback, useState } from "react";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
+import useInput from "../../hooks/useInput";
+import { Container, Button, Nav, Label, Input, Conflict } from "./styles";
+import GlobalStyles from "../../styles/global";
+import { useRecoilValue } from "recoil";
 // import { accessTokenState } from '../../recoil/authState';
 
 const SignUp = () => {
@@ -36,7 +36,7 @@ const SignUp = () => {
     return true;
   };
 
-  const nickname = useInput('', isValidUsername);
+  const nickname = useInput("", isValidUsername);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [nicknameConflict, setNicknameConflict] = useState(false);
 
@@ -45,25 +45,25 @@ const SignUp = () => {
       e.preventDefault();
       setNicknameConflict(false);
       queryClient
-        .fetchQuery('signup', () =>
-          fetch(awsUrl + '/auth/signup', {
-            method: 'POST',
+        .fetchQuery("signup", () =>
+          fetch(awsUrl + "/auth/signup", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            credentials: 'include',
+            credentials: "include",
             body: JSON.stringify({ nickname: nickname.value }),
           })
         )
         .then((response) => {
           if (response.status === 201) {
-            navigate('/home');
+            navigate("/home");
           } else if (response.status === 401) {
-            console.log('accessToken expired');
+            console.log("accessToken expired");
           } else if (response.status === 400) {
             setNicknameConflict(true);
           } else {
-            throw new Error('Unexpected response status code');
+            throw new Error("Unexpected response status code");
           }
         });
     },
@@ -82,15 +82,14 @@ const SignUp = () => {
 
   return (
     <div>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <h1>42 PONG</h1>
         <form onSubmit={onSubmit}>
-          <Label id='nickname-label'>
+          <Label id="nickname-label">
             <span>Nickname</span>
             <Input
-              placeholder='nickname'
+              placeholder="nickname"
               {...nickname}
               onChange={onNicknameChange}
             />
@@ -98,7 +97,7 @@ const SignUp = () => {
           {nicknameConflict && (
             <Conflict>Nickname already exist. Try something else.</Conflict>
           )}
-          <Button type='submit' disabled={isSubmitDisabled}>
+          <Button type="submit" disabled={isSubmitDisabled}>
             Sign Up
           </Button>
         </form>

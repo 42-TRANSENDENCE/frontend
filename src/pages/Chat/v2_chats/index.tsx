@@ -343,7 +343,6 @@ export default function V2chats({ socket }: { socket: any }) {
   }
   return (
     <div style={{ textAlign: "center" }}>
-      <GlobalStyles />
       <Scrollbars
         autoHide
         style={{
