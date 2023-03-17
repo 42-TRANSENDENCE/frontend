@@ -82,7 +82,7 @@
 // export default TwoFactor;
 
 import React, { useCallback, useState } from 'react';
-import { QueryClient, QueryClientProvider, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 import useInput from '../../hooks/useInput';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -109,22 +109,22 @@ const TwoFactor = () => {
   const navigate = useNavigate();
   const [twoFactorError, setTwoFactorError] = useState(false);
 
-  const mutation = useMutation((password: string) => {
-    return fetch(awsUrl + '/2fa/validate', {
+  const mutation = useMutation(async (password: string) => {
+    const response = await fetch(awsUrl + '/2fa/validate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({ token: password }),
-    }).then((response) => {
-      if (response.status === 200) {
-        navigate('/home');
-      } else if (response.status === 401) {
-        setTwoFactorError(true);
-      } else {
-        throw new Error('Unexpected response status code');
-      }
     });
+    if (response.status === 200) {
+      navigate('/home');
+    } else if (response.status === 401) {
+      setTwoFactorError(true);
+    } else {
+      throw new Error('Unexpected response status code');
+    }
   });
 
   const handleInputChange = (index: number, value: string) => {

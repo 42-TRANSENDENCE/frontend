@@ -7,7 +7,7 @@ import {
 } from 'react-router-dom';
 
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { gameSocket, GameContext } from '../..//contexts/GameSocket';
+import { gameSocket, GameContext } from '../../contexts/GameSocket';
 
 const LogIn = loadable(() => import('../../pages/LogIn/LogIn'));
 const LoginCheck = loadable(() => import('../../pages/LoginCheck/LoginCheck'));
