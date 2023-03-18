@@ -7,14 +7,13 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import { QueryClient, QueryClientProvider } from "react-query";
-import { gameSocket, GameContext } from "../..//contexts/GameSocket";
-import { AppContainer } from "./styles";
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { gameSocket, GameContext } from '../../contexts/GameSocket';
+import { AppContainer } from './styles';
 
 const queryClient = new QueryClient();
 
 const LogIn = loadable(() => import("../../pages/LogIn/LogIn"));
-const LoginCheck = loadable(() => import("../../pages/LoginCheck/LoginCheck"));
 const SignUp = loadable(() => import("../../pages/SignUp/SignUp"));
 const Home = loadable(() => import("../Home/Home"));
 const Chat = loadable(() => import("../../pages/Chat/Chat"));
@@ -33,12 +32,11 @@ const App = () => {
   return (
     <AppContainer>
       <QueryClientProvider client={queryClient}>
-        <GameContext.Provider value={gameSocket}>
+        {/* <GameContext.Provider value={gameSocket}> */}
           <Router>
             <Routes>
               <Route path="/" element={<Navigate replace to="/login" />} />
               <Route path="/login" element={<LogIn />} />
-              <Route path="/logincheck" element={<LoginCheck />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/twofactor" element={<TwoFactor />} />
               <Route path="/home" element={<Home />} />
@@ -46,7 +44,7 @@ const App = () => {
               <Route path="/game" element={<Game />} />
             </Routes>
           </Router>
-        </GameContext.Provider>
+        {/* </GameContext.Provider> */}
       </QueryClientProvider>
     </AppContainer>
   );

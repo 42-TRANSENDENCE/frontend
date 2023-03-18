@@ -1,10 +1,12 @@
-import { useState, useContext, useEffect } from "react";
-import { GameContext } from "../../contexts/GameSocket";
-import { GameState } from "./enums";
-import { GameLobby } from "./Lobby/GameLobby";
-import { GameSelectMode } from "./SelectMode/SelectMode";
-import { GameWaiting } from "./Waiting/GameWaiting";
-import { GamePlay } from "./Ingame/GamePlay";
+import {useState, useContext, useEffect} from 'react'
+import { GameContext } from '../../contexts/GameSocket';
+import Title from '../../components/Title';
+import { GameState } from './enum';
+
+import Lobby from './components/Lobby';
+import Waiting from './components/Waiting';
+import Playing from './components/Playing';
+import { GameContainer } from './styles'
 
 import { Window } from "../../components/Window/Window";
 import { GameContainer } from "./styles";
@@ -57,13 +59,40 @@ const Game = (): JSX.Element => {
     return <h1>ERROR</h1>;
   };
 
+  const GameByState = (): JSX.Element => {
+    if (gamestate === GameState.Lobby)
+      return <Lobby socket={socket} />;
+    else if (gamestate === GameState.Waiting)
+      return <Waiting socket={socket} />;
+    else if (gamestate === GameState.InGame)
+      return (
+        <Playing socket={socket} roomId={room} setGamestate={setGamestate} />
+      );
+    return <h1>ERROR</h1>;
+  };
+
   return (
     <GameContainer>
+<<<<<<< HEAD
+      <div className="Title">
+          <Title title="PONG GAME" home={true}/>
+      </div>
+      <div className="Body">
+        <GameByState "Body"/>
+      </div>
+      <div className="Title">
+          <Title title=""/>
+      </div>
+    </GameContainer>
+  )
+}
+=======
       <Window title="Pong Game" sidebarToggle={true} width="95%" height="95%">
         <GameByState />
       </Window>
     </GameContainer>
   );
 };
+>>>>>>> develop
 
 export default Game;

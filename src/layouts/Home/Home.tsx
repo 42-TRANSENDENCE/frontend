@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from "react";
-import loadable from "@loadable/component";
-import { useNavigate, Link } from "react-router-dom";
-import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import React, { useCallback, useState } from 'react';
+import loadable from '@loadable/component';
+import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from "react-query";
+import { useUploadAvatar } from '../../hooks/useUploadAvatar';
 import {
   Container,
   MainContainer,
@@ -10,6 +11,7 @@ import {
   Nav,
   Label,
   Input,
+  InputName,
   Workspaces,
   WorkspaceButton,
   Div,
@@ -18,276 +20,188 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  HomeContainer,
-} from "./styles";
-import home from "../../assets/home.svg";
-import game from "../../assets/game.svg";
-import chat from "../../assets/chat.svg";
-import logout from "../../assets/logout.svg";
-import setting from "../../assets/setting.svg";
-import { Window } from "../../components/Window/Window";
+} from './styles';
+import GlobalStyles from '../../styles/global';
+import home from '../../assets/home.svg';
+import game from '../../assets/game.svg';
+import chat from '../../assets/chat.svg';
+import logout from '../../assets/logout.svg';
+import setting from '../../assets/setting.svg';
+import friends from '../../assets/friends.svg';
+
+import { useUserInfo, useUserAvatar } from '../../Queries/user';
 
 // const Channel = loadable(() => import('@pages/Channel'));
-const Channel = loadable(() => import("../../pages/Channel/Channel"));
-
-interface Profile {
-  name: string;
-  photo: Blob;
-}
+const Channel = loadable(() => import('../../pages/Channel/Channel'));
 
 const Home = () => {
-  // const value = `cookie : ${document.cookie}`;
+  const queryClient = useQueryClient();
+  const [twoFactor, setTwoFactor] = useState(false);
+
   const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
-  const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] =
-    useState(false);
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
   const [showTwoFactorModal, setShowTwoFactorModal] = useState(false);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
 
-  const onClickCreateWorkspace = useCallback(() => {
-    setShowCreateWorkspaceModal(true);
+  const userInfoData = useUserInfo().data;
+  const userAvatar = useUserAvatar().data;
+
+  const onClickFriends = useCallback(() => {
+    setShowFriendsModal(true);
   }, []);
 
-  const toggleTwoFactor = useCallback(() => {
-    setTwoFactorEnabled(!twoFactorEnabled);
-  }, [twoFactorEnabled]);
+  type ImageFile = File | null;
+  const [file, setFile] = React.useState<ImageFile>(null);
+  const { mutate, isLoading } = useUploadAvatar();
 
-  const onCloseTwoFactorModal = useCallback(() => {
-    setShowTwoFactorModal(false);
-  }, []);
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const files = event.target.files;
+      if (files && files[0]) {
+        setFile(files[0]);
+      }
+    },
+    []
+  );
 
-  const onOpenTwoFactorModal = useCallback(() => {
-    setShowTwoFactorModal(true);
-  }, []);
+  const onClickChangeProfileImage = useCallback(() => {
+    mutate(file);
+  }, [file, mutate]);
+  
 
-  const onClickHome = () => {
-    window.location.reload();
+  const toggleTwoFactor = () => {
+    const api = userInfoData?.isTwoFactorAuthenticationEnabled ? '/2fa/turn-off' : '/2fa/turn-on';
+    setTwoFactor(userInfoData?.isTwoFactorAuthenticationEnabled ? false : true);
+    setQrCodeImage(null);
+    fetch(awsUrl + api, {
+      method: 'POST',
+      credentials: 'include',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      if (response.status === 200 && api === '/2fa/turn-on') {
+        return fetch(awsUrl + '/2fa/generate', {
+          method: 'GET',
+          credentials: 'include',
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          if (response.status === 200 && response.headers.get('Content-Type') === 'image/png') {
+            return response.blob();
+          } else {
+            throw new Error('Invalid QR code image response');
+          }
+        })
+        .then(blob => {
+          const qrCodeImageUrl = URL.createObjectURL(blob);
+          setQrCodeImage(qrCodeImageUrl);
+        })
+      }
+    })
+    .catch(error => {
+      console.error('Failed to fetch QR code image:', error);
+    })
+    .finally(() => {
+      queryClient.invalidateQueries({queryKey: ['userInfo']});
+    });
   };
 
-  useEffect(() => {
-    const api = twoFactorEnabled ? "/2fa/turn-on" : "/2fa/turn-off";
-    fetch(awsUrl + api, {
-      method: "POST",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        if (response.status === 200 && api === "/2fa/turn-on") {
-          fetch(awsUrl + "/2fa/generate", {
-            method: "GET",
-            headers: { "Content-Type": "img/png" },
-            credentials: "include",
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error("Network response was not ok");
-              }
-              if (
-                response.status === 200 &&
-                response.headers.get("Content-Type") === "img/png"
-              ) {
-                return response.blob();
-              } else {
-                throw new Error("Invalid QR code image response");
-              }
-            })
-            .then((blob) => {
-              const qrCodeImageUrl = URL.createObjectURL(blob);
-              setQrCodeImage(qrCodeImageUrl);
-            })
-            .catch((error) => console.error("Error:", error));
-        }
-        return response.json();
-      })
-      .then((data) => console.log(data))
-      .catch((error) => console.error("Error:", error));
-  }, [twoFactorEnabled]);
+  const onCloseTwoFactorModal = () => {
+    setShowTwoFactorModal(false);
+  };
+
+  const onOpenTwoFactorModal = () => {
+    setTwoFactor(userInfoData?.isTwoFactorAuthenticationEnabled ? true : false);
+    setShowTwoFactorModal(true);
+  };
+
+  const onClickHome = () => {
+    // window.location.reload();
+    navigate('/home');
+  };
 
   const onClickLogOut = () => {
-    fetch(awsUrl + "/auth/logout", {
-      method: "POST",
-      credentials: "include",
+    fetch(awsUrl + '/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
     }).then((response) => {
       if (response.status === 200) {
         window.location.href = `${awsUrl}:5173/`;
       } else {
-        throw new Error("Unexpected response status code");
+        throw new Error('Unexpected response status code');
       }
     });
   };
 
-  // TODO : Workspace onClick함수들 Window컴포넌트안으로 넣기
   const onClickGame = () => {
-    navigate("/game");
+    navigate('/game');
   };
 
   const onClickChat = () => {
-    navigate("/chat");
+    navigate('/chat');
   };
 
-  const [profile, setProfile] = useState<Profile>({
-    name: "",
-    photo: new Blob(),
-  });
-
-  const fetchProfile = useCallback(async () => {
-    setTwoFactorEnabled(false);
-    try {
-      const nameResponse = await fetch(`${awsUrl}/users`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const user = await nameResponse.text();
-      const userObj = JSON.parse(user);
-      const name = userObj.nickname.replace(/\"/g, "");
-
-      const photoResponse = await fetch(`${awsUrl}/users/avatar`, {
-        method: "GET",
-        credentials: "include",
-      });
-      const photo = await photoResponse.blob();
-
-      setProfile({ name, photo });
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
-  }, [awsUrl]);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
-
-  // return (
-  //   <>
-  //     <Container>
-  //       <Nav>○ ○ ○</Nav>
-  //       <Div>
-  //         <Workspaces>
-  //           <WorkspaceButton onClick={onClickHome}>
-  //             <img src={home}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickGame}>
-  //             <img src={game}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickChat}>
-  //             <img src={chat}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onOpenTwoFactorModal}>
-  //             <img src={setting}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickLogOut}>
-  //             <img src={logout}></img>
-  //           </WorkspaceButton>
-  //           <WorkspaceButton onClick={onClickCreateWorkspace}>
-  //             +
-  //           </WorkspaceButton>
-  //         </Workspaces>
-  //         <MainContainer>
-  //           <Nav>○ ○ ○</Nav>
-  //           <h1>전적 /</h1>
-  //           <h1>승률 /</h1>
-  //           <h1>친구 목록 등</h1>
-  //           <Channel />
-  //         </MainContainer>
-  //         <ProfileContainer>
-  //           <Nav>○ ○ ○</Nav>
-  //           <h1>Profile</h1>
-  //           <img
-  //             src={URL.createObjectURL(profile.photo)}
-  //             alt="Profile"
-  //             style={{
-  //               borderRadius: "60%",
-  //               maxWidth: "100px",
-  //               maxHeight: "100px",
-  //             }}
-  //           />
-  //           <h2>{profile.name}</h2>
-  //           <Channel />
-  //         </ProfileContainer>
-  //       </Div>
-  //     </Container>
-
-  //     {/* ==============[ MODAL ]============== */}
-  //     {showCreateWorkspaceModal && (
-  //       <Modal>
-  //         <ModalContent>
-  //           <ModalHeader>Create Workspace</ModalHeader>
-  //           <ModalBody>
-  //             <Label>Workspace Name</Label>
-  //             <Input type="text" />
-  //           </ModalBody>
-  //           <ModalFooter>
-  //             <Button>Create</Button>
-  //             <Button onClick={() => setShowCreateWorkspaceModal(false)}>
-  //               Cancel
-  //             </Button>
-  //           </ModalFooter>
-  //         </ModalContent>
-  //       </Modal>
-  //     )}
-  //     {showTwoFactorModal && (
-  //       <Modal>
-  //         <ModalContent>
-  //           <ModalHeader>Two Factor Authentication</ModalHeader>
-  //           <ModalBody>
-  //             <Label>Enable two factor authentication:</Label>
-  //             <Input
-  //               type="checkbox"
-  //               checked={twoFactorEnabled}
-  //               onChange={toggleTwoFactor}
-  //             />
-  //             {qrCodeImage && <img src={qrCodeImage} />}
-  //           </ModalBody>
-  //           <ModalFooter>
-  //             <Button onClick={onCloseTwoFactorModal}>Close</Button>
-  //           </ModalFooter>
-  //         </ModalContent>
-  //       </Modal>
-  //     )}
-  //   </>
-  // );
-
-  /* 여기서부터 Window 적용 수정본 */
   return (
-    <>
-      <Window title="Home" sidebarToggle={true} background="gray">
-        <HomeContainer>
-          <Window title="Main" height="70%">
-            <h1>전적 /</h1>
-            <h1>승률 /</h1>
-            <h1>친구 목록 등</h1>
+    <div>
+      <GlobalStyles />
+      <Container>
+        <Nav>○ ○ ○</Nav>
+        <Div>
+          <Workspaces>
+            <WorkspaceButton onClick={onClickHome}>
+              <img src={home}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickGame}>
+              <img src={game}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickChat}>
+              <img src={chat}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onOpenTwoFactorModal}>
+              <img src={setting}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickFriends}>
+              <img src={friends}></img>
+            </WorkspaceButton>
+            <WorkspaceButton onClick={onClickLogOut}>
+              <img src={logout}></img>
+            </WorkspaceButton>
+          </Workspaces>
+          <MainContainer>
+            <Nav>○ ○ ○</Nav>
+            <h1>{userInfoData ? `id : ${userInfoData.id}` : 'Not logged in'}</h1>
+            <h1>{userInfoData ? userInfoData.nickname : 'Not logged in'}</h1>
+            <h1>{userInfoData ? userInfoData.status : 'Not logged in'}</h1>
+            <h1>{userInfoData ? (userInfoData.isTwoFactorAuthenticationEnabled ? '2FA true' : '2FA false') : 'Not logged in'}</h1>
             <Channel />
-          </Window>
-          <Window title="Profile" height="70%">
+          </MainContainer>
+          <ProfileContainer>
+            <Nav>○ ○ ○</Nav>
             <h1>Profile</h1>
-            <img
-              src={URL.createObjectURL(profile.photo)}
-              alt="Profile"
-              style={{
-                borderRadius: "60%",
-                maxWidth: "100px",
-                maxHeight: "100px",
-              }}
-            />
-          </Window>
-        </HomeContainer>
-      </Window>
-      {showCreateWorkspaceModal && (
+            <img src={URL.createObjectURL(userAvatar ? userAvatar : new Blob())} alt="Profile" style={{ borderRadius: '50%', maxWidth: '150px', maxHeight: '150px' }} />
+            <h2>{userInfoData?.nickname}</h2>
+          </ProfileContainer>
+        </Div>
+      </Container>
+      {showFriendsModal && (
         <Modal>
           <ModalContent>
-            <ModalHeader>Create Workspace</ModalHeader>
+            <Nav>○ ○ ○</Nav>
+            <ModalHeader>Friends List</ModalHeader>
             <ModalBody>
-              <Label>Workspace Name</Label>
-              <Input type="text" />
+              <Label>Search by Nickname</Label>
+              <InputName type='text' />
+              <button>Search</button>
             </ModalBody>
             <ModalFooter>
-              <Button>Create</Button>
-              <Button onClick={() => setShowCreateWorkspaceModal(false)}>
-                Cancel
-              </Button>
+              <button onClick={() => setShowFriendsModal(false)}>
+                Close
+              </button>
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -295,15 +209,42 @@ const Home = () => {
       {showTwoFactorModal && (
         <Modal>
           <ModalContent>
+            <Nav>○ ○ ○</Nav>
             <ModalHeader>Two Factor Authentication</ModalHeader>
             <ModalBody>
-              <Label>Enable two factor authentication:</Label>
+              <Label>Enable two factor authentication
               <Input
-                type="checkbox"
-                checked={twoFactorEnabled}
+                type='checkbox'
+                checked={twoFactor}
                 onChange={toggleTwoFactor}
               />
-              {qrCodeImage && <img src={qrCodeImage} />}
+              </Label>
+              {qrCodeImage && (
+                <Modal>
+                  <ModalContent>
+                    <img src={qrCodeImage} />
+                    <div>로그아웃 후 2FA 인증 후 다시 로그인하세요.</div>
+                    <Button onClick={onClickLogOut}>LogOut</Button>
+                  </ModalContent>
+                </Modal>
+              )}
+              <ModalHeader>Change Nickname</ModalHeader>
+              <ModalBody>
+                <Label id='nickname-label'>
+                  <InputName
+                    placeholder='nickname'
+                    // {...nickname}
+                    // onChange={onNicknameChange}
+                  />
+                  <button>submit</button>
+                </Label>
+              </ModalBody>
+              <ModalHeader>Change Profile Image</ModalHeader>
+              <ModalBody>
+                <input type="file" onChange={handleFileChange} />
+                <button onClick={onClickChangeProfileImage}>Upload</button>
+                {isLoading && <p>Uploading avatar...</p>}
+              </ModalBody>
             </ModalBody>
             <ModalFooter>
               <Button onClick={onCloseTwoFactorModal}>Close</Button>
@@ -311,7 +252,7 @@ const Home = () => {
           </ModalContent>
         </Modal>
       )}
-    </>
+    </div>
   );
 };
 export default Home;

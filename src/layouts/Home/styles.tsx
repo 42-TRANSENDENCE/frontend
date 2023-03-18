@@ -1,43 +1,39 @@
-import styled from "styled-components";
+import styled from 'styled-components'
+
+export const Div = styled.div`
+  flexbox: row;
+`
 
 export const Container = styled.div`
   display: flex;
-  justify-content: space-around;
+  justifiy-content: space-around;
   flex-direction: column;
-  background-color: #00e5ff;
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   margin: 8vh 10vw;
+  height: 42em;
   box-shadow: 20px 20px;
   position: relative;
-  width: 100%;
-  height: 100%;
-
   h1 {
-    color: #ffffff;
-    font-family: "IBM Plex Mono", monospace;
+    color: #FFFFFF;
     font-weight: 700;
     font-size: 8vw;
     line-height: 0.2;
     align-items: center;
     text-align: center;
+    // padding: 5% 0;
     text-transform: uppercase;
     &:hover {
       color: black;
     }
-  }
-`;
-
-export const Div = styled.div`
-  width: 100%;
-  height: 100%;
-`;
+`
 
 export const MainContainer = styled.div`
   display: inline-flex;
   flex-grow: 3;
   flex-direction: column;
   align-items: center;
-  background-color: #00e5ff;
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   width: 55%;
   height: 88%;
@@ -45,29 +41,27 @@ export const MainContainer = styled.div`
   position: absolute;
   top: 6%;
   left: 11%;
-
   h1 {
-    color: #ffffff;
-    font-family: "IBM Plex Mono", monospace;
+    color: #FFFFFF;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 500;
-    font-size: 4vw;
+    font-size: 3vw;
     // align-items: center;
     // justify-content: center;
     // text-align: center;
-    padding: 5% 0;
+    padding: 2% 0;
     text-transform: uppercase;
     &:hover {
       color: black;
     }
-  }
-`;
+`
 
 export const ProfileContainer = styled.div`
   display: inline-flex;
   flex-grow: 2;
   flex-direction: column;
   align-items: center;
-  background-color: #00e5ff;
+  background-color: #00E5FF;
   border: 0.5rem solid black;
   width: 27%;
   height: 88%;
@@ -75,10 +69,9 @@ export const ProfileContainer = styled.div`
   position: absolute;
   top: 6%;
   right: 4%;
-
   h1 {
-    color: #ffffff;
-    font-family: "IBM Plex Mono", monospace;
+    color: #FFFFFF;
+    font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
     font-size: 3vw;
     line-height: 24px;
@@ -89,8 +82,7 @@ export const ProfileContainer = styled.div`
     &:hover {
       color: black;
     }
-  }
-`;
+`
 
 export const Nav = styled.nav`
   background-color: black;
@@ -102,7 +94,7 @@ export const Nav = styled.nav`
   @media screen and (max-width: 768px) {
     font-size: 10px;
   }
-`;
+`
 
 export const Button = styled.button`
   border-radius: 10px;
@@ -113,19 +105,17 @@ export const Button = styled.button`
   font-weight: 800;
   margin: 2em 8em;
   padding: 30px 30px;
-  background-color: #7c4dff;
+  background-color: #7C4DFF};
   color: white;
   box-sizing: border-box;
-
   &:hover {
     opacity: 0.9;
     transform: scale(0.98);
   }
-
   @media screen and (max-width: 768px) {
     font-size: 20px;
   }
-`;
+`
 
 export const Workspaces = styled.div`
   display: inline-flex;
@@ -147,25 +137,63 @@ export const WorkspaceButton = styled.button`
   border: none;
   cursor: pointer;
   margin-right: 10px;
-
   &:hover {
     opacity: 0.8;
     transform: scale(0.85);
   }
 `;
 
+
 export const Label = styled.label`
+  display: flex;
+  align-items: center;
   & > span {
-    display: block;
-    text-align: center;
     font-size: 20px;
     font-weight: 800;
     cursor: pointer;
-    line-height: 1.46666667;
+    // line-height: 1.46666667;
   }
 `;
 
 export const Input = styled.input`
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  width: 24px;
+  height: 24px;
+  appearance: none;
+  background-color: rgba(var(--sk_primary_background, 255, 255, 255), 1);
+  border-radius: 4px;
+  border: 1px solid rgba(var(--sk_foreground_high_solid, 134, 134, 134), 1);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:checked {
+    background-color: rgba(var(--sk_highlight, 18, 100, 163), 1);
+    border: 1px solid rgba(var(--sk_highlight, 18, 100, 163), 1);
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--sk_highlight, 18, 100, 163), 0.5);
+  }
+  &:before {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  &:checked:before {
+    display: block;
+  }
+`;
+
+export const InputName = styled.input`
   display: flex;
   margin: 0 auto;
   border-radius: 4px;
@@ -176,20 +204,19 @@ export const Input = styled.input`
   width: 30%;
   color: rgba(var(--sk_primary_foreground, 29, 28, 29), 1);
   background-color: rgba(var(--sk_primary_background, 255, 255, 255), 1);
-  padding: 12px;
-  height: 44px;
+  padding: 18px;
+  height: 30px;
   padding-top: 11px;
   padding-bottom: 13px;
-  font-size: 18px;
-  line-height: 1;
+  font-size: 12px;
   transition: 0.4s;
-
   &:focus {
     --saf-0: rgba(var(--sk_highlight, 18, 100, 163), 1);
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
     width: 40%;
   }
-`;
+`
+
 
 export const Modal = styled.div`
   position: fixed;
@@ -204,18 +231,29 @@ export const Modal = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  background-color: #fff;
-  padding: 24px;
-  border-radius: 8px;
   max-width: 600px;
   width: 100%;
+  display: flex;
+  justifiy-content: space-around;
+  flex-direction: column;
+  background-color: #00E5FF;
+  border: 0.5rem solid black;
+  box-shadow: 15px 15px;
+  position: relative;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 500;
+  font-size: 20px;
+  align-items: center;
+  text-align: center;
 `;
 
 export const ModalHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  margin-bottom: 16px;
+  margin-top: 32px;
+  margin-bottom: 12px;
+  font-weight: 700;
 `;
 
 export const ModalBody = styled.div`
@@ -225,16 +263,4 @@ export const ModalBody = styled.div`
 export const ModalFooter = styled.div`
   display: flex;
   justify-content: flex-end;
-`;
-
-/* 여기서부터 Window 적용 수정본 */
-export const HomeContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  align-items: top;
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 1.75rem;
-  padding: 1rem;
-  padding-top: 4rem;
 `;

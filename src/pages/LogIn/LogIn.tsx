@@ -1,5 +1,7 @@
-import { LoginContainer, LoginButton } from "./styles";
-import { Window } from "../../components/Window/Window";
+import { Container } from './styles';
+import loginButton from '../../assets/bigButton/loginButton.svg';
+import Button from '../../components/Button';
+import Title from '../../components/Title';
 
 const LogIn = () => {
   const clientId = import.meta.env.VITE_CLIENT_ID;
@@ -11,20 +13,15 @@ const LogIn = () => {
   };
 
   return (
-    // <>
-    //   <Container>
-    //     <Nav>○ ○ ○</Nav>
-    //     <h1>42 PONG</h1>
-    //     <Button onClick={onClick}>42 LogIn</Button>
-    //   </Container>
-    // </>
-    <Window title="42Pong" width="80%" height="60%" background="#00e5ff">
-      <LoginContainer>
-        <h1>42 PONG</h1>
-        <LoginButton onClick={onClick}>42 LogIn</LoginButton>
-      </LoginContainer>
-    </Window>
+    <Container>
+      <div className="Title">
+        <Title title="PONG PONG" home search/>
+      </div>
+      <div className="Body">
+        <Button img_url={loginButton} onClick={onClick} />
+      </div>
+    </Container>
   );
-};
+}
 
 export default LogIn;

@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Container, Button, Nav, Label, Input } from "../../styles/styles";
 import GlobalStyles from "../../styles/global";
 import { Navigate, Route, Routes } from "react-router";
 import V2rooms from "./v2_rooms";
