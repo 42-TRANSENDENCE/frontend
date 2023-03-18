@@ -4,14 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
 import { Container, Button, Nav, Label, Input, Conflict } from './styles';
 import GlobalStyles from '../../styles/global';
-import { useRecoilValue } from 'recoil';
-// import { accessTokenState } from '../../recoil/authState';
 
 const SignUp = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
   const navigate = useNavigate();
   const queryClient = new QueryClient();
-  // const accessToken = useRecoilValue(accessTokenState);
 
   const isValidUsername = (username: string): boolean => {
     const consecutivePeriodsRegex = /\.{2,}/;

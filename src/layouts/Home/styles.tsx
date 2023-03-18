@@ -17,7 +17,6 @@ export const Container = styled.div`
 
   h1 {
     color: #FFFFFF;
-    font-family: 'IBM Plex Mono', monospace;
     font-weight: 700;
     font-size: 8vw;
     line-height: 0.2;
