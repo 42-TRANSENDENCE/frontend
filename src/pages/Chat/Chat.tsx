@@ -1,74 +1,41 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Workspaces, WorkspaceButton, Div, Container, Nav } from '../../layouts/Home/styles';
-import GlobalStyles from '../../styles/global';
-import home from '../../assets/home.svg';
-import game from '../../assets/game.svg';
-import chat from '../../assets/chat.svg';
-import logout from '../../assets/logout.svg';
-import setting from '../../assets/setting.svg';
+import React, { useEffect } from "react";
+import GlobalStyles from "../../styles/global";
+import { Navigate, Route, Routes } from "react-router";
+import V2rooms from "./v2_rooms";
+import V2dms from "./v2_dms";
+import V2chats from "./v2_chats";
+import useSocket from "../../hooks/useSocket";
+import Create_fakeUsers from "./create_fakeusers";
+import Get_fakeUsers from "./get_fakeusers";
 
 const Chat = () => {
-  const awsUrl = import.meta.env.VITE_AWS_URL;
-  const navigate = useNavigate();
+  const [chat_socket, disconnect_chat_socket] = useSocket("v2_chat");
+  console.log("connecting chat_socket: ", chat_socket);
 
-  const onClickHome = () => {
-    navigate('/home');
-  };
+  useEffect(() => {
+    return () => {
+      console.log("disconnecting chat socket");
+      disconnect_chat_socket();
+    };
+  }, []);
 
-  const onClickLogOut = () => {
-    fetch(awsUrl + '/auth/logout', {
-      method: 'POST',
-      body: JSON.stringify(''),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then((response) => {
-      if (response.status === 200) {
-        window.location.href = 'http://localhost:5173/';
-      } else {
-        throw new Error('Unexpected response status code');
-      }
-    })
-  };
-
-  const onClickGame = () => {
-    navigate('/game');
-  };
-
-  const onClickChat = () => {
-    window.location.reload();
-  };
   return (
-    <div>
-      <GlobalStyles />
-      <Container>
-        <Nav>○ ○ ○</Nav>
-        <Div>
-          <Workspaces>
-            <WorkspaceButton onClick={onClickHome}>
-              <img src={home}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickGame}>
-              <img src={game}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickChat}>
-              <img src={chat}></img>
-            </WorkspaceButton>
-            <WorkspaceButton>
-              <img src={setting}></img>
-            </WorkspaceButton>
-            <WorkspaceButton onClick={onClickLogOut}>
-              <img src={logout}></img>
-            </WorkspaceButton>
-          </Workspaces>
-        </Div>
-        <h1>Chat Page!</h1>
-        <h1>...</h1>
-      </Container>
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate replace to="v2_rooms" />} />
+      <Route path="v2_rooms/*">
+        <Route path=":roomId/chat" element={<V2chats socket={chat_socket} />} />
+        <Route path="*" element={<V2rooms socket={chat_socket} />} />
+      </Route>
+      <Route path="v2_dms/*">
+        <Route path=":dmId" element={<V2dms socket={chat_socket} />} />
+      </Route>
+      <Route path="createUsers" element={<Create_fakeUsers />} />
+      <Route
+        path="getUsers/:id"
+        element={<Get_fakeUsers socket={chat_socket} />}
+      />
+    </Routes>
   );
-}
+};
 
 export default Chat;

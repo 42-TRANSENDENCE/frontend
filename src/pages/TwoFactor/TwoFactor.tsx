@@ -11,18 +11,18 @@ import {
   Inputs,
   Form,
   Conflict,
-} from './styles';
-import GlobalStyles from '../../styles/global';
+} from "./styles";
+import GlobalStyles from "../../styles/global";
 
 const TwoFactor = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
-  const p1 = useInput('');
-  const p2 = useInput('');
-  const p3 = useInput('');
-  const p4 = useInput('');
-  const p5 = useInput('');
-  const p6 = useInput('');
-  const [password, setPassword] = useState('');
+  const p1 = useInput("");
+  const p2 = useInput("");
+  const p3 = useInput("");
+  const p4 = useInput("");
+  const p5 = useInput("");
+  const p6 = useInput("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [twoFactorError, setTwoFactorError] = useState(false);
 
@@ -30,7 +30,7 @@ const TwoFactor = () => {
     const response = await fetch(awsUrl + '/2fa/validate', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       credentials: 'include',
       body: JSON.stringify({ token: password }),
@@ -73,41 +73,40 @@ const TwoFactor = () => {
 
   return (
     <div>
-      <GlobalStyles />
       <Container>
         <Nav>○ ○ ○</Nav>
         <h1>Two-Factor Authentication</h1>
         <Form onSubmit={onSubmit}>
-          <Label id='password'>
+          <Label id="password">
             <span>Google Authenticator</span>
             <Inputs>
               <Input
-                id='p1'
+                id="p1"
                 maxLength={1}
                 onChange={(e) => handleInputChange(1, e.target.value)}
               />
               <Input
-                id='p2'
+                id="p2"
                 maxLength={1}
                 onChange={(e) => handleInputChange(2, e.target.value)}
               />
               <Input
-                id='p3'
+                id="p3"
                 maxLength={1}
                 onChange={(e) => handleInputChange(3, e.target.value)}
               />
               <Input
-                id='p4'
+                id="p4"
                 maxLength={1}
                 onChange={(e) => handleInputChange(4, e.target.value)}
               />
               <Input
-                id='p5'
+                id="p5"
                 maxLength={1}
                 onChange={(e) => handleInputChange(5, e.target.value)}
               />
               <Input
-                id='p6'
+                id="p6"
                 maxLength={1}
                 onChange={(e) => handleInputChange(6, e.target.value)}
               />
@@ -116,7 +115,7 @@ const TwoFactor = () => {
           {twoFactorError && (
             <Conflict>2FA authentication failed. Please try again.</Conflict>
           )}
-          <Button type='submit'>LogIn</Button>
+          <Button type="submit">LogIn</Button>
         </Form>
       </Container>
     </div>

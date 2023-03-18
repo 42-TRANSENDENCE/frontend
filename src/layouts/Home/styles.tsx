@@ -14,7 +14,6 @@ export const Container = styled.div`
   height: 42em;
   box-shadow: 20px 20px;
   position: relative;
-
   h1 {
     color: #FFFFFF;
     font-weight: 700;
@@ -42,7 +41,6 @@ export const MainContainer = styled.div`
   position: absolute;
   top: 6%;
   left: 11%;
-
   h1 {
     color: #FFFFFF;
     font-family: 'IBM Plex Mono', monospace;
@@ -71,7 +69,6 @@ export const ProfileContainer = styled.div`
   position: absolute;
   top: 6%;
   right: 4%;
-
   h1 {
     color: #FFFFFF;
     font-family: 'IBM Plex Mono', monospace;
@@ -111,12 +108,10 @@ export const Button = styled.button`
   background-color: #7C4DFF};
   color: white;
   box-sizing: border-box;
-
   &:hover {
     opacity: 0.9;
     transform: scale(0.98);
   }
-
   @media screen and (max-width: 768px) {
     font-size: 20px;
   }
@@ -142,7 +137,6 @@ export const WorkspaceButton = styled.button`
   border: none;
   cursor: pointer;
   margin-right: 10px;
-
   &:hover {
     opacity: 0.8;
     transform: scale(0.85);
@@ -153,7 +147,6 @@ export const WorkspaceButton = styled.button`
 export const Label = styled.label`
   display: flex;
   align-items: center;
-
   & > span {
     font-size: 20px;
     font-weight: 800;
@@ -175,17 +168,14 @@ export const Input = styled.input`
   border: 1px solid rgba(var(--sk_foreground_high_solid, 134, 134, 134), 1);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-
   &:checked {
     background-color: rgba(var(--sk_highlight, 18, 100, 163), 1);
     border: 1px solid rgba(var(--sk_highlight, 18, 100, 163), 1);
   }
-
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(var(--sk_highlight, 18, 100, 163), 0.5);
   }
-
   &:before {
     content: "";
     position: absolute;
@@ -198,7 +188,6 @@ export const Input = styled.input`
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
   }
-
   &:checked:before {
     display: block;
   }
@@ -221,7 +210,6 @@ export const InputName = styled.input`
   padding-bottom: 13px;
   font-size: 12px;
   transition: 0.4s;
-
   &:focus {
     --saf-0: rgba(var(--sk_highlight, 18, 100, 163), 1);
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
@@ -276,4 +264,3 @@ export const ModalFooter = styled.div`
   display: flex;
   justify-content: flex-end;
 `;
-
