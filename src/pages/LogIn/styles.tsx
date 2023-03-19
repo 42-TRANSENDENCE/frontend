@@ -1,6 +1,6 @@
-import styled from 'styled-components'
-import Background from '../../assets/Background.svg'
-import triangle from '../../assets/triangle.svg'
+import styled from 'styled-components';
+import Background from '../../assets/Background.svg';
+import triangle from '../../assets/triangle.svg';
 
 export const Container = styled.div`
   width: 100vw;
@@ -17,13 +17,13 @@ export const Container = styled.div`
   background-repeat: no-repeat;
   background-size: min(50vw, 50vh);
 
-  .Title{
-    background: rgba(255,0,0,0.5);
+  .Title {
+    /* background: rgba(255,0,0,0.5); */
     width: 100%;
     flex: 1;
     max-height: 100px;
   }
-  .Body{
+  .Body {
     width: 100%;
     flex: 9;
 
@@ -31,4 +31,4 @@ export const Container = styled.div`
     justify-content: center;
     align-items: center;
   }
-`
+`;
