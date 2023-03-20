@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export const Div = styled.div`
-  flexbox: row;
+  /* flexbox: row; */
 `
 
 export const Container = styled.div`

@@ -14,10 +14,10 @@ const LogIn = () => {
 
   return (
     <Container>
-      <div className="Title">
-        <Title title="PONG PONG" home search/>
+      <div className='Title'>
+        <Title title='PONG PONG' />
       </div>
-      <div className="Body">
+      <div className='Body'>
         <Button img_url={loginButton} onClick={onClick} />
       </div>
     </Container>

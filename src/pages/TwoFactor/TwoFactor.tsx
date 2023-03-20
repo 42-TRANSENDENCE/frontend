@@ -2,17 +2,10 @@ import { useCallback, useState } from 'react';
 import { useMutation } from 'react-query';
 import useInput from '../../hooks/useInput';
 import { useNavigate } from 'react-router-dom';
-import {
-  Container,
-  Button,
-  Nav,
-  Label,
-  Input,
-  Inputs,
-  Form,
-  Conflict,
-} from './styles';
-import GlobalStyles from '../../styles/global';
+import { Container, Label, Input, Inputs, Form, Conflict } from './styles';
+import Button from '../../components/Button';
+import Title from '../../components/Title';
+import loginButton from '../../assets/bigButton/2FALoginButton.svg';
 
 const TwoFactor = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
@@ -38,7 +31,14 @@ const TwoFactor = () => {
     if (response.status === 200) {
       navigate('/home');
     } else if (response.status === 401) {
-      setTwoFactorError(true);
+      // setTwoFactorError(true);
+      // p1.onChange('');
+      // p2.onChange('');
+      // p3.onChange('');
+      // p4.onChange('');
+      // p5.onChange('');
+      // p6.onChange('');
+      // setPassword('');
     } else {
       throw new Error('Unexpected response status code');
     }
@@ -46,7 +46,7 @@ const TwoFactor = () => {
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length === 1 && !isNaN(Number(value))) {
-      setPassword(password + value);
+      // setPassword(password + value);
       const nextInput = document.getElementById(
         `p${index + 1}`
       ) as HTMLInputElement;
@@ -63,6 +63,26 @@ const TwoFactor = () => {
     }
   };
 
+  // const handleInputChange = (index: number, value: string) => {
+  //   const tempPassword = password + value;
+  //   if (value.length === 1 && !isNaN(Number(value))) {
+  //     const nextInput = document.getElementById(`p${index + 1}`) as HTMLInputElement;
+  //     if (nextInput) {
+  //       nextInput.focus();
+  //     } else {
+  //       const currentInput = document.getElementById(`p${index}`) as HTMLInputElement;
+  //       if (currentInput) {
+  //         currentInput.blur();
+  //       }
+  //     }
+  //   }
+  
+  //   if (tempPassword.length === 6) {
+  //     setPassword(tempPassword);
+  //   }
+  // };
+  
+
   const onSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
@@ -72,11 +92,11 @@ const TwoFactor = () => {
   );
 
   return (
-    <div>
-      <GlobalStyles />
-      <Container>
-        <Nav>○ ○ ○</Nav>
-        <h1>Two-Factor Authentication</h1>
+    <Container>
+      <div className='Title'>
+        <Title title='PONG 2FA' />
+      </div>
+      <div className='Body'>
         <Form onSubmit={onSubmit}>
           <Label id='password'>
             <span>Google Authenticator</span>
@@ -115,11 +135,12 @@ const TwoFactor = () => {
           </Label>
           {twoFactorError && (
             <Conflict>2FA authentication failed. Please try again.</Conflict>
-          )}
-          <Button type='submit'>LogIn</Button>
+        )}
+
+          <Button img_url={loginButton} type='submit' />
         </Form>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 };
 
