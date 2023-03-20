@@ -117,6 +117,7 @@ export const SearchBox = styled.input`
       position: absolute;
       right: 0.4rem;
       padding: 0 3.1rem 0 0;
+      border-radius: 0;
     }
   }
 `;
