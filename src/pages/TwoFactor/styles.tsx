@@ -9,7 +9,6 @@ export const Container = styled.div`
   // margin: 5% 15%;
   margin: 7vh 15vw;
   box-shadow: 20px 20px;
-
   h1 {
     color: #FFFFFF;
     font-family: 'IBM Plex Mono', monospace;
@@ -23,11 +22,7 @@ export const Container = styled.div`
     &:hover {
       color: black;
     }
-  //   @media screen and (max-width: 768px) {
-  //     font-size: 60px;
-  //     line-height: 12px;
-  //   }
-  // }
+  }
 `
 
 export const Nav = styled.nav`
@@ -54,12 +49,10 @@ export const Button = styled.button`
   background-color: #7C4DFF;
   color: white;
   box-sizing: border-box;
-
   &:hover {
     opacity: 0.9;
     transform: scale(0.98);
   }
-
   @media screen and (max-width: 768px) {
     font-size: 20px;
   }
@@ -75,7 +68,6 @@ export const Label = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   & > span {
     display: block;
     text-align: center;
@@ -102,7 +94,6 @@ export const Input = styled.input`
   padding: 14px;
   font-size: 20px;
   transition: 0.4s;
-
   &:focus {
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
     width: 6%;

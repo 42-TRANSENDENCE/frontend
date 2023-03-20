@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 
 export const Div = styled.div`
-  flexbox: row;
+  /* flexbox: row; */
 `
 
 export const Container = styled.div`
   display: flex;
-  justifiy-content: space-around;
+  justify-content: space-around;
   flex-direction: column;
   background-color: #00E5FF;
   border: 0.5rem solid black;
@@ -26,6 +26,7 @@ export const Container = styled.div`
     &:hover {
       color: black;
     }
+  }
 `
 
 export const MainContainer = styled.div`
@@ -54,6 +55,7 @@ export const MainContainer = styled.div`
     &:hover {
       color: black;
     }
+  }
 `
 
 export const ProfileContainer = styled.div`
@@ -82,6 +84,7 @@ export const ProfileContainer = styled.div`
     &:hover {
       color: black;
     }
+  }
 `
 
 export const Nav = styled.nav`
@@ -105,7 +108,7 @@ export const Button = styled.button`
   font-weight: 800;
   margin: 2em 8em;
   padding: 30px 30px;
-  background-color: #7C4DFF};
+  background-color: #7C4DFF;
   color: white;
   box-sizing: border-box;
   &:hover {
@@ -234,7 +237,7 @@ export const ModalContent = styled.div`
   max-width: 600px;
   width: 100%;
   display: flex;
-  justifiy-content: space-around;
+  justify-content: space-around;
   flex-direction: column;
   background-color: #00E5FF;
   border: 0.5rem solid black;

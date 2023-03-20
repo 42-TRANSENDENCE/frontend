@@ -5,9 +5,9 @@ import App from './layouts/App/App';
 import GlobalStyles from './styles/global';
 // import loadable from '@layouts/App';
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <RecoilRoot>
     <GlobalStyles />
     <App />
-  </RecoilRoot>
-);
+  </RecoilRoot>,
+)
