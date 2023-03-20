@@ -31,9 +31,9 @@ export const TitleContainer = styled.div`
     border-top: 0.2rem solid black;
   }
 
-  @media screen and (max-width: 340px) and (min-height: 340px) {
+  @media screen and (max-width: 600px) {
     div.Title {
-      display: none !important;
+      display: none;
     }
   }
 `;
@@ -75,6 +75,23 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
         position: absolute;
       }
     `}
+
+  /* @media screen and (min-width: 250px) and (max-width: 600px) {
+    & {
+      width: 3.25rem;
+    }
+  } */
+  @media screen and (min-width: 250px) and (max-width: 600px) {
+    & {
+      width: ${(props) => (props.isOpen ? '13.25rem' : '3.25rem')};
+    }
+  }
+
+  @media screen and (max-width: 250px) {
+    & {
+      display: none;
+    }
+  }
 `;
 
 export const SearchBox = styled.input`
@@ -87,11 +104,20 @@ export const SearchBox = styled.input`
   border-radius: 2.5rem;
 
   color: gray;
-  padding: 1.6rem 5.5rem 2rem 2.7rem;
+  padding: 1.6rem 4rem 2rem 2.7rem;
   font-size: 2.4rem;
 
   &:focus {
     outline: none;
+  }
+
+  @media screen and (min-width: 327px) and (max-width: 600px) {
+    & {
+      width: 10rem;
+      position: absolute;
+      right: 0.4rem;
+      padding: 0 3.1rem 0 0;
+    }
   }
 `;
 
