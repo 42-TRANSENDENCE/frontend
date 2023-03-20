@@ -1,12 +1,12 @@
 import styled from 'styled-components'
 
 export const Div = styled.div`
-  /* flexbox: row; */
+  flexbox: row;
 `
 
 export const Container = styled.div`
   display: flex;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   flex-direction: column;
   background-color: #00E5FF;
   border: 0.5rem solid black;
@@ -237,7 +237,7 @@ export const ModalContent = styled.div`
   max-width: 600px;
   width: 100%;
   display: flex;
-  justify-content: space-around;
+  /* justify-content: space-around; */
   flex-direction: column;
   background-color: #00E5FF;
   border: 0.5rem solid black;

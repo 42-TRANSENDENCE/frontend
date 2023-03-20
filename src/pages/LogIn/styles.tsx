@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import Background from '../../assets/Background.svg'
 import triangle from '../../assets/triangle.svg'
 
 export const Container = styled.div`
