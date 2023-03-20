@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 export const TitleContainer = styled.div`
   width: 100%;
@@ -36,14 +36,19 @@ export const TitleContainer = styled.div`
       display: none;
     }
   }
+  @media screen and (max-height: 777px) {
+    img {
+      width: 2rem;
+    }
+  }
 `;
 
 /** */
 
-const backgroundColor = '#2A2E37';
-const searchBgColor = 'transparent';
-const iconColor = 'rgb(52, 54, 62)';
-const transition = 'all .5s ease';
+const backgroundColor = "#2A2E37";
+const searchBgColor = "transparent";
+const iconColor = "rgb(52, 54, 62)";
+const transition = "all .5s ease";
 
 export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   width: 3rem;
@@ -55,7 +60,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   transition: ${transition};
 
   &:before {
-    content: '';
+    content: "";
     display: block;
     width: 0.1875rem;
     height: 100%;
@@ -83,7 +88,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   } */
   @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
-      width: ${(props) => (props.isOpen ? '13.25rem' : '3.25rem')};
+      width: ${(props) => (props.isOpen ? "13.25rem" : "3.25rem")};
     }
   }
 
@@ -153,7 +158,7 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   transition: ${transition};
 
   &:before {
-    content: '';
+    content: "";
     width: 0.3rem;
     height: 0.4rem;
     position: absolute;
@@ -166,7 +171,7 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   }
 
   &:after {
-    content: '';
+    content: "";
     width: 0.3rem;
     height: 0.4rem;
     position: absolute;
