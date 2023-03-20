@@ -22,11 +22,15 @@ const ChatList = ({ Flex }) => {
         <ChatLists>
           <ChatItem>
             <ChatProfile>
-              <img src="https://via.placeholder.com/50" alt="User profile" />
               <span>John Doe</span>
+              <img src="https://via.placeholder.com/50" alt="User profile" />
             </ChatProfile>
             <ChatBubble>
-              Hi there!
+              Hi there!Hi there!Hi there!Hi there!Hi there!Hi there!Hi there!Hi
+              there! Hi there!Hi there!Hi there!Hi there!Hi there!Hi there! Hi
+              there!Hi there!Hi there!Hi there!Hi there!Hi there!Hi there!Hi
+              there!Hi there!Hi there!Hi there!Hi there!Hi there! Hi there!Hi
+              there! Hi there! Hi there!
               <ChatBubbleTail />
             </ChatBubble>
           </ChatItem>
@@ -36,9 +40,19 @@ const ChatList = ({ Flex }) => {
               <ChatBubbleTail other />
             </ChatBubble>
             <ChatProfile>
-              <img src="https://via.placeholder.com/50" alt="User profile" />
               <span>Jane Doe</span>
+              <img src="https://via.placeholder.com/50" alt="User profile" />
             </ChatProfile>
+          </ChatItem>
+          <ChatItem>
+            <ChatProfile>
+              <span>John Doe</span>
+              <img src="https://via.placeholder.com/50" alt="User profile" />
+            </ChatProfile>
+            <ChatBubble>
+              Hi there!
+              <ChatBubbleTail />
+            </ChatBubble>
           </ChatItem>
         </ChatLists>
       </div>

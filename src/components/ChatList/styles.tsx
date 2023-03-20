@@ -9,11 +9,12 @@ export const ChatItem = styled.div<{ other?: boolean }>`
   margin: 0.5rem;
   display: flex;
   justify-content: ${(props) => (props.other ? "flex-end" : "flex-start")};
+  position: relative;
 `;
 
 export const ChatBubble = styled.div<{ other?: boolean }>`
   position: relative;
-  padding: 0.5rem;
+  padding: 1.5rem;
   max-width: 80%;
   border-radius: 1rem;
   background-color: ${(props) => (props.other ? "#FFF" : "#F0F0F0")};
@@ -32,12 +33,18 @@ export const ChatBubbleTail = styled.div<{ other?: boolean }>`
       : "#F0F0F0 transparent transparent transparent"};
   bottom: -0.625rem;
   ${(props) => (props.other ? "right" : "left")}: -0.625rem;
+  transform: ${(props) => (props.other ? "rotate(-45deg)" : "rotate(45deg)")};
 `;
 
-export const ChatProfile = styled.div`
+export const ChatProfile = styled.div<{ other?: boolean }>`
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-bottom: 0.5rem;
+  /* position: relative; */
+  position: absolute;
+  bottom: 0;
+  ${(props) => (props.other ? "right" : "left")}: 0;
 
   & > img {
     width: 2rem;
