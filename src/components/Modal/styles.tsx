@@ -27,10 +27,41 @@ export const CreateModal = styled.div`
 
 export const CloseModalButton = styled.button`
   position: absolute;
-  right: 10px;
-  top: 6px;
+  right: 0.625rem;
+  top: 0.4rem;
   background: transparent;
   border: none;
   font-size: 30px;
   cursor: pointer;
+`;
+
+export const InfoModalButton = styled.button<{ tooltip: string }>`
+  position: absolute;
+  left: 0.625rem;
+  top: 0.4rem;
+  background: transparent;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+
+  ${({ tooltip }) =>
+    tooltip &&
+    `
+    &:hover {
+      &::after {
+        content: "${tooltip}";
+        position: absolute;
+        z-index: 1;
+        top: 2rem;
+        left: 1.5rem;
+
+        transform: translateX(-50%);
+        padding: 0.25rem 0.5rem;
+        background-color: black;
+        color: white;
+        font-size: 0.75rem;
+        border-radius: 0.25rem;
+      }
+    }
+  `}
 `;

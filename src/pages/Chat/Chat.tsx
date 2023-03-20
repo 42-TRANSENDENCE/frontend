@@ -7,6 +7,7 @@ import V2chats from "./v2_chats";
 import useSocket from "../../hooks/useSocket";
 import Create_fakeUsers from "./create_fakeusers";
 import Get_fakeUsers from "./get_fakeusers";
+import { Design } from "./design";
 
 const Chat = () => {
   const [chat_socket, disconnect_chat_socket] = useSocket("v2_chat");
@@ -34,6 +35,7 @@ const Chat = () => {
         path="getUsers/:id"
         element={<Get_fakeUsers socket={chat_socket} />}
       />
+      <Route path="design/*" element={<Design />} />
     </Routes>
   );
 };

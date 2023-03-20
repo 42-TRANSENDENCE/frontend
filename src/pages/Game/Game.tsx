@@ -1,12 +1,12 @@
-import {useState, useContext, useEffect} from 'react'
-import { GameContext } from '../../contexts/GameSocket';
-import Title from '../../components/Title';
-import { GameState } from './enum';
+import { useState, useContext, useEffect } from "react";
+import { GameContext } from "../../contexts/GameSocket";
+import Title from "../../components/Title";
+import { GameState } from "./enum";
 
 // import Lobby from './components/Lobby';
 // import Waiting from './components/Waiting';
 // import Playing from './components/Playing';
-import { GameContainer } from './styles'
+import { GameContainer } from "./styles";
 
 import { Window } from "../../components/Window/Window";
 
@@ -73,16 +73,15 @@ const Game = (): JSX.Element => {
   return (
     <GameContainer>
       <div className="Title">
-          <Title title="PONG GAME" home={true}/>
+        <Title title="PONG GAME" home={true} />
       </div>
-      <div className="Body">
-        {/* <GameByState "Body"/> */}
-      </div>
+      <div className="Body">{/* <GameByState "Body"/> */}</div>
+      <div className="Body">{/* <GameByState "Body"/> */}</div>
       <div className="Title">
-          <Title title=""/>
+        <Title title="" />
       </div>
     </GameContainer>
-  )
-}
+  );
+};
 
 export default Game;
