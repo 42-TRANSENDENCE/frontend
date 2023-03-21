@@ -1,8 +1,10 @@
 import styled, { css } from "styled-components";
 
 export const TitleContainer = styled.div`
+  --font-height: 60px;
   width: 100%;
   height: 100%;
+  min-height: var(--font-height);
   background: white;
   position: relative;
   display: flex;
@@ -56,7 +58,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   /* margin: 2.5rem auto 0; */
   background-color: ${searchBgColor};
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
   transition: ${transition};
 
   &:before {
@@ -65,7 +67,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
     width: 0.1875rem;
     height: 100%;
     position: relative;
-    background-color: ${iconColor};
+    background-color: gray;
     transition: ${transition};
   }
 
@@ -75,8 +77,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
       width: 26.25rem;
 
       &:before {
-        height: 4rem;
-        margin: 0.5rem 0 1rem 2rem;
+        height: 100%;
         position: absolute;
       }
     `}
@@ -104,17 +105,13 @@ export const SearchBox = styled.input`
   height: 100%;
   box-shadow: none;
   border: none;
-  /* background: transparent; */
-  /* background-color: red; */
+  background: none;
   border-radius: 2.5rem;
 
   color: gray;
-  padding: 1.6rem 4rem 2rem 2.7rem;
-  font-size: 2.4rem;
-
-  &:focus {
-    outline: none;
-  }
+  padding-left : 2rem;
+  padding-right: 4.6rem;
+  font-size: 2rem;
 
   @media screen and (min-width: 327px) and (max-width: 600px) {
     & {

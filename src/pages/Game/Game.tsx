@@ -3,12 +3,10 @@ import { GameContext } from '../../contexts/GameSocket';
 import Title from '../../components/Title';
 import { GameState } from './enum';
 
-// import Lobby from './components/Lobby';
-// import Waiting from './components/Waiting';
-// import Playing from './components/Playing';
+import Lobby from './Lobby';
+import Waiting from './Waiting';
+import Ingame from './Ingame';
 import { GameContainer } from './styles'
-
-import { Window } from "../../components/Window/Window";
 
 const Game = (): JSX.Element => {
   const [gamestate, setGamestate] = useState(GameState.Lobby);
@@ -45,41 +43,28 @@ const Game = (): JSX.Element => {
     };
   }, []);
 
-  // const GameByState = (): JSX.Element => {
-  //   if (gamestate === GameState.Lobby) return <GameLobby socket={socket} />;
-  //   else if (gamestate == GameState.SelectMode)
-  //     return <GameSelectMode socket={socket} />;
-  //   else if (gamestate === GameState.Waiting)
-  //     return <GameWaiting socket={socket} />;
-  //   else if (gamestate === GameState.InGame)
-  //     return (
-  //       <GamePlay socket={socket} roomId={room} setGamestate={setGamestate} />
-  //     );
-  //   return <h1>ERROR</h1>;
-  // };
-
-  // const GameByState = (): JSX.Element => {
-  //   if (gamestate === GameState.Lobby)
-  //     return <Lobby socket={socket} />;
-  //   else if (gamestate === GameState.Waiting)
-  //     return <Waiting socket={socket} />;
-  //   else if (gamestate === GameState.InGame)
-  //     return (
-  //       <Playing socket={socket} roomId={room} setGamestate={setGamestate} />
-  //     );
-  //   return <h1>ERROR</h1>;
-  // };
+  const GameByState = (): JSX.Element => {
+    if (gamestate === GameState.Lobby)
+      return <Lobby socket={socket} />;
+    else if (gamestate === GameState.Waiting)
+      return <Waiting socket={socket} />;
+    else if (gamestate === GameState.InGame)
+      return (
+        <Ingame socket={socket} roomId={room} setGamestate={setGamestate} />
+      );
+    return <h1>ERROR</h1>;
+  };
 
   return (
     <GameContainer>
       <div className="Title">
-          <Title title="PONG GAME" home={true}/>
+          <Title title="PONG GAME" home={true} search={false}/>
       </div>
       <div className="Body">
-        {/* <GameByState "Body"/> */}
+        <GameByState />
       </div>
-      <div className="Title">
-          <Title title=""/>
+      <div className="Footer">
+          <Title title="PONG GAME" home={false} search={false}/>
       </div>
     </GameContainer>
   )

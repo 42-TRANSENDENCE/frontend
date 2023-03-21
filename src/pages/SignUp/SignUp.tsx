@@ -2,8 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
-import { Container, Label, Input, Conflict } from './styles';
-import Button from '../../components/Button';
+import { Container } from '../../styles/styles';
+import { Label, Input, Conflict } from './styles';
+import {BigButton} from '../../components/Button';
 import Title from '../../components/Title';
 import signupButton from '../../assets/bigButton/signupButton.svg';
 
@@ -97,7 +98,7 @@ const SignUp = () => {
           {nicknameConflict && (
             <Conflict>Nickname already exist. Try something else.</Conflict>
           )}
-          <Button img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
+          <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
         </form>
       </div>
     </Container>

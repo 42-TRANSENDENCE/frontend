@@ -1,8 +1,9 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { Container, Label, Input, Inputs, Form, Conflict } from './styles';
-import Button from '../../components/Button';
+import { Label, Input, Inputs, Form, Conflict } from './styles';
+import { Container } from '../../styles/styles';
+import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 import loginButton from '../../assets/bigButton/2FALoginButton.svg';
 
@@ -123,7 +124,7 @@ const TwoFactor = () => {
             <Conflict>2FA authentication failed. Please try again.</Conflict>
         )}
 
-          <Button img_url={loginButton} type='submit' />
+          <BigButton img_url={loginButton} type='submit' />
         </Form>
       </div>
     </Container>

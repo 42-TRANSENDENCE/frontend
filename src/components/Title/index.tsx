@@ -50,6 +50,7 @@ const Title = ({ title, home, search }: any): JSX.Element => {
 
   return (
     <TitleContainer>
+
       {home && (
         <div className="Home">
           <Link to="/home">
@@ -62,18 +63,12 @@ const Title = ({ title, home, search }: any): JSX.Element => {
           </Link>
         </div>
       )}
+
       <div className="Title">
         <span>{title}</span>
       </div>
+
       {search && (
-        <>
-          {/* <div className="Search">
-            <img
-              src={SearchButtonUrl}
-              className="SearchButton"
-              onClick={onClickSearch}
-            />
-          </div> */}
           <div className="Search">
             <form onSubmit={onSubmitNickname}>
               <SearchWrapper isOpen={isOpen}>
@@ -87,13 +82,13 @@ const Title = ({ title, home, search }: any): JSX.Element => {
                   isOpen={isOpen}
                   onClickCapture={handleSearchToggle}
                 >
-                  <SearchIcon isOpen={isOpen}></SearchIcon>
+                  <SearchIcon isOpen={isOpen} />
                 </SearchButton>
               </SearchWrapper>
             </form>
           </div>
-        </>
       )}
+
     </TitleContainer>
   );
 };
