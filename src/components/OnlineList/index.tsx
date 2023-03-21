@@ -25,14 +25,14 @@ const UserInfos = [
   { name: 'userinfo20', status: 'chat' },
 ];
 
-const onlineList = function ({ Flex }) {
+const onlineList = function () {
   return (
     <div
       style={{
-        flex: Flex,
         borderRadius: '2rem',
         border: '0.3rem solid black',
         height: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
