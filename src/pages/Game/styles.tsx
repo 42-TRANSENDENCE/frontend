@@ -1,9 +1,8 @@
 import styled from 'styled-components'
-import Background from '../../assets/Background.svg'
 import triangle from '../../assets/triangle.svg'
 
 export const GameContainer = styled.div `
-    width: 100vw;
+  width: 100vw;
   height: 100vh;
   padding: 3vh 3vw;
   display: flex;
@@ -12,13 +11,7 @@ export const GameContainer = styled.div `
   justify-content: center;
   align-items: center;
 
-  background-image: url(${triangle});
-  background-position: right bottom;
-  background-repeat: no-repeat;
-  background-size: min(50vw, 50vh);
-
-  .Title{
-    background: rgba(255,0,0,0.5);
+  .Title, .Footer{
     width: 100%;
     flex: 1;
     max-height: 100px;
@@ -30,6 +23,9 @@ export const GameContainer = styled.div `
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .Footer{
+    transform: rotate(180deg)
   }
 
 `
