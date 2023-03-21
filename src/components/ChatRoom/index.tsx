@@ -41,8 +41,7 @@ async function postCreateRoom(
     }),
   }).then((res) => res.text());
 }
-
-const ChatRoom = ({ socket }: { socket: any }) => {
+const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [findRoomName, setFindRoomName] = useState('');
@@ -257,6 +256,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
         border: '0.3rem solid black',
         padding: '1rem',
         background: 'white',
+        flex: Flex,
       }}
     >
       <form

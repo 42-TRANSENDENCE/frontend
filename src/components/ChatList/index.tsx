@@ -54,7 +54,7 @@ const ChatListComponent = React.memo(({ chatList }: { chatList: any }) => {
   );
 });
 
-const ChatList = () => {
+const ChatList = ({ Flex }: { Flex: number }) => {
   const [chat, setChat] = useState('');
   const [chatList, setChatList] = useState(ChatsData);
 
@@ -99,6 +99,7 @@ const ChatList = () => {
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
+        flex: Flex,
       }}
     >
       <div style={{ flex: 9 }}>
