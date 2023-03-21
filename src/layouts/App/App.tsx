@@ -20,7 +20,7 @@ const TwoFactor = loadable(() => import("../../pages/TwoFactor/TwoFactor"));
 const queryClient = new QueryClient();
 const App = () => {
   return (
-    // <AppContainer>
+    <AppContainer>
       <QueryClientProvider client={queryClient}>
         {/* <GameContext.Provider value={gameSocket}> */}
           <Router>
@@ -36,7 +36,7 @@ const App = () => {
           </Router>
         {/* </GameContext.Provider> */}
       </QueryClientProvider>
-    // </AppContainer>
+    </AppContainer>
   );
 };
 

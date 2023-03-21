@@ -14,6 +14,7 @@ const GlobalStyles = createGlobalStyle`
     --color-red: #F36A7B;
     --color-green: #64E469;
     --color-yellow: #FCF451;
+    --color-gray: #D9D9D9;
   }
   body {
     background: var(--color-blue);
