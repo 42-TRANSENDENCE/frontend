@@ -99,6 +99,7 @@ const ChatList = ({ Flex }: { Flex: number }) => {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
       }}
     >
       <div style={{ flex: 9 }}>

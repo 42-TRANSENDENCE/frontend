@@ -1,9 +1,9 @@
-import { Children, useCallback, useState } from "react";
-import { CloseModalButton, CreateModal, InfoModalButton } from "./styles";
-import modalCloseButton from "../../assets/smallButton/modalCloseButton.svg";
-import modalInfoButton from "../../assets/smallButton/modalQuestionButton.svg";
+import { Children, useCallback, useState } from 'react';
+import { CloseModalButton, CreateModal, InfoModalButton } from './styles';
+import modalCloseButton from '../../assets/smallButton/modalCloseButton.svg';
+import modalInfoButton from '../../assets/smallButton/modalQuestionButton.svg';
 
-const chat_backurl = "http://127.0.0.1:3095";
+const chat_backurl = 'http://127.0.0.1:3095';
 
 export default function Modal({
   children,
@@ -30,9 +30,9 @@ export default function Modal({
       <div
         onClick={stopPropagation}
         style={{
-          backgroundColor: "#4495F7",
-          borderRadius: "2rem",
-          border: "0.3rem solid black",
+          backgroundColor: '#4495F7',
+          borderRadius: '2rem',
+          border: '0.3rem solid black',
         }}
       >
         {showCloseButton && (
@@ -40,9 +40,9 @@ export default function Modal({
             <img
               src={modalCloseButton}
               style={{
-                width: "2rem",
-                borderRadius: "2rem",
-                border: "0.3rem solid black",
+                width: '2rem',
+                borderRadius: '2rem',
+                border: '0.3rem solid black',
               }}
             />
           </CloseModalButton>
@@ -52,9 +52,9 @@ export default function Modal({
             <img
               src={modalInfoButton}
               style={{
-                width: "2rem",
-                borderRadius: "2rem",
-                border: "0.3rem solid black",
+                width: '2rem',
+                borderRadius: '2rem',
+                border: '0.3rem solid black',
               }}
             />
           </InfoModalButton>
