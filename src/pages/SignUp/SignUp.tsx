@@ -2,8 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
-import { Container, Button, Nav, Label, Input, Conflict } from './styles';
-import GlobalStyles from '../../styles/global';
+import { Container } from '../../styles/styles';
+import { Label, Input, Conflict } from './styles';
+import {BigButton} from '../../components/Button';
+import Title from '../../components/Title';
+import signupButton from '../../assets/bigButton/signupButton.svg';
 
 const SignUp = () => {
   const awsUrl = import.meta.env.VITE_AWS_URL;
@@ -78,14 +81,14 @@ const SignUp = () => {
   );
 
   return (
-    <div>
-      <GlobalStyles />
-      <Container>
-        <Nav>○ ○ ○</Nav>
-        <h1>42 PONG</h1>
+    <Container>
+      <div className='Title'>
+        <Title title='PONG SIGNUP' />
+      </div>
+      <div className='Body'>
         <form onSubmit={onSubmit}>
           <Label id='nickname-label'>
-            <span>Nickname</span>
+            <span>N I C K N A M E</span>
             <Input
               placeholder='nickname'
               {...nickname}
@@ -95,12 +98,10 @@ const SignUp = () => {
           {nicknameConflict && (
             <Conflict>Nickname already exist. Try something else.</Conflict>
           )}
-          <Button type='submit' disabled={isSubmitDisabled}>
-            Sign Up
-          </Button>
+          <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
         </form>
-      </Container>
-    </div>
+      </div>
+    </Container>
   );
 };
 

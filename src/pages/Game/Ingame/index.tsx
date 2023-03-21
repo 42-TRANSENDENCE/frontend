@@ -1,9 +1,10 @@
-import "../styles/GamePlay.css";
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { GameState } from "../enums";
-import { Window } from "../../../components/Window/Window";
+import { GameState } from "../enum";
 import { PlayContainer, CanvasContainer, QuitButton } from "./styles";
+
+import Profile, { ProfileEnum } from '../../..//components/Profile';
+import friends from '../../../assets/friends.svg';
 
 import Canvas__background from "./Canvas__background";
 import Canvas__foreground from "./Canvas__foreground";
@@ -11,7 +12,7 @@ import Canvas__foreground from "./Canvas__foreground";
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
 
-export const GamePlay = (props: any) => {
+const Ingame = (props: any) : JSX.Element => {
   const game_socket: Socket = props.socket;
   const room_id: string = props.roomId;
   const setState = props.setGamestate;
@@ -92,42 +93,26 @@ export const GamePlay = (props: any) => {
 
   return (
     <PlayContainer>
-      <Window title="Player1" width="min(25%, 180px)" height="max(30%, 300px)">
-        {/* 플레이어 정보 */}
-      </Window>
 
-      <Window
-        title="Pong"
-        width="50%"
-        height="fit-content"
-        flex_direction="row-reverse"
-      >
-        <CanvasContainer>
-          <Canvas__background
-            socket={game_socket}
-            width={CANV_WIDTH}
-            height={CANV_HEIGHT}
-            color={color}
-            isWin={isWin}
-          />
-          <Canvas__foreground
-            socket={game_socket}
-            width={CANV_WIDTH}
-            height={CANV_HEIGHT}
-          />
-        </CanvasContainer>
-        <QuitButton onClick={quitGame}>
-          <p>나가기</p>
-        </QuitButton>
-      </Window>
-
-      <Window title="Player2" width="min(25%, 180px)" height="max(30%, 300px)">
-        {/* 플레이어 정보 */}
-      </Window>
-    </PlayContainer>
+      <CanvasContainer className="CanvasContainer">
+        <Canvas__background
+          socket={game_socket}
+          width={CANV_WIDTH}
+          height={CANV_HEIGHT}
+          color={color}
+          isWin={isWin}
+        />
+        <Canvas__foreground
+          socket={game_socket}
+          width={CANV_WIDTH}
+          height={CANV_HEIGHT}
+        />
+      </CanvasContainer>
+  </PlayContainer>
   );
 };
 
+// 키보드 입력이 화면을dfasdfasdfadsf 스크롤 하지 않도록 기본행동 방지
 function default_keyoff(e: KeyboardEvent): void {
   if (
     ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(
@@ -138,3 +123,5 @@ function default_keyoff(e: KeyboardEvent): void {
     e.stopPropagation();
   }
 }
+
+export default Ingame;

@@ -25,17 +25,16 @@ const UserInfos = [
   { name: 'userinfo20', status: 'chat' },
 ];
 
-const onlineList = function () {
+const onlineList = function ({ Flex }: { Flex: number }) {
   return (
     <div
       style={{
+        flex: Flex,
         borderRadius: '2rem',
         border: '0.3rem solid black',
         height: '100%',
-        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden',
       }}
     >
       {/* onlineList */}
@@ -46,7 +45,6 @@ const onlineList = function () {
           flexDirection: 'column',
           fontSize: '2rem',
           overflow: 'auto',
-          background: 'white',
         }}
       >
         <div style={{ fontSize: '3rem', paddingLeft: '1rem' }}>online</div>
@@ -70,7 +68,6 @@ const onlineList = function () {
           flexDirection: 'column',
           fontSize: '2rem',
           overflow: 'auto',
-          background: '#d9d9d9',
         }}
       >
         <div style={{ fontSize: '3rem', paddingLeft: '1rem' }}>offline</div>

@@ -1,4 +1,3 @@
-import '../styles/GamePlay.css'
 import {useEffect, useRef} from 'react'
 import {SingleCanvas} from './styles'
 

@@ -1,6 +1,6 @@
-import { Container } from './styles';
+import { Container } from '../../styles/styles';
 import loginButton from '../../assets/bigButton/loginButton.svg';
-import Button from '../../components/Button';
+import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 
 const LogIn = () => {
@@ -14,11 +14,11 @@ const LogIn = () => {
 
   return (
     <Container>
-      <div className="Title">
-        <Title title="PONG PONG" home search/>
+      <div className='Title'>
+        <Title title='PONG PONG' />
       </div>
-      <div className="Body">
-        <Button img_url={loginButton} onClick={onClick} />
+      <div className='Body'>
+        <BigButton img_url={loginButton} onClick={onClick} />
       </div>
     </Container>
   );

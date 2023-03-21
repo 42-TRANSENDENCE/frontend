@@ -1,6 +1,6 @@
-import { Box } from './styles';
+import { Box, MiddleBox, SmallBox } from "./styles";
 
-const Button = ({img_url, onClick} : any) : JSX.Element => {
+export const BigButton = ({img_url, onClick} : any) : JSX.Element => {
   return (
     <Box onClick={onClick}>
       <img src={img_url} />
@@ -8,4 +8,18 @@ const Button = ({img_url, onClick} : any) : JSX.Element => {
   );
 }
 
-export default Button;
+export const MiddleButton = ({img_url, onClick} : any) : JSX.Element => {
+  return (
+    <MiddleBox onClick={onClick}>
+      <img src={img_url} />
+    </MiddleBox>
+  );
+}
+
+export const SmallButton = ({img_url, onClick} : any) : JSX.Element => {
+  return (
+    <SmallBox onClick={onClick} >
+      <img src={img_url} />
+    </SmallBox>
+  );
+}
