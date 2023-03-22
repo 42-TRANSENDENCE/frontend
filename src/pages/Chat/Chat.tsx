@@ -42,8 +42,7 @@ const Chat = () => {
             <Route path="v3_rooms/*">
               <Route
                 path=":roomId/chat"
-                // element={<V2chats socket={chat_socket} />}
-                element={<ChatList Flex={1.85} />}
+                element={<ChatList socket={chat_socket} Flex={1.85} />}
               />
               <Route
                 path="*"

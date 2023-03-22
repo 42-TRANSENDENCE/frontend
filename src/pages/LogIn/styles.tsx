@@ -15,7 +15,7 @@ export const Container = styled.div`
   background-repeat: no-repeat;
   background-size: min(50vw, 50vh);
   .Title {
-    background: rgba(255, 0, 0, 0.5);
+    /* background: rgba(255, 0, 0, 0.5); */
     width: 100%;
     flex: 1;
     max-height: 100px;
