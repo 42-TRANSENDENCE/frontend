@@ -47,7 +47,13 @@ const Chat = () => {
               <Route
                 path="*"
                 element={
-                  <div style={{ flex: '1.85' }}>
+                  <div
+                    style={{
+                      flex: '1.85',
+                      display: 'flex',
+                      flexDirection: 'column',
+                    }}
+                  >
                     <Link to="/">
                       <span>홈으로</span>
                     </Link>

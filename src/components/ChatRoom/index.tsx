@@ -186,7 +186,6 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
           }
           /* 최초 입장 */
           if (data.status === 0) {
-            console.log('공개방 최초 입장하십니다');
             const token = localStorage.getItem('jwt_token');
             fetch(chat_backurl + `/room/${dataset_roomId}`, {
               method: 'POST',
@@ -198,6 +197,8 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
             }).then((res) => {
               console.log(res);
               if (res.status === 200) {
+                console.log('공개방 최초입장');
+                socket?.emit('join', dataset_roomId);
                 navigate(`v3_rooms/${dataset_roomId}/chat`);
               } else {
                 setErrorMessage('방에 입장할 수 없습니다.');
@@ -217,6 +218,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
             }).then((res) => {
               if (res.status === 200) {
                 console.log('비공개방 최초입장');
+                socket?.emit('join', dataset_roomId);
                 navigate(`v3_rooms/${dataset_roomId}/chat`);
                 return 'OK';
               } else {

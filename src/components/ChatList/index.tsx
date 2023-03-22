@@ -330,7 +330,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
       socket?.on('message', onMessage);
       socket?.on('join', onJoin);
       socket?.on('exit', onExit);
-      socket?.emit('join', roomId);
+      // socket?.emit('join', roomId);
       socket?.on('kick', onKick);
       socket?.on('role', onRole);
     }
@@ -341,7 +341,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
       socket?.off('exit', onExit);
       socket?.off('kick', onKick);
       socket?.off('role', onRole);
-      socket?.emit('leave', roomId);
+      // socket?.emit('leave', roomId);
     };
   }, [roomId, onJoin, onExit, onMessage]);
 
@@ -361,6 +361,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     if (event.keyCode === 13 && !event.shiftKey) {
       // Submit the form
       event.preventDefault();
+      if (!chat?.trim()) return;
       mutateChat({ chat, user });
       setChat('');
     } else if (event.keyCode === 13 && event.shiftKey) {
@@ -374,11 +375,11 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   if (isError) {
     const response = error as Response;
     return (
-      <>
+      <div style={{ flex: 1.85 }}>
         <div>방에 대한 권한이 없습니다</div>
         <div>{response && response.statusText}</div>
-        <Link to="/chat/v2_rooms">방 목록으로</Link>
-      </>
+        <Link to="/chat/v3_rooms">방 목록으로</Link>
+      </div>
     );
   }
 
@@ -476,7 +477,22 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
           </button>
         </div>
       </form>
-      <Link to="/chat/v3_rooms">방 목록으로</Link>
+      <div
+        style={{ flex: 0.3, display: 'flex', justifyContent: 'space-evenly' }}
+      >
+        <Link to="/chat/v3_rooms" style={{ border: '0.2rem solid red' }}>
+          <button>방 목록으로</button>
+        </Link>
+        <Link to="/chat/v3_rooms" style={{ border: '0.2rem solid red' }}>
+          <button
+            onClick={() => {
+              socket?.emit('leave', roomId);
+            }}
+          >
+            방 나가기
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
