@@ -2,7 +2,9 @@ import React, { useCallback, useState } from 'react';
 import loadable from '@loadable/component';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from "react-query";
-import { useUploadAvatar } from '../../hooks/useUploadAvatar';
+import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
+import { useLogout } from '../../hooks/mutation/user';
+import { useUploadAvatar } from '../../hooks/mutation/user';
 import Modal from '../../components/Modal';
 import { Container, Label, Input, InputName, Avatar } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
@@ -24,7 +26,6 @@ import logout from '../../assets/logout.svg';
 import setting from '../../assets/setting.svg';
 import friends from '../../assets/friends.svg';
 
-import { useUserInfo, useUserAvatar } from '../../Queries/user';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ const Home = () => {
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
+  const userLogout = useLogout().data;
 
   type ImageFile = File | null;
   const [file, setFile] = React.useState<ImageFile>(null);
@@ -112,18 +114,18 @@ const Home = () => {
     navigate('/home');
   };
 
-  const onClickLogOut = () => {
-    fetch(awsUrl + '/auth/logout', {
-      method: 'POST',
-      credentials: 'include',
-    }).then((response) => {
-      if (response.status === 200) {
-        window.location.href = `${awsUrl}:5173/`;
-      } else {
-        throw new Error('Unexpected response status code');
-      }
-    });
-  };
+  // const onClickLogOut = () => {
+  //   fetch(awsUrl + '/auth/logout', {
+  //     method: 'POST',
+  //     credentials: 'include',
+  //   }).then((response) => {
+  //     if (response.status === 200) {
+  //       window.location.href = `${awsUrl}:5173/`;
+  //     } else {
+  //       throw new Error('Unexpected response status code');
+  //     }
+  //   });
+  // };
 
   const onClickGame = () => {
     navigate('/game');
@@ -150,7 +152,7 @@ const Home = () => {
             <BigButton img_url={gameButton} onClick={onClickGame} />
             <div className="MidiumButtons">
               <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
-              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+              <MiddleButton img_url={logoutButton} onClick={userLogout} />
             </div>
           </div>
 
@@ -245,7 +247,7 @@ const Home = () => {
             <Modal>
               <img src={qrCodeImage} />
               <div>로그아웃 후 2FA 인증 후 다시 로그인하세요.</div>
-              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+              <MiddleButton img_url={logoutButton} onClick={userLogout} />
             </Modal>
           )}
         </div>
@@ -253,4 +255,5 @@ const Home = () => {
     </>
   );
 };
+
 export default Home;
