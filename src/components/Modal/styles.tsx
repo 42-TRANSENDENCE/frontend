@@ -1,4 +1,4 @@
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
 
 export const CreateModal = styled.div`
   position: fixed;
@@ -8,6 +8,7 @@ export const CreateModal = styled.div`
   top: 0;
   right: 0;
   z-index: 1022;
+  background-color: rgba(128, 128, 128, 0.5);
   & > div {
     margin-top: 200px;
     display: inline-block;
@@ -27,10 +28,42 @@ export const CreateModal = styled.div`
 
 export const CloseModalButton = styled.button`
   position: absolute;
-  right: 10px;
-  top: 6px;
+  right: 0.625rem;
+  top: 0.4rem;
   background: transparent;
   border: none;
   font-size: 30px;
   cursor: pointer;
+`;
+
+export const InfoModalButton = styled.button<{ tooltip: string }>`
+  position: absolute;
+  left: 0.625rem;
+  top: 0.4rem;
+  background: transparent;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+
+  ${({ tooltip }) =>
+    tooltip &&
+    `
+    &:hover {
+      &::after {
+        content: "${tooltip}";
+        position: absolute;
+        z-index: 1;
+        top: 2rem;
+        left: 5.5rem;
+        width: 11rem;
+
+        transform: translateX(-50%);
+        padding: 0.25rem 0.5rem;
+        background-color: black;
+        color: white;
+        font-size: 0.75rem;
+        border-radius: 0.25rem;
+      }
+    }
+  `}
 `;
