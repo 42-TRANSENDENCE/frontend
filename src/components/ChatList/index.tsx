@@ -43,38 +43,53 @@ async function postChat(
   return res;
 }
 
-function ChatsMenu({
+const ChatsMenu = ({
   username,
   roomDatas,
   myUser,
   roomId,
-  refetch,
 }: {
   username: string;
   roomDatas: any;
   myUser: any;
   roomId: string;
-  refetch: any;
-}) {
-  console.log(roomDatas);
+}) => {
   const token = localStorage.getItem('jwt_token');
-  const onkick = async () => {
-    let res = await fetch(`${chat_backurl}/room/${roomId}/kick/${username}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        // room_id: roomId,
-        // user_me: myUser.username,
-        // user_you: username,
-      }),
-    }).then((res) => {
-      // refetch();
-    });
+
+  const kickMutation = useMutation(async () => {
+    const response = await fetch(
+      `${chat_backurl}/room/${roomId}/kick/${username}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
+    return response.json();
+  });
+
+  const onKickOther = async (e: any) => {
+    e.stopPropagation();
+    console.log('kick해버리자!!');
+    kickMutation.mutate();
+
+    // const response = await fetch(
+    //   `${chat_backurl}/room/${roomId}/kick/${username}`,
+    //   {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     body: JSON.stringify({}),
+    //   }
+    // );
+    // return response.json();
   };
-  const onBan = async () => {
+  const onBanOther = async () => {
     let res = await fetch(`${chat_backurl}/room/${roomId}/ban/${username}`, {
       method: 'POST',
       headers: {
@@ -82,10 +97,12 @@ function ChatsMenu({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {});
+    }).then((res) => {
+      res.text();
+    });
   };
 
-  const onAdmin = async () => {
+  const onAdminOther = async () => {
     let res = await fetch(`${chat_backurl}/room/${roomId}/admin/${username}`, {
       method: 'POST',
       headers: {
@@ -93,10 +110,12 @@ function ChatsMenu({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {});
+    }).then((res) => {
+      res.text();
+    });
   };
 
-  const onMute = async () => {
+  const onMuteOther = async () => {
     let res = await fetch(`${chat_backurl}/room/${roomId}/mute/${username}`, {
       method: 'POST',
       headers: {
@@ -104,7 +123,9 @@ function ChatsMenu({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {});
+    }).then((res) => {
+      res.text();
+    });
   };
 
   return (
@@ -124,10 +145,10 @@ function ChatsMenu({
           <div>나는 방장입니다</div>
         ) : (
           <>
-            <div onClick={onAdmin}>관리자 임명하기</div>
-            <div onClick={onkick}>5분간 kick</div>
-            <div onClick={onBan}>영원히 ban</div>
-            <div onClick={onMute}>5분간 mute</div>
+            <div onClick={onAdminOther}>관리자 임명하기</div>
+            <div onClick={onKickOther}>5분간 kick</div>
+            <div onClick={onBanOther}>영원히 ban</div>
+            <div onClick={onMuteOther}>5분간 mute</div>
           </>
         )
       ) : roomDatas.adminList.includes(myUser.username) ? (
@@ -137,8 +158,8 @@ function ChatsMenu({
           <div>방장님 입니다</div>
         ) : (
           <>
-            <div onClick={onkick}>5분간 kick</div>
-            <div onClick={onBan}>영원히 ban</div>
+            <div onClick={onKickOther}>5분간 kick</div>
+            <div onClick={onBanOther}>영원히 ban</div>
             <div>5분간 mute</div>
           </>
         )
@@ -151,65 +172,99 @@ function ChatsMenu({
       )}
     </div>
   );
-}
+};
 
-const ChatListComponent = React.memo(
+const EachChat = React.memo(
   ({
-    chatList,
-    username,
+    index,
+    chatData,
     roomDatas,
     myUser,
     roomId,
-    refetch,
-  }: {
-    chatList: any;
-    username: string;
-    roomDatas: any;
-    myUser: any;
-    roomId: string;
-    refetch: any;
-  }) => {
-    const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
-    const handleChatClick = (index: number) => {
-      if (selectedChatIndex === index) {
-        setSelectedChatIndex(-1);
-        return;
-      }
-      setSelectedChatIndex(index);
-    };
+  }: // selectedChatIndex,
+  // handleProfileImageClick,
+  any) => {
+    const [selectedChatProfile, setSelectedChatProfile] =
+      useState<boolean>(false);
+
+    const handleChatProfileClick = useCallback((e: any) => {
+      e.stopPropagation();
+      setSelectedChatProfile((prev) => !prev);
+    }, []);
 
     return (
-      <ChatLists>
-        {chatList.map((chatData: any, index: number) => (
-          <ChatItem other={chatData.user !== username} key={index}>
-            <ChatProfile onClick={() => handleChatClick(index)}>
-              <img src={chatData.imgSrc} alt="User profile" />
-            </ChatProfile>
-            {selectedChatIndex === index && (
-              <ChatsMenu
-                username={chatData.user}
-                roomDatas={roomDatas}
-                myUser={myUser}
-                roomId={roomId}
-                refetch={refetch}
-              />
-            )}
-            <ChatMain>
-              <span>{chatData.user}</span>
-              <span>{chatData.createdAt}</span>
-              <ChatBubble
-                other={chatData.user !== username}
-                style={{ whiteSpace: 'pre-wrap' }}
-              >
-                {chatData.chat}
-              </ChatBubble>
-            </ChatMain>
-          </ChatItem>
-        ))}
-      </ChatLists>
+      <ChatItem other={chatData.user !== myUser.username} key={index}>
+        <ChatProfile>
+          <img
+            src={chatData.imgSrc}
+            alt="User profile"
+            onClick={handleChatProfileClick}
+          />
+        </ChatProfile>
+        {selectedChatProfile && (
+          <ChatsMenu
+            username={chatData.user}
+            roomDatas={roomDatas}
+            myUser={myUser}
+            roomId={roomId}
+          />
+        )}
+        <ChatMain>
+          <span>{chatData.user}</span>
+          <span>{chatData.createdAt}</span>
+          <ChatBubble
+            other={chatData.user !== myUser.username}
+            style={{ whiteSpace: 'pre-wrap' }}
+          >
+            {chatData.chat}
+          </ChatBubble>
+        </ChatMain>
+      </ChatItem>
     );
   }
 );
+
+const ChatListComponent = ({
+  chatDatas,
+  roomDatas,
+  myUser,
+  roomId,
+}: {
+  chatDatas: any;
+  roomDatas: any;
+  myUser: any;
+  roomId: string;
+}) => {
+  // const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
+  // const handleProfileImageClick = useCallback(
+  //   (index: number) => {
+  //     console.log(index);
+  //     if (selectedChatIndex === index) {
+  //       setSelectedChatIndex(-1);
+  //       return;
+  //     }
+  //     setSelectedChatIndex(index);
+  //   },
+  //   [selectedChatIndex]
+  // );
+
+  return (
+    <ChatLists>
+      {chatDatas.map((chatData: any, index: number) => (
+        <EachChat
+          key={index}
+          index={index}
+          chatData={chatData}
+          roomDatas={roomDatas}
+          myUser={myUser}
+          roomId={roomId}
+          // selectedChatIndex={selectedChatIndex}
+          // handleProfileImageClick={handleProfileImageClick}
+        />
+      ))}
+    </ChatLists>
+  );
+};
 
 const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   const params = useParams<{ roomId?: string }>();
@@ -238,7 +293,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
         `${chat_backurl}/room/${roomId}/chat`,
         options
       );
-      console.log(response);
+      // console.log(response);
       if (!response.ok) {
         throw new Error('채팅방에 참여하지 않았습니다!');
       }
@@ -250,8 +305,9 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     // }
   );
 
-  const { data: user, isLoading: isLoadingUser } = useQuery<any>(['user'], () =>
-    fetch(chat_backurl + '/user', options).then((res) => res.json())
+  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
+    ['user'],
+    () => fetch(chat_backurl + '/user', options).then((res) => res.json())
   );
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
@@ -262,7 +318,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { mutate: mutateChat } = useMutation<unknown, unknown, any, unknown>(
-    ({ chat, user }) => postChat(roomId!, chat, user.username),
+    ({ chat, userData }) => postChat(roomId!, chat, userData.username),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['chat', roomId]);
@@ -312,10 +368,10 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   }, []);
   const onKick = useCallback(function (data: any) {
     console.log('KickData: ', data);
-    if (data === user.username) {
+    if (data === userData.username) {
       console.log('강퇴당하셨습니다');
       refetch();
-      navigate('/chat/v2_rooms');
+      navigate('/chat/v3_rooms');
     } else {
       console.log(`${data}님이 강퇴당햇습니다`);
     }
@@ -353,7 +409,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   const onSubumitChat = (e: any) => {
     e.preventDefault();
     if (!chat?.trim()) return;
-    mutateChat({ chat, user });
+    mutateChat({ chat, userData });
     setChat('');
   };
 
@@ -362,7 +418,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
       // Submit the form
       event.preventDefault();
       if (!chat?.trim()) return;
-      mutateChat({ chat, user });
+      mutateChat({ chat, userData });
       setChat('');
     } else if (event.keyCode === 13 && event.shiftKey) {
       // Add a new line
@@ -416,12 +472,10 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
             ))}
           </ChatLists> */}
           <ChatListComponent
-            chatList={chatDatas}
-            username={user.username}
+            chatDatas={chatDatas}
             roomDatas={roomDatas}
-            myUser={user}
+            myUser={userData}
             roomId={roomId}
-            refetch={refetch}
           />
           <ToastContainer limit={1} />
         </Scrollbars>
