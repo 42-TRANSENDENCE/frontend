@@ -2,8 +2,6 @@ import styled from "styled-components";
 import triangle from '../../assets/triangle.svg';
 
 export const AppContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
   padding: 0;
   display: flex;
   flex-direction: column;

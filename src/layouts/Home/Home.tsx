@@ -149,7 +149,7 @@ const Home = () => {
   return (
     <Container>
       <div className='Title'>
-        <Title title='PONG HOME' search={true}/>
+        <Title title='PONG HOME' home={true} search={true}/>
       </div>
 
       <div className='Body'>

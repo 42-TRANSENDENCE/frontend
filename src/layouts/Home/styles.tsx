@@ -2,26 +2,28 @@ import styled from 'styled-components'
 import triangle from '../../assets/triangle.svg'
 
 export const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: 3% 3%;
+  width: var(--page-width);
+  height: var(--page-height);
+  padding: var(--html-padding-vertical) var(--html-padding-horizontal);
   display: flex;
   flex-direction: column;
-  gap: 3%;
-  justify-content: center;
+  gap: var(--html-padding-vertical);
+  justify-content: top;
   align-items: center;
   
   .Title{
-    width: 100%;
-    display: flex;
-    justify-content: center;
+    width: var(--title-width);
+    height: var(--title-height);
   }
   
   .Body{
-    width: 100%;
-    height: 100%;
+    width: var(--body-width);
+    height: var(--body-height);
 
-    display:flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
     flex-direction: row;
     gap: 1%;
     .LeftSide{
@@ -68,6 +70,9 @@ export const Container = styled.div`
         margin-top: 2rem;
       }
     }
+  }
+  .Body::-webkit-scrollbar {
+    display: none; // 크롬, 사파리, 오페라, 엣지
   }
   `
 
