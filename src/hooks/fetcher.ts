@@ -1,16 +1,19 @@
-import { useQueryClient } from "react-query";
+// import { useQueryClient } from 'react-query';
+// import { useRefreshToken } from './query/user';
+import { useNavigate } from 'react-router-dom';
 
 const awsUrl = import.meta.env.VITE_AWS_URL;
 
 export function useFetcher() {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const fetcherWrapper = (
     url: string,
     options: RequestInit = {},
-    contentType = 'application/json',
+    // contentType = 'application/json',
   ) =>
-    fetcher(url, options, contentType)
+    fetcher(url, options)
       .then((response) => {
         if (response.status === 401) throw response;
         else return response;
@@ -18,7 +21,16 @@ export function useFetcher() {
       .catch((e) => {
         if (e instanceof Response) {
           if (e.status === 401) {
-            queryClient.invalidateQueries({ queryKey: ['auth/refresh'] });
+            fetcher('/auth/refresh', {
+              method: 'GET',
+              credentials: 'include',
+            })
+            .then((response) => {
+              console.log(response.status);
+              if (response.status === 401) navigate('/');
+              else return response;
+            })
+            // queryClient.invalidateQueries({ queryKey: ['auth/refresh'] });
           }
         }
         throw e;
@@ -29,12 +41,12 @@ export function useFetcher() {
 export async function fetcher(
   url: string,
   options: RequestInit = {},
-  contentType: string,
+  // contentType: string,
 ) {
-  options.headers = {
-    ...options.headers,
-    'content-type': contentType,
-  };
+  // options.headers = {
+  //   ...options.headers,
+  //   'content-type': contentType,
+  // };
 
   const response = await fetch(awsUrl + url, options);
 

@@ -26,7 +26,8 @@ export const useUserInfo = () => {
       })
       if (response.ok) return response.json();
       throw response;
-    }
+    },
+    retry: 0,
   });
   return data;
 }
@@ -46,35 +47,34 @@ export const useUserAvatar = () => {
       })
       if (response.ok) return response.blob();
       throw response;
-    }
+    },
+    retry: 0,
   });
   return data;
 }
 
-export const useRefreshToken = () => {
-  const navigate = useNavigate();
+// export function useRefreshToken() {
+//   const fetcher = useFetcher();
+//   const navigate = useNavigate();
+//   useQuery({
+//     queryKey: ['auth/refresh'],
+//     queryFn: async () => {
+//       await fetcher('/auth/refresh', {
+//         method: 'GET',
+//         credentials: 'include',
+//       })
+//     },
+//     onError: (err) => {
+//       if (err instanceof Response) {
+//         if (err.status === 401) {
+//           navigate('/');
+//         }
+//       }
+//     },
+//     retry: 0,
+//     refetchOnMount: false,
+//     refetchOnWindowFocus: false,
+//     refetchInterval: 3500 * 1000,
+//   });
+// }
 
-  useQuery({
-    queryKey: ['auth/refresh'],
-    queryFn: async () => {
-      const response = await fetch('/auth/refresh', {
-        method: 'GET',
-        credentials: 'include',
-      })
-      if (response.status === 401) {
-        navigate('/');
-      }
-    },
-    onError: (err) => {
-      if (err instanceof Response) {
-        if (err.status === 401) {
-          navigate('/');
-        }
-      }
-    },
-    // retry: 0,
-    // refetchOnMount: false,
-    // refetchOnWindowFocus: false,
-    // refetchInterval: 3500 * 1000,
-  });
-}
