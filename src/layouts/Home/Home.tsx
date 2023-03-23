@@ -3,7 +3,7 @@ import loadable from '@loadable/component';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from "react-query";
 import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
-import { useLogout } from '../../hooks/mutation/user';
+// import { useLogout } from '../../hooks/mutation/user';
 import { useUploadAvatar } from '../../hooks/mutation/user';
 import Modal from '../../components/Modal';
 import { Container, Label, Input, InputName, Avatar } from './styles';
@@ -18,14 +18,8 @@ import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import avatarSubmitButton from '../../assets/middleButton/AvatarSubmitButton.svg';
 import avatarUploadButton from '../../assets/middleButton/AvatarUploadButton.svg';
 import nicknameSubmitButton from '../../assets/middleButton/nicknameSubmitButton.svg';
-
-import home from '../../assets/home.svg';
-import game from '../../assets/game.svg';
-import chat from '../../assets/chat.svg';
-import logout from '../../assets/logout.svg';
-import setting from '../../assets/setting.svg';
-import friends from '../../assets/friends.svg';
-
+import Switch from 'react-switch';
+import { FaTimes, FaCheck } from 'react-icons/fa';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -38,7 +32,7 @@ const Home = () => {
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
-  const userLogout = useLogout().data;
+  // const userLogout = useLogout().data;
 
   type ImageFile = File | null;
   const [file, setFile] = React.useState<ImageFile>(null);
@@ -114,18 +108,18 @@ const Home = () => {
     navigate('/home');
   };
 
-  // const onClickLogOut = () => {
-  //   fetch(awsUrl + '/auth/logout', {
-  //     method: 'POST',
-  //     credentials: 'include',
-  //   }).then((response) => {
-  //     if (response.status === 200) {
-  //       window.location.href = `${awsUrl}:5173/`;
-  //     } else {
-  //       throw new Error('Unexpected response status code');
-  //     }
-  //   });
-  // };
+  const onClickLogOut = () => {
+    fetch(awsUrl + '/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    }).then((response) => {
+      if (response.status === 200) {
+        window.location.href = `${awsUrl}:5173/`;
+      } else {
+        throw new Error('Unexpected response status code');
+      }
+    });
+  };
 
   const onClickGame = () => {
     navigate('/game');
@@ -152,7 +146,7 @@ const Home = () => {
             <BigButton img_url={gameButton} onClick={onClickGame} />
             <div className="MidiumButtons">
               <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
-              <MiddleButton img_url={logoutButton} onClick={userLogout} />
+              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
             </div>
           </div>
 
@@ -196,7 +190,7 @@ const Home = () => {
               alignItems: 'center'
             }}
           >
-            <Avatar src={friends} alt="Profile Image" />
+            <Avatar src={URL.createObjectURL(userAvatar ? userAvatar : new Blob())} />
             <div
               style={{
                 display: 'flex',
@@ -237,17 +231,33 @@ const Home = () => {
           }}
         >
           <Label>Enable two factor authentication
-            <Input
+            {/* <Input
               type='checkbox'
               checked={twoFactor}
               onChange={toggleTwoFactor}
+            /> */}
+            <Switch
+              checked={twoFactor}
+              onChange={toggleTwoFactor}
+              onColor="#64E469"
+              onHandleColor="#FCF451"
+              offColor="#D9D9D9"
+              offHandleColor="#FCF451"
+              handleDiameter={24}
+              uncheckedIcon={<FaTimes size={24} color="#868686" display='flex' />}
+              checkedIcon={<FaCheck size={24} color="#ffffff" />}
+              height={24}
+              width={48}
             />
           </Label>
           {qrCodeImage && (
-            <Modal>
+            <Modal
+              show={qrCodeImage}
+              onCloseModal={onClickLogOut}
+            >
               <img src={qrCodeImage} />
               <div>로그아웃 후 2FA 인증 후 다시 로그인하세요.</div>
-              <MiddleButton img_url={logoutButton} onClick={userLogout} />
+              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
             </Modal>
           )}
         </div>
