@@ -76,7 +76,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
 
   const onNewRoom = useCallback(
     async (data: any) => {
-      console.log('newRoom 데이터: ', data);
+      // console.log('newRoom 데이터: ', data);
       queryClient.setQueryData(['roomlist'], () => {
         return [...rooms, data];
       });
@@ -128,7 +128,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
       if (findRoomName.trim() === '') {
         setFilteredRooms(rooms);
         setFindRoomName('');
-        console.log('rooms: ', rooms);
+        // console.log('rooms: ', rooms);
         // console.log('filteredRooms: ', filteredRooms);
         return;
       }
@@ -202,7 +202,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               },
               body: JSON.stringify({}),
             }).then((res) => {
-              console.log(res);
+              // console.log(res);
               if (res.status === 200) {
                 console.log('공개방 최초입장');
                 socket?.emit('join', dataset_roomId);

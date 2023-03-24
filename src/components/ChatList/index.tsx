@@ -14,7 +14,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
 
 export const ChatElement = styled.section`
   position: relative;
@@ -252,9 +252,17 @@ const ChatListComponent = ({
   );
 };
 
-const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
-  const params = useParams<{ roomId?: string }>();
-  const { roomId } = params;
+const ChatList = ({
+  Flex,
+  socket,
+  roomId,
+}: {
+  Flex: number;
+  socket: any;
+  roomId: string | undefined;
+}) => {
+  // const params = useParams<{ roomId?: string }>();
+  // const { roomId } = params;
   const [chat, setChat] = useState('');
   const scrollbarRef = useRef<Scrollbars>(null);
 
@@ -269,31 +277,26 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     data: chatDatas,
     isLoading: isLoadingChats,
     isError: isErrorChats,
-    error,
+    error: chatError,
     refetch: refetchChatList,
-  } = useQuery<any>(
-    ['chat', roomId],
-    async () => {
-      try {
-        const response = await fetch(
-          `${chat_backurl}/room/${roomId}/chat`,
-          options
-        );
-        const res = await response.json();
-        console.log('[[[myQueryDatas]]] ' + res);
-        if (!response.ok) {
-          throw new Error(res);
-        }
-        return res;
-      } catch (error) {
-        console.error('ERROR!!!!', error);
-        throw error;
-      }
+    isLoadingError: isLoadingErrorChats,
+  } = useQuery<any>(['chat', roomId], async () => {
+    const response = await fetch(
+      `${chat_backurl}/room/${roomId}/chat`,
+      options
+    );
+    const res = await response.json();
+    console.log('[[[myQueryDatas-chatDatas]]] \n' + JSON.stringify(res));
+    if (!response.ok) {
+      const error = new Error('not ok!');
+      error.message = res.message;
+      console.log('!response.ok ', error.message, error.stack);
+      throw error;
+    } else {
+      console.log('[[response.ok]]', JSON.stringify(chatError));
     }
-    // {
-    //   retryOnMount: true,
-    // }
-  );
+    return res;
+  });
 
   const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
     ['user'],
@@ -302,19 +305,21 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
     ['room', roomId],
-    () =>
-      fetch(chat_backurl + `/room/${roomId}`, options).then((res) => res.json())
-    // {
-    //   retryOnMount: true,
-    // }
+    async () => {
+      const response = await fetch(chat_backurl + `/room/${roomId}`, options);
+      const res = await response.json();
+      console.log('[[[myQueryDatas-roomDatas]]] \n' + JSON.stringify(res));
+      return res;
+    }
   );
-  console.log(roomId, '채팅방 데이터: ', roomDatas);
   console.log(
+    '전체적인 데이터 - ',
     roomId,
-    '채팅 데이터: ',
+    '번 방에서의 채팅 데이터(chatDatas): ',
     chatDatas,
     '에러는 ',
-    error,
+    chatError,
+    'isErorrChats는 ',
     isErrorChats
   );
 
@@ -374,10 +379,10 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     if (data === userData.username) {
       console.log('KickData: ', data, userData.username);
       console.log('강퇴당하셨습니다');
-      navigate('/chat/v3_rooms');
       queryClient.invalidateQueries(['chat', roomId]);
       queryClient.invalidateQueries(['room', roomId]);
-      console.log('kick되기전 invalidate했음');
+      navigate('/chat/v3_rooms');
+      // console.log('kick되기전 invalidate했음');
     } else {
       console.log(`${data}님이 강퇴당햇습니다`);
     }
@@ -387,20 +392,11 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   }, []);
 
   useEffect(() => {
-    if (roomDatas && userData) {
-      console.log('ChatList useEffect 실행됨 (roomDatas, userData 존재)');
-      const is_kicked = roomDatas.kickList.find(
-        (kickData: any) => kickData.username === userData.username
-      );
-      if (is_kicked) {
-        console.log('기존 kicked된 사람이니 invalidate하겠다');
-        queryClient.invalidateQueries(['room', roomId]);
-      }
-    }
+    console.log('ChatList useEffect 실행됨');
     return () => {
       console.log('ChatList useEffect 종료됨');
     };
-  }, [roomDatas, userData]);
+  }, []);
 
   useEffect(() => {
     if (userData) {
@@ -449,17 +445,18 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     }
   }
 
-  if (isLoadingChats || isLoadingRoom || isLoadingUser) return <div />;
+  if (isLoadingChats || isLoadingRoom || isLoadingUser || isLoadingErrorChats)
+    return <div />;
   if (isErrorChats) {
-    const response = error as Response;
+    const response = chatError as Error;
     queryClient.invalidateQueries(['chat', roomId]);
     queryClient.invalidateQueries(['room', roomId]);
-    console.log('에러메시지: ', Object.keys(response));
+    console.log('error컴포넌트: ', response.message);
 
     return (
       <div style={{ flex: 1.85 }}>
         <div>방에 대한 권한이 없습니다</div>
-        <div>{response && response.statusText}</div>
+        <div>{response && response.message}</div>
         <Link to="/chat/v3_rooms">방 목록으로</Link>
       </div>
     );
@@ -467,6 +464,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   return (
     <div
+      key={Number(roomId)}
       style={{
         borderRadius: '2rem',
         border: '0.3rem solid black',
@@ -479,24 +477,6 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     >
       <div style={{ flex: 9 }}>
         <Scrollbars autoHide ref={scrollbarRef}>
-          {/* <ChatLists>
-            {chatList.map((chatData) => (
-              <ChatItem other={chatData.name !== 'me'}>
-                <ChatProfile>
-                  <img src={chatData.imgSrc} alt="User profile" />
-                </ChatProfile>
-                <ChatMain>
-                  <span>{chatData.name}</span>
-                  <ChatBubble
-                    other={chatData.name !== 'me'}
-                    style={{ whiteSpace: 'pre-wrap' }}
-                  >
-                    {chatData.content}
-                  </ChatBubble>
-                </ChatMain>
-              </ChatItem>
-            ))}
-          </ChatLists> */}
           <ChatListComponent
             chatDatas={chatDatas}
             roomDatas={roomDatas}

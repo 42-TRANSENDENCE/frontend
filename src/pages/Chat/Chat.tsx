@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import GlobalStyles from '../../styles/global';
-import { Navigate, Route, Routes } from 'react-router';
+import { Navigate, Route, Routes, useParams } from 'react-router';
 import V2rooms from './v2_rooms';
 import V2dms from './v2_dms';
 import V2chats from './v2_chats';
@@ -16,6 +16,16 @@ import OnlineList from '../../components/OnlineList';
 import Title from '../../components/Title';
 import { Container } from '../LogIn/styles';
 import { Link } from 'react-router-dom';
+
+// ChatList마다 reRendering대신 reMounting을 하기 위해 roomId={roomId}를 넘겨줌
+const ChatContainer = ({ socket: chat_socket, Flex }: any) => {
+  const params = useParams<{ roomId?: string }>();
+  const { roomId } = params;
+
+  return (
+    <ChatList socket={chat_socket} Flex={Flex} key={roomId} roomId={roomId} />
+  );
+};
 
 const Chat = () => {
   const [chat_socket, disconnect_chat_socket] = useSocket('v2_chat');
@@ -42,7 +52,14 @@ const Chat = () => {
             <Route path="v3_rooms/*">
               <Route
                 path=":roomId/chat"
-                element={<ChatList socket={chat_socket} Flex={1.85} />}
+                element={
+                  // <ChatList
+                  //   socket={chat_socket}
+                  //   Flex={1.85}
+                  //   key={useParams().roomId}
+                  // />
+                  <ChatContainer socket={chat_socket} Flex={1.85} />
+                }
               />
               <Route
                 path="*"
@@ -71,14 +88,6 @@ const Chat = () => {
         </div>
       </Container>
       <Routes>
-        {/* <Route path="/" element={<Navigate replace to="v2_rooms" />} />
-      <Route path="v2_rooms/*">
-        <Route path=":roomId/chat" element={<V2chats socket={chat_socket} />} />
-        <Route path="*" element={<V2rooms socket={chat_socket} />} />
-      </Route>
-      <Route path="v2_dms/*">
-        <Route path=":dmId" element={<V2dms socket={chat_socket} />} />
-      </Route> */}
         <Route path="createUsers" element={<Create_fakeUsers />} />
         <Route
           path="getUsers/:id"
