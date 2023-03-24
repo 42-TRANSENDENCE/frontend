@@ -23,7 +23,7 @@ async function postCreateRoom(
       password,
       owner,
     }),
-  }).then((res) => res.text());
+  }).then((res) => res.json());
 }
 const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   const navigate = useNavigate();
@@ -52,12 +52,9 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  const {
-    data: rooms,
-    isLoading: isLoadingRooms,
-    refetch,
-  } = useQuery<any>(['roomlist'], () =>
-    fetch(chat_backurl + `/rooms/`).then((res) => res.json())
+  const { data: rooms, isLoading: isLoadingRooms } = useQuery<any>(
+    ['roomlist'],
+    () => fetch(chat_backurl + `/rooms/`).then((res) => res.json())
   );
   const { data: user, isLoading: isLoadingUser } = useQuery<any>(['user'], () =>
     fetch(chat_backurl + '/user', options).then((res) => res.json())
@@ -159,32 +156,42 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   const onEnterEvent = useCallback(
     (e: any) => {
       e.preventDefault();
-      const target = e.target;
-      const roominfoEl = target.closest('[data-id]');
+      const roominfoEl = e.target.closest('[data-id]');
       const dataset_roomId = roominfoEl.getAttribute('data-id');
       const dataset_hasPassword =
         roominfoEl.getAttribute('data-password') === 'true';
       console.log(dataset_roomId + '번 방에 입장합니다.');
-      fetch(chat_backurl + `/room/${dataset_roomId}`)
+      fetch(chat_backurl + `/room/${dataset_roomId}`, options)
         .then((res) => res.json())
         .then((data) => {
+          console.log('memberList: ' + data.memberList);
+          console.log(
+            'kickedList + ' + data.kickList.map((v: any) => v.username)
+          );
+
           /* 기존 참여자 */
+          const is_kicked = data.kickList.find(
+            (kickData: any) => kickData.username === user.username
+          );
+          if (is_kicked) {
+            // setErrorMessage('강퇴당한 유저입니다.');
+            console.log('강퇴당한 유저입니다.');
+            // queryClient.invalidateQueries(['chat', String(dataset_roomId)]);
+            navigate(`v3_rooms/${dataset_roomId}/chat`);
+            return;
+          }
           const is_member = data.memberList.find(
             (memberName: any) => memberName === user.username
           );
+
           if (is_member) {
             console.log('기존 참여자 입장');
             navigate(`v3_rooms/${dataset_roomId}/chat`);
             return;
           }
-          const is_kicked = data.kickList.find(
-            (memberName: any) => memberName === user.username
-          );
-          if (is_kicked) {
-            setErrorMessage('강퇴당한 유저입니다.');
-            return;
-          }
+
           /* 최초 입장 */
+          // TODO : api 문서에 따라 returnFail 수정
           if (data.status === 0) {
             const token = localStorage.getItem('jwt_token');
             fetch(chat_backurl + `/room/${dataset_roomId}`, {
@@ -199,6 +206,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               if (res.status === 200) {
                 console.log('공개방 최초입장');
                 socket?.emit('join', dataset_roomId);
+                res.json();
                 navigate(`v3_rooms/${dataset_roomId}/chat`);
               } else {
                 setErrorMessage('방에 입장할 수 없습니다.');
@@ -219,8 +227,9 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               if (res.status === 200) {
                 console.log('비공개방 최초입장');
                 socket?.emit('join', dataset_roomId);
+                res.json();
                 navigate(`v3_rooms/${dataset_roomId}/chat`);
-                return 'OK';
+                return;
               } else {
                 setErrorMessage('비밀번호가 틀렸습니다.');
               }

@@ -39,7 +39,7 @@ async function postChat(
       chat: data,
       user: username,
     }),
-  }).then((res) => res.text());
+  }).then((res) => res.json());
   return res;
 }
 
@@ -73,21 +73,7 @@ const ChatsMenu = ({
 
   const onKickOther = async (e: any) => {
     e.stopPropagation();
-    console.log('kick해버리자!!');
     kickMutation.mutate();
-
-    // const response = await fetch(
-    //   `${chat_backurl}/room/${roomId}/kick/${username}`,
-    //   {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //     body: JSON.stringify({}),
-    //   }
-    // );
-    // return response.json();
   };
   const onBanOther = async () => {
     let res = await fetch(`${chat_backurl}/room/${roomId}/ban/${username}`, {
@@ -98,7 +84,7 @@ const ChatsMenu = ({
       },
       body: JSON.stringify({}),
     }).then((res) => {
-      res.text();
+      res.json();
     });
   };
 
@@ -111,7 +97,7 @@ const ChatsMenu = ({
       },
       body: JSON.stringify({}),
     }).then((res) => {
-      res.text();
+      res.json();
     });
   };
 
@@ -124,7 +110,7 @@ const ChatsMenu = ({
       },
       body: JSON.stringify({}),
     }).then((res) => {
-      res.text();
+      res.json();
     });
   };
 
@@ -271,7 +257,6 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   const { roomId } = params;
   const [chat, setChat] = useState('');
   const scrollbarRef = useRef<Scrollbars>(null);
-  // const [chatList, setChatList] = useState(ChatsData);
 
   console.log(`현재 roomId: ${roomId} 에 있는 상태입니다.`);
   const token = localStorage.getItem('jwt_token');
@@ -282,25 +267,30 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   const {
     data: chatDatas,
-    isLoading,
-    isError,
+    isLoading: isLoadingChats,
+    isError: isErrorChats,
     error,
-    refetch,
+    refetch: refetchChatList,
   } = useQuery<any>(
     ['chat', roomId],
     async () => {
-      const response = await fetch(
-        `${chat_backurl}/room/${roomId}/chat`,
-        options
-      );
-      // console.log(response);
-      if (!response.ok) {
-        throw new Error('채팅방에 참여하지 않았습니다!');
+      try {
+        const response = await fetch(
+          `${chat_backurl}/room/${roomId}/chat`,
+          options
+        );
+        const res = await response.json();
+        console.log('[[[myQueryDatas]]] ' + res);
+        if (!response.ok) {
+          throw new Error(res);
+        }
+        return res;
+      } catch (error) {
+        console.error('ERROR!!!!', error);
+        throw error;
       }
-      return response.json();
     }
     // {
-    //   retry: 3,
     //   retryOnMount: true,
     // }
   );
@@ -312,7 +302,20 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
     ['room', roomId],
-    () => fetch(chat_backurl + `/room/${roomId}`).then((res) => res.json())
+    () =>
+      fetch(chat_backurl + `/room/${roomId}`, options).then((res) => res.json())
+    // {
+    //   retryOnMount: true,
+    // }
+  );
+  console.log(roomId, '채팅방 데이터: ', roomDatas);
+  console.log(
+    roomId,
+    '채팅 데이터: ',
+    chatDatas,
+    '에러는 ',
+    error,
+    isErrorChats
   );
 
   const queryClient = useQueryClient();
@@ -332,12 +335,13 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
       queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
-      // if (data.SenderId === "hyoslee") {
-      //   setTimeout(() => {
-      //     scrollbarRef.current?.scrollToBottom();
-      //   }, 10);
-      //   return;
-      // }
+      // console.log(data, userData.username);
+      if (data.user === userData.username) {
+        setTimeout(() => {
+          scrollbarRef.current?.scrollToBottom();
+        }, 10);
+        return;
+      }
       if (
         scrollbarRef.current &&
         scrollbarRef.current.getScrollHeight() <
@@ -366,22 +370,40 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   const onExit = useCallback(function (data: any) {
     console.log('LeaveData: ', data);
   }, []);
-  const onKick = useCallback(function (data: any) {
-    console.log('KickData: ', data);
+  const onKick = function (data: any) {
     if (data === userData.username) {
+      console.log('KickData: ', data, userData.username);
       console.log('강퇴당하셨습니다');
-      refetch();
       navigate('/chat/v3_rooms');
+      queryClient.invalidateQueries(['chat', roomId]);
+      queryClient.invalidateQueries(['room', roomId]);
+      console.log('kick되기전 invalidate했음');
     } else {
       console.log(`${data}님이 강퇴당햇습니다`);
     }
-  }, []);
+  };
   const onRole = useCallback(function (data: any) {
-    refetch();
+    refetchChatList();
   }, []);
 
   useEffect(() => {
-    if (onMessage && onJoin && onExit) {
+    if (roomDatas && userData) {
+      console.log('ChatList useEffect 실행됨 (roomDatas, userData 존재)');
+      const is_kicked = roomDatas.kickList.find(
+        (kickData: any) => kickData.username === userData.username
+      );
+      if (is_kicked) {
+        console.log('기존 kicked된 사람이니 invalidate하겠다');
+        queryClient.invalidateQueries(['room', roomId]);
+      }
+    }
+    return () => {
+      console.log('ChatList useEffect 종료됨');
+    };
+  }, [roomDatas, userData]);
+
+  useEffect(() => {
+    if (userData) {
       console.log('소켓 기능이 on 되었습니다! (join, exit, message)');
       socket?.on('message', onMessage);
       socket?.on('join', onJoin);
@@ -399,7 +421,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
       socket?.off('role', onRole);
       // socket?.emit('leave', roomId);
     };
-  }, [roomId, onJoin, onExit, onMessage]);
+  }, [userData]);
 
   const onChangeChat = useCallback((e: any) => {
     e.preventDefault();
@@ -427,9 +449,13 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
     }
   }
 
-  if (isLoading || isLoadingRoom || isLoadingUser) return <div />;
-  if (isError) {
+  if (isLoadingChats || isLoadingRoom || isLoadingUser) return <div />;
+  if (isErrorChats) {
     const response = error as Response;
+    queryClient.invalidateQueries(['chat', roomId]);
+    queryClient.invalidateQueries(['room', roomId]);
+    console.log('에러메시지: ', Object.keys(response));
+
     return (
       <div style={{ flex: 1.85 }}>
         <div>방에 대한 권한이 없습니다</div>
