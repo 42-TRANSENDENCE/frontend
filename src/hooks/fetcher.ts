@@ -26,7 +26,6 @@ export function useFetcher() {
               credentials: 'include',
             })
             .then((response) => {
-              console.log(response.status);
               if (response.status === 401) navigate('/');
               else return response;
             })
