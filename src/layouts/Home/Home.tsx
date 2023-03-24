@@ -3,7 +3,6 @@ import loadable from '@loadable/component';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from "react-query";
 import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
-// import { useLogout } from '../../hooks/mutation/user';
 import { useUploadAvatar } from '../../hooks/mutation/user';
 import Modal from '../../components/Modal';
 import { Container, Label, Input, InputName, Avatar } from './styles';
@@ -18,8 +17,7 @@ import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import avatarSubmitButton from '../../assets/middleButton/AvatarSubmitButton.svg';
 import avatarUploadButton from '../../assets/middleButton/AvatarUploadButton.svg';
 import nicknameSubmitButton from '../../assets/middleButton/nicknameSubmitButton.svg';
-import Switch from 'react-switch';
-import { FaTimes, FaCheck } from 'react-icons/fa';
+import { Switch } from '@material-ui/core';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -32,7 +30,6 @@ const Home = () => {
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
-  // const userLogout = useLogout().data;
 
   type ImageFile = File | null;
   const [file, setFile] = React.useState<ImageFile>(null);
@@ -104,7 +101,6 @@ const Home = () => {
   };
 
   const onClickHome = () => {
-    // window.location.reload();
     navigate('/home');
   };
 
@@ -177,7 +173,7 @@ const Home = () => {
             borderRadius: '1rem',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
           >
           <div
@@ -187,10 +183,11 @@ const Home = () => {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-evenly',
-              alignItems: 'center'
+              alignItems: 'space-evenly',
+              padding: '1rem'
             }}
           >
-            <Avatar src={URL.createObjectURL(userAvatar ? userAvatar : new Blob())} />
+            <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
             <div
               style={{
                 display: 'flex',
@@ -198,7 +195,7 @@ const Home = () => {
                 justifyContent: 'space-evenly',
               }}
             >
-              <label for='file-upload' class='custom-file-upload'>
+              <label htmlFor='file-upload' className='custom-file-upload'>
                 <img src={avatarUploadButton} alt='Image' />
               </label>
               <input id='file-upload' type='file' onChange={handleFileChange} />
@@ -206,15 +203,22 @@ const Home = () => {
               {isLoading && <p>Uploading avatar...</p>}
             </div>
           </div>
-          
-          <Label id='nickname-label'>
-            <InputName
-              placeholder='nickname'
-              // {...nickname}
-              // onChange={onNicknameChange}
-            />
-            <MiddleButton img_url={nicknameSubmitButton} />
-          </Label>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-evenly',
+              padding: '1rem',
+            }}
+          >
+            <Label id='nickname-label'>
+              <InputName
+                placeholder='nickname'
+                // {...nickname}
+                // onChange={onNicknameChange}
+              />
+              <MiddleButton img_url={nicknameSubmitButton} />
+            </Label>
+          </div>
         </div>
 
         <div
@@ -227,28 +231,11 @@ const Home = () => {
             justifyContent: 'space-evenly',
             alignItems: 'center',
             overflow: 'hidden',
-            margin: '1rem'
+            margin: '1rem 0'
           }}
         >
           <Label>Enable two factor authentication
-            {/* <Input
-              type='checkbox'
-              checked={twoFactor}
-              onChange={toggleTwoFactor}
-            /> */}
-            <Switch
-              checked={twoFactor}
-              onChange={toggleTwoFactor}
-              onColor="#64E469"
-              onHandleColor="#FCF451"
-              offColor="#D9D9D9"
-              offHandleColor="#FCF451"
-              handleDiameter={24}
-              uncheckedIcon={<FaTimes size={24} color="#868686" display='flex' />}
-              checkedIcon={<FaCheck size={24} color="#ffffff" />}
-              height={24}
-              width={48}
-            />
+            <Switch checked={twoFactor} onChange={toggleTwoFactor} />
           </Label>
           {qrCodeImage && (
             <Modal

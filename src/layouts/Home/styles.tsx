@@ -122,12 +122,13 @@ export const Input = styled.input`
 export const InputName = styled.input`
   display: flex;
   margin: 0 auto;
+  margin-right: 1rem;
   border-radius: 4px;
   --saf-0: rgba(var(--sk_foreground_high_solid, 134, 134, 134), 1);
   border: 1px solid var(--saf-0);
   transition: border 80ms ease-out, box-shadow 80ms ease-out;
   box-sizing: border-box;
-  width: 30%;
+  width: 50%;
   color: rgba(var(--sk_primary_foreground, 29, 28, 29), 1);
   background-color: rgba(var(--sk_primary_background, 255, 255, 255), 1);
   padding: 18px;
@@ -139,7 +140,7 @@ export const InputName = styled.input`
   &:focus {
     --saf-0: rgba(var(--sk_highlight, 18, 100, 163), 1);
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
-    width: 40%;
+    width: 60%;
   }
 `
 
@@ -147,5 +148,6 @@ export const Avatar = styled.img`
   border-radius: 50%;
   border: 0.3rem solid black;
   width: 55%;
+  height: 55%;
   aspect-ratio: 1;
 `
