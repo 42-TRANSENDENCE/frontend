@@ -17,7 +17,7 @@ import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import avatarSubmitButton from '../../assets/middleButton/AvatarSubmitButton.svg';
 import avatarUploadButton from '../../assets/middleButton/AvatarUploadButton.svg';
 import nicknameSubmitButton from '../../assets/middleButton/nicknameSubmitButton.svg';
-import { Switch } from '@material-ui/core';
+import {Switch} from '@mui/material';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -128,34 +128,40 @@ const Home = () => {
   return (
     <>
       <Container>
-        <div className='Title'>
-          <Title title='PONG HOME' search={true}/>
-        </div>
+      <div className='Title'>
+        <Title title='PONG HOME' home={true} search={true}/>
+      </div>
 
-        <div className='Body'>
-          <div className="LeftSide">
-            <OnlineList Flex={1.8}/>
-          </div>
-
-          <div className="MiddleSide">
-            <BigButton img_url={chatButton} onClick={onClickChat} />
-            <BigButton img_url={gameButton} onClick={onClickGame} />
-            <div className="MidiumButtons">
-              <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
-              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+      <div className='BodyOuter'>
+          <div className='Body'>
+            <div className="LeftSide Section">
+              <OnlineList Flex={1.8}/>
             </div>
-          </div>
 
-          <div className="RightSide">
-            <Profile
-              imageSrc={URL.createObjectURL(userAvatar ? userAvatar : new Blob())}
-              nickname={userInfoData?.nickname}
-              win={15}
-              lose={5}
-              who={ProfileEnum.ME}
-            />
-            <div className='Notification'>
-              Notification
+            <div className="MiddleSide Section">
+              <div className="BigButtons">
+                <BigButton img_url={chatButton} onClick={onClickChat} />
+                <BigButton img_url={gameButton} onClick={onClickGame} />
+              </div>
+              <div className="MidiumButtons">
+                <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
+                <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+              </div>
+            </div>
+
+            <div className="RightSide Section">
+              <div className="Profile">
+                <Profile
+                  imageSrc={URL.createObjectURL(userAvatar ? userAvatar : new Blob())}
+                  nickname={userInfoData?.nickname}
+                  win={15}
+                  lose={5}
+                  who={ProfileEnum.ME}
+                />
+              </div>
+              <div className='Notification'>
+                Notification
+              </div>
             </div>
           </div>
         </div>
@@ -175,7 +181,7 @@ const Home = () => {
             flexDirection: 'column',
             overflow: 'hidden',
           }}
-          >
+        >
           <div
             style={{
               background: 'pink',
@@ -202,7 +208,9 @@ const Home = () => {
               <MiddleButton img_url={avatarSubmitButton} onClick={onClickChangeProfileImage} />
               {isLoading && <p>Uploading avatar...</p>}
             </div>
-          </div>
+        </div>
+        
+        </div>
           <div
             style={{
               display: 'flex',
@@ -218,35 +226,33 @@ const Home = () => {
               />
               <MiddleButton img_url={nicknameSubmitButton} />
             </Label>
-          </div>
-        </div>
-
-        <div
-          style={{
-            background: 'white',
-            border: '0.3rem solid black',
-            borderRadius: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-evenly',
-            alignItems: 'center',
-            overflow: 'hidden',
-            margin: '1rem 0'
-          }}
-        >
-          <Label>Enable two factor authentication
-            <Switch checked={twoFactor} onChange={toggleTwoFactor} />
-          </Label>
-          {qrCodeImage && (
-            <Modal
-              show={qrCodeImage}
-              onCloseModal={onClickLogOut}
+            <div
+              style={{
+                background: 'white',
+                border: '0.3rem solid black',
+                borderRadius: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-evenly',
+                alignItems: 'center',
+                overflow: 'hidden',
+                margin: '1rem 0'
+              }}
             >
-              <img src={qrCodeImage} />
-              <div>로그아웃 후 2FA 인증 후 다시 로그인하세요.</div>
-              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
-            </Modal>
-          )}
+              <Label>Enable two factor authentication
+                <Switch checked={twoFactor} onChange={toggleTwoFactor} />
+              </Label>
+              {qrCodeImage && (
+                <Modal
+                  show={qrCodeImage}
+                  onCloseModal={onClickLogOut}
+                >
+                  <img src={qrCodeImage} />
+                  <div>로그아웃 후 2FA 인증 후 다시 로그인하세요.</div>
+                  <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+              </Modal>
+              )}
+          </div>
         </div>
       </Modal>
     </>

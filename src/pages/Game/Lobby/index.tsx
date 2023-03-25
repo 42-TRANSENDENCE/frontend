@@ -55,18 +55,20 @@ const LobbyContainer = styled.div`
     justify-content: space-evenly;
     align-items: center;
 
-    --w : min(60vw, 500px);
-    width: var(--w);
+    --w : min(var(--body-width), 600px);
+    --h : calc(var(--body-height) * 0.8);
+    --size : min(var(--w), var(--h));
+    width: var(--size);
     aspect-ratio: 1;
     
     background: var(--color-blue);
     
-    border-radius: 50px;
-    border: calc(10 / 800 * var(--w)) solid black;
+    border-radius: calc(var(--size) / 8);
+    border: calc(var(--border-width) * 2) solid black;
     
     box-sizing: border-box;
     /* width: fit-content; */
-    padding: 25px;
+    padding: var(--html-padding-horizontal);
   }
   .top {
     width: 100%;
@@ -74,6 +76,11 @@ const LobbyContainer = styled.div`
     display: flex;
     align-items: top;
     justify-content: right;
+    Button {
+      width: calc(var(--size) * 0.1);
+      border: var(--border-width) solid black;
+      border-radius: calc(var(--size) * 0.05);
+    }
   }
   .body{
     /* background-color: green; */
@@ -85,10 +92,9 @@ const LobbyContainer = styled.div`
     align-items: center;
 
     Button {
-      background-color: white;
-      width: 90%;
-      max-width: 400px;
-      border-radius: calc(80 / 800 * min(60vw, 800px));
+      width: calc(var(--size) - 2*var(--html-padding-horizontal));
+      border: var(--border-width) solid black;
+      border-radius: calc(50 / 800 * min(60vw, 800px));
     }
 
   }

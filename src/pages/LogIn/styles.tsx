@@ -1,30 +1,54 @@
 import styled from 'styled-components';
-import triangle from '../../assets/triangle.svg';
 
 export const Container = styled.div`
-  width: 100vw;
-  height: 100vh;
-  padding: 3vh 3vw;
+  width: var(--page-width);
+  height: var(--page-height);
+  padding: var(--html-padding-vertical) var(--html-padding-horizontal);
   display: flex;
   flex-direction: column;
-  gap: 3vh;
-  justify-content: center;
+  gap: var(--html-padding-vertical);
+  justify-content: top;
   align-items: center;
-  background-image: url(${triangle});
-  background-position: right bottom;
-  background-repeat: no-repeat;
-  background-size: min(50vw, 50vh);
+
   .Title {
-    background: rgba(255, 0, 0, 0.5);
-    width: 100%;
-    flex: 1;
-    max-height: 100px;
+    width: var(--title-width);
+    height: var(--title-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+  }
+  .BodyOuter {
+    width: var(--body-width);
+    height: var(--body-height);
+    display: flex;
+    align-items: top;
+    justify-content: top;
+    overflow-y: scroll;
+  &::-webkit-scrollbar {
+    display: none; // 크롬, 사파리, 오페라, 엣지
+  }
   }
   .Body {
-    width: 100%;
-    flex: 9;
+    width: var(--body-width);
+    height: var(--body-height);
+
+
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    overflow: hidden;
+
+    .BigButtons{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--html-padding-vertical);
+        Button {
+          width: 80%;
+          border: var(--border-width) solid black;
+        }
+      }
   }
 `;

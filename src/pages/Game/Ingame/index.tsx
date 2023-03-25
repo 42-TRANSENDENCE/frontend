@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { GameState } from "../enum";
-import { PlayContainer, CanvasContainer, QuitButton } from "./styles";
+import { PlayContainer, CanvasContainer } from "./styles";
 
 import Profile, { ProfileEnum } from '../../..//components/Profile';
 import friends from '../../../assets/friends.svg';

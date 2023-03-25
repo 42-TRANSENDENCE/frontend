@@ -52,16 +52,17 @@ const Title = ({ title, home, search }: any): JSX.Element => {
     <TitleContainer>
 
       {home && (
-        <div className="Home">
-          <Link to="/home">
-            <img
-              src={HomeButtonUrl}
-              className="HomeButton"
-              onClick={onClickHome}
-              alt="Home"
-            />
-          </Link>
-        </div>
+          <div className="Home">
+            <Link to="/home">
+              <div>
+                <img
+                  src={HomeButtonUrl}
+                  onClick={onClickHome}
+                  alt="Home"
+                />
+              </div>
+            </Link>
+          </div>
       )}
 
       <div className="Title">
@@ -77,6 +78,7 @@ const Title = ({ title, home, search }: any): JSX.Element => {
                   value={nickname}
                   onChange={onChangeNickname}
                 />
+
                 <SearchButton
                   className="SearchButton"
                   isOpen={isOpen}
@@ -84,6 +86,7 @@ const Title = ({ title, home, search }: any): JSX.Element => {
                 >
                   <SearchIcon isOpen={isOpen} />
                 </SearchButton>
+
               </SearchWrapper>
             </form>
           </div>

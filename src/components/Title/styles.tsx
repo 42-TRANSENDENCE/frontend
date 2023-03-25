@@ -1,39 +1,59 @@
 import styled, { css } from "styled-components";
 
 export const TitleContainer = styled.div`
-  --font-height: 60px;
-  width: 100%;
-  height: 100%;
-  min-height: var(--font-height);
-  background: white;
+  box-sizing: border-box;
+  background-color: white;
+  width: var(--title-width);
+  height: var(--title-height);
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 2rem;
-  border: 0.3rem solid black;
-  img {
-    width: 3rem;
-  }
-  div.Home {
+  border-radius: calc(var(--title-height) / 2);
+  border: var(--border-width) solid black;
+  overflow: hidden;
+  
+  .Home {
+    --button-size: calc(var(--title-height) * 0.6); 
+    height: var(--button-size);
+    aspect-ratio: 1;
     position: absolute;
-    left: 1rem;
+    left: calc(var(--title-height) * 0.125);
+    
+    img{
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background-color: var(--color-yellow);
+    }
   }
-  div.Search {
+  
+  .Search {
+    --button-size: calc(var(--title-height) * 0.5); 
     position: absolute;
-    right: 1rem;
+    width: fit-content;
+    height: var(--button-size);
+    right: calc(var(--title-height) * 0.125);
+  }
+  
+  .Title {
+    background: white;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span{
+      background-color: none;
+      font-weight: 600;
+      line-height: calc(var(--title-height) * 0.5);
+      font-size: calc(var(--title-height) * 0.5);
+      border-top: var(--border-width) solid black;
+    }
   }
 
-  div.Title {
-    margin-top: 0.3rem;
-    text-align: center;
-  }
-  div.Title > span {
-    font-size: 1.8765rem;
-    border-top: 0.2rem solid black;
-  }
 
-  @media screen and (max-width: 600px) {
+  /* @media screen and (max-width: 600px) {
     div.Title {
       display: none;
     }
@@ -42,7 +62,7 @@ export const TitleContainer = styled.div`
     img {
       width: 2rem;
     }
-  }
+  } */
 `;
 
 /** */
@@ -53,40 +73,27 @@ const iconColor = "rgb(52, 54, 62)";
 const transition = "all .5s ease";
 
 export const SearchWrapper = styled.div<{ isOpen: boolean }>`
-  width: 3rem;
-  height: 3rem;
-  /* margin: 2.5rem auto 0; */
+
   background-color: ${searchBgColor};
-  position: relative;
-  /* overflow: hidden; */
+  width: 0;
+  height: var(--button-size);
+  
+  position: absolute;
+  right: 0;
   transition: ${transition};
-
-  &:before {
-    content: "";
-    display: block;
-    width: 0.1875rem;
-    height: 100%;
-    position: relative;
-    background-color: gray;
-    transition: ${transition};
-  }
-
+  border-radius: calc(var(--button-size) * 0.5);
+  
   ${(props) =>
     props.isOpen &&
     css`
-      width: 26.25rem;
-
-      &:before {
-        height: 100%;
-        position: absolute;
-      }
-    `}
+      width: max(15vw, 100px);
+  `}
 
   /* @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
       width: 3.25rem;
     }
-  } */
+  }
   @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
       width: ${(props) => (props.isOpen ? "13.25rem" : "3.25rem")};
@@ -97,23 +104,26 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
     & {
       display: none;
     }
-  }
+  } */
 `;
 
 export const SearchBox = styled.input`
-  width: 100%;
-  height: 100%;
-  box-shadow: none;
-  border: none;
-  background: none;
-  border-radius: 2.5rem;
-
-  color: gray;
-  padding-left : 2rem;
-  padding-right: 4.6rem;
+  width: calc(100% - var(--button-size) * 1.5 - 5px);
+  height: 120%;
+  background-color: transparent;
+  
+  color: black;
   font-size: 2rem;
 
-  @media screen and (min-width: 327px) and (max-width: 600px) {
+  position: absolute;
+  right: calc(var(--button-size) + 5px);
+  top: -10%;
+
+  border-radius: 10px;
+  border: 2px solid gray;
+  background: lightgray;
+
+  /* @media screen and (min-width: 327px) and (max-width: 600px) {
     & {
       width: 10rem;
       position: absolute;
@@ -121,59 +131,55 @@ export const SearchBox = styled.input`
       padding: 0 3.1rem 0 0;
       border-radius: 0;
     }
-  }
+  } */
 `;
 
 export const SearchButton = styled.span<{ isOpen: boolean }>`
-  width: 3rem;
-  height: 3rem;
+  width: var(--button-size);
+  height: var(--button-size);
   display: block;
   position: absolute;
-  /* background: rgb(255, 0, 0); */
-  right: 0.7rem;
-  top: -1rem;
-  padding: 1rem;
+  right: 0;
+  top: 0;
   cursor: pointer;
 
-  ${(props) =>
-    props.isOpen &&
-    css`
-      right: 1rem;
-      top: -1rem;
-    `}
+ 
 `;
 
 export const SearchIcon = styled.span<{ isOpen: boolean }>`
-  width: 2.1rem;
-  height: 2.2rem;
-  border-radius: 2.5rem;
-  border: 0.3rem solid ${iconColor};
-  /* background: rgb(0, 0, 255); */
+  --circle-diameter : calc(var(--button-size) * 0.7);
+  --line-width : calc(var(--button-size) * 0.09);
+  box-sizing: border-box;
+  width: var(--circle-diameter);
+  aspect-ratio: 1;
+  border-radius:  calc(var(--circle-diameter) / 2);
+  border: var(--line-width) solid ${iconColor};
   display: block;
   position: relative;
-  /* margin-left: 0.3125rem; */
   transition: ${transition};
-
+  
   &:before {
     content: "";
-    width: 0.3rem;
-    height: 0.4rem;
     position: absolute;
-    left: 1.48rem;
-    top: 1.5rem;
     display: block;
     background-color: ${iconColor};
+
+    width: var(--line-width);
+    height: calc(var(--button-size) * 0.5);
+    
+    left: calc(var(--button-size) * 0.6);
+    top: calc(var(--button-size) * 0.4);
     transform: rotate(-45deg);
     transition: ${transition};
   }
 
   &:after {
     content: "";
-    width: 0.3rem;
-    height: 0.4rem;
+    height: calc(var(--button-size) * 0.5);
+    width: var(--line-width);
     position: absolute;
-    top: 1.752567rem;
-    left: 1.74rem;
+    left: calc(var(--button-size) * 0.6);
+    top: calc(var(--button-size) * 0.4);
     display: block;
     background-color: ${iconColor};
     transform: rotate(-45deg);
@@ -183,23 +189,29 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   ${(props) =>
     props.isOpen &&
     css`
+      --circle-diameter : calc(var(--button-size)* 0.9);
+      top : calc(var(--button-size)* 0.05);
+      left : calc(var(--button-size)* 0.05);
       margin: 0;
-      width: 3rem;
-      height: 3rem;
-      border-radius: 3.75;
+      width: var(--circle-diameter);
+      border-radius: calc(var(--circle-diameter) / 2);
 
       &:before {
-        transform: rotate(47deg);
-        top: 0.99rem;
-        left: 1.3rem;
-        height: 1.125rem;
+        width: var(--line-width);
+        height: calc(var(--button-size) * 0.3);
+
+        transform: rotate(45deg);
+        top: calc(var(--button-size) * 0.32);
+        left: calc(var(--button-size) * 0.38);
       }
 
       &:after {
-        transform: rotate(-230deg);
-        top: 0.465rem;
-        left: 1.3rem;
-        height: 1.125rem;
+        width: var(--line-width);
+        height: calc(var(--button-size) * 0.3);
+
+        transform: rotate(-45deg);
+        top: calc(var(--button-size) * 0.13);
+        left: calc(var(--button-size) * 0.38);
       }
     `}
 `;

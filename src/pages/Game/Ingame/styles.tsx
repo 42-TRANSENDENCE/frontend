@@ -1,71 +1,44 @@
 import styled from 'styled-components'
 
 export const PlayContainer = styled.div `
-  width : 100%;
-  height: 100%;
+  width : var(--body-width);
+  height: var(--body-height);
+  --profile-width: calc(var(--body-width) * 0.25);
+  --canvas-width: calc(var(--body-width) * 0.5);
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: row;
-  justify-content : space-evenly;
+  justify-content : center;
   align-items : center;
-  gap : 1rem;
-
-
+  box-sizing: border-box;
 `
 //위는 건들지 마!
 
 export const CanvasContainer = styled.div `
   background: white;
-  --h : min(600px, 50vh);
-  --w : min(min(700px, 80vw), calc(var(--h) * 1.5));
-  width: calc(var(--w) + 10px);
-  height: calc(var(--w) / 1.5 + 10px);
+  --canv-padding: calc(min(var(--html-padding-vertical), var(--html-padding-horizontal))/2);
+  --h : calc(var(--body-height) - 2*var(--canv-padding));
+  --w : calc(min(var(--canvas-width), calc(var(--h) * 1.5)) - 2*var(--canv-padding));
+  --border-width: calc(var(--w) / 100);
+  width: calc(var(--w) + 2*var(--canv-padding));
+  height: calc(var(--w) / 1.5 + 2*var(--canv-padding));
   position : relative;
   border-radius: calc(var(--w) / 600 * 20);
-  border: calc(var(--w) / 600 * 6) solid black;
+  border: var(--border-width) solid black;
   box-sizing: content-box;
   overflow: hidden;
 `
 
 export const SingleCanvas = styled.canvas `
-  width: calc(100% - 10px);
+  width: calc(100% - 2*var(--canv-padding));
   height: fit-content;
   position: absolute;
   border: none;
-  left : 5px;
-  top: 5px;
-  border-radius: calc(var(--w) / 600 * 20 - 10px);
+  left : var(--canv-padding);
+  top: var(--canv-padding);
+  border-radius: calc(var(--w) / 600 * 20 - var(--canv-padding));
   overflow: hidden;
-`
-export const QuitButton = styled.button `
-  width: 30%;
-  height : 30px;
-  max-width : 120px;
-  aspect-ratio : 3.5;
-  border-radius : 5px;
-  background : black;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  p {
-    color: white;
-    background: none;
-    border: none;
-    text-align: center;
-    /* font-size: 8pt; */
-  }
-  margin-top: 3%;
-
-  &:active {
-    p {
-      color: rgb(80,80,80);
-    }
-  }
-
-  &:hover {
-    background: rgb(50,50,50);
-  }
 `
 
 // 플레이어 정보 담을 컨테이너 만들어야 함.
