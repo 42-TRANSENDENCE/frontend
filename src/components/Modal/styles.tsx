@@ -24,6 +24,38 @@ export const CreateModal = styled.div`
     z-index: 1012;
     position: relative;
   }
+
+  #file-upload {
+  display: none;
+  }
+  .custom-file-upload {
+    --w : min(max(10vw, 100px), 150px);
+    width: var(--w);
+    aspect-ratio: 4/3;
+    border-radius : calc(var(--w) * 45 / 200);
+    border: calc(var(--w) * 6 / 200) solid black;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    img {
+      width: 100%;
+      margin: 0;
+    };
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.98);
+    };
+
+    &:active {
+      opacity: 0.4;
+    };
+  }
 `;
 
 export const CloseModalButton = styled.button`
