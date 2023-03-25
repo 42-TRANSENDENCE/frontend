@@ -26,7 +26,7 @@ export const Container = styled.div`
     align-items: top;
     justify-content: top;
     overflow-y: scroll;
-    &::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: none; // 크롬, 사파리, 오페라, 엣지
   }
   }
@@ -67,7 +67,7 @@ export const Container = styled.div`
         justify-content: space-between;
         gap: var(--html-padding-vertical);
         Button {
-          width: 80%;
+          width: calc(var(--section-width) * 0.9);
           border: var(--border-width) solid black;
         }
       }
@@ -79,7 +79,7 @@ export const Container = styled.div`
         justify-content: center;
         gap: var(--html-padding-horizontal);
         Button {
-          width: 30%;
+          width: calc(var(--section-width) * 0.35);
           border: var(--border-width) solid black;
         }
       }
@@ -88,7 +88,8 @@ export const Container = styled.div`
     .RightSide {
       gap: var(--html-padding-vertical);
       .Profile{
-        width: calc(var(--section-width) * 0.80);;
+        --w : calc(var(--section-width) * 0.80);
+        width: var(--w);
       }
       .Notification {
         --w : calc(var(--section-width) * 0.95);

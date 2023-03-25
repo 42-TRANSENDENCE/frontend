@@ -17,7 +17,7 @@ import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import avatarSubmitButton from '../../assets/middleButton/AvatarSubmitButton.svg';
 import avatarUploadButton from '../../assets/middleButton/AvatarUploadButton.svg';
 import nicknameSubmitButton from '../../assets/middleButton/nicknameSubmitButton.svg';
-import { Switch } from '@material-ui/core';
+import {Switch} from '@mui/material';
 
 const Home = () => {
   const queryClient = useQueryClient();
@@ -139,8 +139,10 @@ const Home = () => {
             </div>
 
             <div className="MiddleSide Section">
-              <BigButton img_url={chatButton} onClick={onClickChat} />
-              <BigButton img_url={gameButton} onClick={onClickGame} />
+              <div className="BigButtons">
+                <BigButton img_url={chatButton} onClick={onClickChat} />
+                <BigButton img_url={gameButton} onClick={onClickGame} />
+              </div>
               <div className="MidiumButtons">
                 <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
                 <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
@@ -148,13 +150,15 @@ const Home = () => {
             </div>
 
             <div className="RightSide Section">
-              <Profile
-                imageSrc={URL.createObjectURL(userAvatar ? userAvatar : new Blob())}
-                nickname={userInfoData?.nickname}
-                win={15}
-                lose={5}
-                who={ProfileEnum.ME}
-              />
+              <div className="Profile">
+                <Profile
+                  imageSrc={URL.createObjectURL(userAvatar ? userAvatar : new Blob())}
+                  nickname={userInfoData?.nickname}
+                  win={15}
+                  lose={5}
+                  who={ProfileEnum.ME}
+                />
+              </div>
               <div className='Notification'>
                 Notification
               </div>
