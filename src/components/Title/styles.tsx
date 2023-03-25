@@ -9,11 +9,9 @@ export const TitleContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 2rem;
-  border: 0.3rem solid black;
+  border-radius: calc(var(--title-height) / 2);
+  border: var(--border-width) solid black;
   overflow: hidden;
-
-
   
   .Home {
     --button-size: calc(var(--title-height) * 0.6); 
@@ -50,7 +48,7 @@ export const TitleContainer = styled.div`
       font-weight: 600;
       line-height: calc(var(--title-height) * 0.5);
       font-size: calc(var(--title-height) * 0.5);
-      border-top: 0.2rem solid black;
+      border-top: var(--border-width) solid black;
     }
   }
 
@@ -111,7 +109,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
 
 export const SearchBox = styled.input`
   width: calc(100% - var(--button-size) * 1.5 - 5px);
-  height: 90%;
+  height: 120%;
   background-color: transparent;
   
   color: black;
@@ -119,7 +117,7 @@ export const SearchBox = styled.input`
 
   position: absolute;
   right: calc(var(--button-size) + 5px);
-  top: 5%;
+  top: -10%;
 
   border-radius: 10px;
   border: 2px solid gray;
