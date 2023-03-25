@@ -8,8 +8,8 @@ const GlobalStyles = createGlobalStyle`
     --color-green: #64E469;
     --color-yellow: #FCF451;
     --color-gray: #D9D9D9;
-    --html-padding-horizontal: min(50px, 2.5vw);
-    --html-padding-vertical: min(30px, 2.5vh);
+    --html-padding-horizontal: min(25px, 2.5vw);
+    --html-padding-vertical: min(25px, 2.5vh);
 
     margin: 0;
     padding: 0;
@@ -36,11 +36,11 @@ const GlobalStyles = createGlobalStyle`
     --page-height : calc(100vh - 2*var(--html-padding-vertical));
 
     --title-width: calc(var(--page-width) * 0.90);
-    --title-height : calc(var(--title-width) * (12 / 180));
+    --title-height : calc(var(--title-width) * (8 / 180));
     
     --body-width: var(--title-width);
     --body-height: calc(var(--page-height) - 1*var(--title-height) - 3*var(--html-padding-vertical));
-    --border-width: min(5px, calc(var(--title-width) * 5 / 1800));
+    --border-width: min(5px, calc(min(var(--body-width), var(--body-height)) * 8 / 1800));
   
     width: var(--page-width);
     height: var(--page-height);
