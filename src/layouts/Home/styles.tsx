@@ -14,68 +14,97 @@ export const Container = styled.div`
   .Title{
     width: var(--title-width);
     height: var(--title-height);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: top;
+  }
+
+  .BodyOuter {
+    width: var(--body-width);
+    height: var(--body-height);
+    display: flex;
+    align-items: top;
+    justify-content: top;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+    display: none; // 크롬, 사파리, 오페라, 엣지
+  }
   }
   
   .Body{
+    --body-height: max(calc(var(--page-height) - 1*var(--title-height) - 3*var(--html-padding-vertical)), calc(var(--body-width) * (9/16)));
     width: var(--body-width);
     height: var(--body-height);
 
+
     display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: auto;
+    justify-content: space-between;
+    align-items: top;
     flex-direction: row;
-    gap: 1%;
-    .LeftSide{
-      flex: 0.8;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .MiddleSide{
-      flex: 1.2;
-      height: 100%;
+    overflow: hidden;
+
+    .Section {
+      --section-width: calc(var(--body-width) * 0.33 - var(--html-padding-horizontal));
+      width: var(--section-width);
+      height: var(--body-height);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 5%;
+    }
+    
+    .LeftSide{
+    }
+    
+    .MiddleSide{
+      --section-width: calc(var(--body-width) * 0.34);
+      width: var(--section-width);
+      gap: var(--html-padding-vertical);
+      .BigButtons{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--html-padding-vertical);
+        Button {
+          width: 80%;
+          border: var(--border-width) solid black;
+        }
+      }
 
       .MidiumButtons {
         display: flex;
-        width: fit-content;
         flex-direction: row;
-        gap: 20%;
+        align-items: center;
+        justify-content: center;
+        gap: var(--html-padding-horizontal);
+        Button {
+          width: 30%;
+          border: var(--border-width) solid black;
+        }
       }
     }
 
     .RightSide {
-      flex: 0.8;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 5%;
-      align-items: center;
-      flex-direction: column;
-
+      gap: var(--html-padding-vertical);
+      .Profile{
+        width: calc(var(--section-width) * 0.80);;
+      }
       .Notification {
-        --w: min(30vw, 450px);
+        --w : calc(var(--section-width) * 0.95);
+        --h : calc(var(--w) * 0.2);
         width: var(--w);
-        height: 15%;
-        max-height: 70px;
+        height: var(--h);
         background: white;
-        border-radius: calc(var(--w) * 25 / 450);
-        border: calc(var(--w) * 7 / 450) solid black;
+        border-radius: calc(var(--h) / 3 );
+        border: var(--border-width) solid black;
         text-align: center;
         margin-top: 2rem;
       }
     }
   }
-  .Body::-webkit-scrollbar {
-    display: none; // 크롬, 사파리, 오페라, 엣지
-  }
   `
-
   
   // export const Div = styled.div`
   //   /* flexbox: row; */

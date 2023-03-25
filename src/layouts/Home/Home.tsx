@@ -152,30 +152,36 @@ const Home = () => {
         <Title title='PONG HOME' home={true} search={true}/>
       </div>
 
-      <div className='Body'>
-        <div className="LeftSide">
-          <OnlineList Flex={1.8}/>
-        </div>
-
-        <div className="MiddleSide">
-          <BigButton img_url={chatButton} onClick={onClickChat} />
-          <BigButton img_url={gameButton} onClick={onClickGame} />
-          <div className="MidiumButtons">
-            <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
-            <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+      <div className='BodyOuter'>
+        <div className='Body'>
+          <div className="LeftSide Section">
+            <OnlineList Flex={1.8}/>
           </div>
-        </div>
 
-        <div className="RightSide">
-          <Profile
-            imageSrc={friends}
-            nickname='keokim'
-            win={15}
-            lose={5}
-            who={ProfileEnum.FRIEND}
-          />
-          <div className='Notification'>
-            Notification
+          <div className="MiddleSide Section">
+            <div className='BigButtons'>
+              <BigButton img_url={chatButton} onClick={onClickChat} />
+              <BigButton img_url={gameButton} onClick={onClickGame} />
+            </div>
+            <div className="MidiumButtons">
+              <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
+              <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
+            </div>
+          </div>
+
+          <div className="RightSide Section">
+            <div className='Profile'>
+              <Profile
+                imageSrc={friends}
+                nickname='keokim'
+                win={15}
+                lose={5}
+                who={ProfileEnum.FRIEND}
+              />
+            </div>
+            <div className='Notification'>
+              Notification
+            </div>
           </div>
         </div>
       </div>
