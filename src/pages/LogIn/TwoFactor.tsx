@@ -108,7 +108,7 @@ const TwoFactor = () => {
       </div>
       <div className='Body'>
         <Form onSubmit={onSubmit}>
-          <div>
+          <div className='Input'>
             <Label id='password'>
               <p>Google Authenticator</p>
               <TwoFactorInputContainer>

@@ -35,9 +35,13 @@ export const Container = styled.div`
 
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: center;
     align-items: center;
     overflow: hidden;
+
+    .Input {
+      margin-bottom: var(--title-height);
+    }
 
     .BigButtons{
       display: flex;
@@ -59,6 +63,7 @@ export const Label = styled.label`
   display:flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: var(--label-height);
   > p {
     width: var(--body-width);
     height: var(--label-height);
@@ -104,7 +109,6 @@ export const LongInput = styled.input`
   font-size: calc(var(--input-height) * 0.6);
   line-height: var(--input-height);
   transition: 0.3s;
-  margin-bottom: var(--html-padding-vertical);
   &:focus {
     width: calc(var(--body-width) * 0.4);
   }
@@ -121,5 +125,5 @@ export const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
 `
