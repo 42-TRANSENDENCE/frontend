@@ -1,4 +1,4 @@
-import { Container } from '../../styles/styles';
+import { Container } from './styles';
 import loginButton from '../../assets/bigButton/loginButton.svg';
 import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
@@ -15,10 +15,14 @@ const LogIn = () => {
   return (
     <Container>
       <div className='Title'>
-        <Title title='PONG PONG' />
+        <Title title='PONG PONG'/>
       </div>
-      <div className='Body'>
-        <BigButton img_url={loginButton} onClick={onClick} />
+      <div className='BodyOuter'>
+        <div className='Body'>
+          <div className='BigButtons'>
+            <BigButton img_url={loginButton} onClick={onClick} />
+          </div>
+        </div>
       </div>
     </Container>
   );
