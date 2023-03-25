@@ -8,8 +8,8 @@ const GlobalStyles = createGlobalStyle`
     --color-green: #64E469;
     --color-yellow: #FCF451;
     --color-gray: #D9D9D9;
-    --html-padding-horizontal: 2.5vw;
-    --html-padding-vertical: 2.5vh;
+    --html-padding-horizontal: min(50px, 2.5vw);
+    --html-padding-vertical: min(30px, 2.5vh);
 
     margin: 0;
     padding: 0;
@@ -20,8 +20,8 @@ const GlobalStyles = createGlobalStyle`
     text-decoration: none;
 
     box-sizing: border-box;
-    /* background-color: var(--color-yellow); */
     background-color: rgb(50, 50, 50);
+    /* background-color: var(--color-yellow); */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,16 +31,18 @@ const GlobalStyles = createGlobalStyle`
     overflow: hidden;
   }
   body {
+    // page 가로 세로, title 가로 세로, 테두리 두께 공통.
     --page-width : min(1920px, calc(100vw - 2*var(--html-padding-horizontal)));
     --page-height : calc(100vh - 2*var(--html-padding-vertical));
 
-    --title-width: calc(var(--page-width) * 0.95);
-    --title-height : max(50px, min(100px, calc(var(--page-height) * 0.1)));
+    --title-width: calc(var(--page-width) * 0.90);
+    --title-height : calc(var(--title-width) * (12 / 180));
     
     --body-width: var(--title-width);
     --body-height: calc(var(--page-height) - 1*var(--title-height) - 3*var(--html-padding-vertical));
+    --border-width: min(5px, calc(var(--title-width) * 5 / 1800));
+  
     width: var(--page-width);
-    max-width: 1920px;
     height: var(--page-height);
     background: var(--color-blue);
     color: black;
