@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { QueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
 import { Container } from '../../styles/styles';
