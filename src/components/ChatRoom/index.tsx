@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg';
 import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
+import { ChatRoomContainer } from './styles';
 
 const chat_backurl = 'http://127.0.0.1:3095';
 
@@ -25,7 +26,7 @@ async function postCreateRoom(
     }),
   }).then((res) => res.json());
 }
-const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
+const ChatRoom = ({ socket }: { socket: any }) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [findRoomName, setFindRoomName] = useState('');
@@ -123,7 +124,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   };
 
   const onSubmitRoomName = useCallback(
-    (e) => {
+    (e: any) => {
       e.preventDefault();
       if (findRoomName.trim() === '') {
         setFilteredRooms(rooms);
@@ -132,7 +133,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
         // console.log('filteredRooms: ', filteredRooms);
         return;
       }
-      const newFilteredRooms = rooms.filter((v) => {
+      const newFilteredRooms = rooms.filter((v: any) => {
         return v.title === findRoomName.trimLeft();
       });
       setFilteredRooms(newFilteredRooms);
@@ -142,10 +143,10 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   );
 
   const onChangeInput = useCallback(
-    (e) => {
+    (e: any) => {
       e.preventDefault();
       setFindRoomName(e.target.value);
-      const newFilteredRooms = rooms.filter((v) => {
+      const newFilteredRooms = rooms.filter((v: any) => {
         return v.title.includes(e.target.value.trimLeft());
       });
       setFilteredRooms(newFilteredRooms);
@@ -244,18 +245,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   if (isLoadingRooms || isLoadingUser) return <div>isLoading...</div>;
 
   return (
-    <div
-      style={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRadius: '2rem',
-        border: '0.3rem solid black',
-        padding: '1rem',
-        background: 'white',
-        flex: Flex,
-      }}
-    >
+    <ChatRoomContainer>
       <form
         style={{
           flex: 1,
@@ -445,7 +435,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
           </button>
         </form>
       </CreateRoomModal>
-    </div>
+    </ChatRoomContainer>
   );
 };
 
