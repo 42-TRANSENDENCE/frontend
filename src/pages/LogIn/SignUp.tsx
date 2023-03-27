@@ -40,25 +40,25 @@ const SignUp = () => {
       </div>
       <div className='BodyOuter'>
         <div className='Body'>
-          <div className='Input'>
-            <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit}>
+            <div className='Input'>
               <Label id='nickname-label'>
                 <p>N I C K N A M E</p>
-                  <LongInput
-                    placeholder='nickname'
-                    {...nickname}
-                    onChange={onNicknameChange}
-                  />
-                  </Label>
+                <LongInput
+                  placeholder='nickname'
+                  {...nickname}
+                  onChange={onNicknameChange}
+                />
+              </Label>
               {nicknameConflict && (
                 <Conflict>Nickname already exist. Try something else.</Conflict>
               )}
-            </form>
-          </div>
+            </div>
 
-          <div className='BigButtons'>
-            <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
-          </div>
+            <div className='BigButtons'>
+              <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
+            </div>
+          </form>
         </div>
       </div>
     </Container>
