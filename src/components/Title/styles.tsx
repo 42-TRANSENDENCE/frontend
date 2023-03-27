@@ -45,7 +45,7 @@ export const TitleContainer = styled.div`
 
     span{
       background-color: none;
-      font-weight: 600;
+      font-weight: 400;
       line-height: calc(var(--title-height) * 0.5);
       font-size: calc(var(--title-height) * 0.5);
       border-top: var(--border-width) solid black;

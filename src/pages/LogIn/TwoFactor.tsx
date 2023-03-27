@@ -1,8 +1,7 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { Label, Input, Inputs, Form, Conflict } from './styles';
-import { Container } from '../../styles/styles';
+import { Container, Label, TwoFactorSingleInput, TwoFactorInputContainer, Conflict, Form } from './styles';
 import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 import loginButton from '../../assets/bigButton/2FALoginButton.svg';
@@ -109,22 +108,25 @@ const TwoFactor = () => {
       </div>
       <div className='Body'>
         <Form onSubmit={onSubmit}>
-          <Label id='password'>
-            <span>Google Authenticator</span>
-            <Inputs>
-              <Input type='text' maxLength={1} ref={ref1} onChange={(event) => handleOnChange(0, event.target.value)} />
-              <Input type='text' maxLength={1} ref={ref2} onChange={(event) => handleOnChange(1, event.target.value)} />
-              <Input type='text' maxLength={1} ref={ref3} onChange={(event) => handleOnChange(2, event.target.value)} />
-              <Input type='text' maxLength={1} ref={ref4} onChange={(event) => handleOnChange(3, event.target.value)} />
-              <Input type='text' maxLength={1} ref={ref5} onChange={(event) => handleOnChange(4, event.target.value)} />
-              <Input type='text' maxLength={1} ref={ref6} onChange={(event) => handleOnChange(5, event.target.value)} />
-            </Inputs>
-          </Label>
-          {twoFactorError && (
-            <Conflict>2FA authentication failed. Please try again.</Conflict>
-        )}
-
-          <BigButton img_url={loginButton} type='submit' />
+          <div className='Input'>
+            <Label id='password'>
+              <p>Google Authenticator</p>
+              <TwoFactorInputContainer>
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref1} onChange={(event) => handleOnChange(0, event.target.value)} />
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref2} onChange={(event) => handleOnChange(1, event.target.value)} />
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref3} onChange={(event) => handleOnChange(2, event.target.value)} />
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref4} onChange={(event) => handleOnChange(3, event.target.value)} />
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref5} onChange={(event) => handleOnChange(4, event.target.value)} />
+                <TwoFactorSingleInput type='text' maxLength={1} ref={ref6} onChange={(event) => handleOnChange(5, event.target.value)} />
+              </TwoFactorInputContainer>
+            </Label>
+            {twoFactorError && (
+              <Conflict>2FA authentication failed. Please try again.</Conflict>
+            )}
+          </div> 
+          <div className='BigButtons'>
+            <BigButton img_url={loginButton} type='submit' />
+          </div>
         </Form>
       </div>
     </Container>

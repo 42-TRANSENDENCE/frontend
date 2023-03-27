@@ -1,4 +1,4 @@
-import TwoFactor from '@/pages/TwoFactor/TwoFactor';
+import TwoFactor from '@/pages/LogIn/TwoFactor';
 import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from 'react-query';
 type ImageFile = File | null;
 
