@@ -1,42 +1,17 @@
 import React, { useCallback, useState } from 'react';
-import { QueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 import useInput from '../../hooks/useInput';
+import { isValidNickname } from '../../hooks/user';
+import { useSignup } from '../../hooks/mutation/user';
 import { Container } from '../../styles/styles';
 import { Label, Input, Conflict } from './styles';
-import {BigButton} from '../../components/Button';
+import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 import signupButton from '../../assets/bigButton/signupButton.svg';
 
 const SignUp = () => {
-  const awsUrl = import.meta.env.VITE_AWS_URL;
-  const navigate = useNavigate();
-  const queryClient = new QueryClient();
+  const signup = useSignup();
 
-  const isValidUsername = (username: string): boolean => {
-    const consecutivePeriodsRegex = /\.{2,}/;
-    const invalidCharactersRegex = /[^\w-.']/;
-
-    // lowercase the username
-    username = username.toLowerCase();
-
-    // check for consecutive periods and invalid characters
-    if (
-      consecutivePeriodsRegex.test(username) ||
-      invalidCharactersRegex.test(username)
-    ) {
-      return false;
-    }
-
-    // check the length
-    if (username.length > 12) {
-      return false;
-    }
-
-    return true;
-  };
-
-  const nickname = useInput('', isValidUsername);
+  const nickname = useInput('', isValidNickname);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   const [nicknameConflict, setNicknameConflict] = useState(false);
 
@@ -44,30 +19,9 @@ const SignUp = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setNicknameConflict(false);
-      queryClient
-        .fetchQuery('signup', () =>
-          fetch(awsUrl + '/auth/signup', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ nickname: nickname.value }),
-          })
-        )
-        .then((response) => {
-          if (response.status === 201) {
-            navigate('/home');
-          } else if (response.status === 401) {
-            console.log('accessToken expired');
-          } else if (response.status === 400) {
-            setNicknameConflict(true);
-          } else {
-            throw new Error('Unexpected response status code');
-          }
-        });
+      signup.mutate(nickname.value);
     },
-    [nickname, navigate, queryClient, awsUrl]
+    [nickname, signup]
   );
 
   const onNicknameChange = useCallback(

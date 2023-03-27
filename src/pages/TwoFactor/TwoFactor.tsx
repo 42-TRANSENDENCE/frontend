@@ -1,6 +1,7 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { Label, Input, Inputs, Form, Conflict } from './styles';
 import { Container } from '../../styles/styles';
 import { BigButton } from '../../components/Button';
@@ -31,6 +32,7 @@ const TwoFactor = () => {
     if (response.status === 200) {
       navigate('/home');
     } else if (response.status === 401) {
+      toast.error('Wrong password. Try again');
       setTwoFactorError(true);
       setPassword('');
     } else {
