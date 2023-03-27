@@ -14,7 +14,7 @@ import ChatList from '../../components/ChatList';
 import ChatRoom from '../../components/ChatRoom';
 import OnlineList from '../../components/OnlineList';
 import Title from '../../components/Title';
-import { Container } from '../LogIn/styles';
+import { Container } from '../../layouts/Home/styles';
 import { Link } from 'react-router-dom';
 
 // ChatList마다 reRendering대신 reMounting을 하기 위해 key={roomId}를 넘겨줌
@@ -42,47 +42,52 @@ const Chat = () => {
         <div className="Title">
           <Title title="PONG CHAT" home search />
         </div>
-        <div className="Body" style={{ gap: '1rem' }}>
-          <OnlineList Flex={1} />
-          {/* <ChatList Flex={1.85} /> */}
-          <Routes>
-            <Route path="/" element={<Navigate replace to="v3_rooms" />} />
-            <Route path="v3_rooms/*">
-              <Route
-                path=":roomId/chat"
-                element={
-                  // <ChatList
-                  //   socket={chat_socket}
-                  //   Flex={1.85}
-                  //   key={useParams().roomId}
-                  // />
-                  <ChatContainer socket={chat_socket} Flex={1.85} />
-                }
-              />
-              <Route
-                path="*"
-                element={
-                  <div
-                    style={{
-                      flex: '1.85',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <Link to="/">
-                      <span>홈으로</span>
-                    </Link>
-                    <Link to="/chat/createUsers">유저들 만들기</Link>
-                    <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
-                    <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
-                    <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
-                    <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
-                  </div>
-                }
-              />
-            </Route>
-          </Routes>
-          <ChatRoom socket={chat_socket} Flex={1} />
+        <div className="BodyOuter">
+          <div className="Body">
+            <div className="LeftSide Section">
+              <OnlineList Flex={1} />
+            </div>
+
+            <div className="MiddleSide Section">
+              <Routes>
+                <Route path="/" element={<Navigate replace to="v3_rooms" />} />
+                <Route path="v3_rooms/*">
+                  <Route
+                    path=":roomId/chat"
+                    element={<ChatContainer socket={chat_socket} Flex={1.85} />}
+                  />
+                  <Route
+                    path="*"
+                    element={
+                      <div
+                        style={{
+                          flex: '1.85',
+                          display: 'flex',
+                          flexDirection: 'column',
+                        }}
+                      >
+                        <Link to="/">
+                          <span>홈으로</span>
+                        </Link>
+                        <Link to="/chat/createUsers">유저들 만들기</Link>
+                        <Link to="/chat/getUsers/1">1번 유저 쿠키획득</Link>
+                        <Link to="/chat/getUsers/3">3번 유저 쿠키획득</Link>
+                        <Link to="/chat/v2_dms/rock11">
+                          rock11 유저와 dm하기
+                        </Link>
+                        <Link to="/chat/v2_dms/rock33">
+                          rock33 유저와 dm하기
+                        </Link>
+                      </div>
+                    }
+                  />
+                </Route>
+              </Routes>
+            </div>
+            <div className="RightSide Section">
+              <ChatRoom socket={chat_socket} Flex={1} />
+            </div>
+          </div>
         </div>
       </Container>
       <Routes>

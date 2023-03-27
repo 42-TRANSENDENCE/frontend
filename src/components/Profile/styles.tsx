@@ -1,8 +1,7 @@
 import styled from "styled-components";
 
 export const ProfileContainer = styled.div<any>`
-  --w: min(25vw, 400px);
-  --boarder_color: ${props => props.color || "black"};
+  --border-color: ${props => props.color || "black"};
   width: var(--w);
   aspect-ratio: 450/600;
   background: white;
@@ -11,8 +10,8 @@ export const ProfileContainer = styled.div<any>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 2rem;
-  border: calc(var(--w) * 7 / 400) solid var(--boarder_color);
+  border-radius: calc(var(--w) / 6);
+  border: var(--border-width) solid var(--border-color);
   text-align: center;
   overflow: hidden;
 
@@ -77,7 +76,7 @@ export const ProfileContainer = styled.div<any>`
 
 export const Avatar = styled.img`
   border-radius: 50%;
-  border: 0.3rem solid black;
-  width: 55%;
+  border: var(--border-width) solid black;
+  width: calc(var(--w) * 0.55);
   aspect-ratio: 1;
 `

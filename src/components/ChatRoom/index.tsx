@@ -324,11 +324,13 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
                     <img
                       src="../../../public/padlock_opened.png"
                       style={{ height: '30%' }}
+                      alt="padlock_opened"
                     />
                   ) : (
                     <img
                       src="../../../public/padlock_locked.png"
                       style={{ height: '30%' }}
+                      alt="padlock_locked"
                     />
                   )}
                 </div>
@@ -364,6 +366,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               (prevShowCreateRoomModal) => !prevShowCreateRoomModal
             );
           }}
+          title="방 만들기"
         >
           <img
             src={createRoomButtonUrl}
@@ -373,6 +376,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               maxWidth: '100%',
               maxHeight: '100%',
             }}
+            alt="createRoomButton"
           />
         </button>
       </div>
@@ -426,6 +430,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               width: '4rem',
               height: '4rem',
             }}
+            title="방 만들기(모달)"
           >
             <img
               src={createRoomButtonUrl}
@@ -435,6 +440,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
                 maxWidth: '100%',
                 maxHeight: '100%',
               }}
+              alt="createRoomButton(모달)"
             />
           </button>
         </form>

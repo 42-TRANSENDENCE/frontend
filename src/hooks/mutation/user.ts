@@ -1,22 +1,18 @@
-import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from "react-query";
-
+import TwoFactor from '@/pages/LogIn/TwoFactor';
+import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from 'react-query';
 type ImageFile = File | null;
 
 async function uploadAvatar(file: ImageFile): Promise<void> {
   if (!file) return;
-
+  const awsUrl = import.meta.env.VITE_AWS_URL;
   const formData = new FormData();
   formData.append("file", file);
-
-  const response = await fetch("http://44.195.129.81/users/avatar", {
-    method: "PUT",
+  
+  await fetch(awsUrl + '/users/avatar', {
+    method: 'PUT',
     body: formData,
     credentials: 'include',
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to upload avatar");
-  }
+  })
 }
 
 export function useUploadAvatar(): UseMutationResult<void, Error, ImageFile, MutationFunction<void, ImageFile>> {

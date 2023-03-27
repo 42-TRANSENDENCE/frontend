@@ -83,9 +83,8 @@ const ChatsMenu = ({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {
-      res.json();
     });
+    return res.json();
   };
 
   const onAdminOther = async () => {
@@ -96,9 +95,8 @@ const ChatsMenu = ({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {
-      res.json();
     });
+    return res.json();
   };
 
   const onMuteOther = async () => {
@@ -109,9 +107,8 @@ const ChatsMenu = ({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({}),
-    }).then((res) => {
-      res.json();
     });
+    return res.json();
   };
 
   return (
@@ -219,7 +216,7 @@ const ChatListComponent = ({
   chatDatas: any;
   roomDatas: any;
   myUser: any;
-  roomId: string;
+  roomId: string | undefined;
 }) => {
   // const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
   // const handleProfileImageClick = useCallback(
@@ -328,7 +325,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   const onMessage = useCallback(
     async (data: any) => {
-      // console.log("데이터: ", data);
+      console.log('onMessage데이터: ', data);
       queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
@@ -359,7 +356,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
         toast.clearWaitingQueue();
       }
     },
-    [queryClient, roomId]
+    [queryClient, roomId, userData]
   );
   const onJoin = useCallback(function (data: any) {
     console.log('JoinData: ', data);
@@ -457,11 +454,11 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
 
   return (
     <div
-      key={Number(roomId)}
       style={{
         borderRadius: '2rem',
         border: '0.3rem solid black',
         height: '100%',
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
