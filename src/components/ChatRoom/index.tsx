@@ -4,23 +4,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg';
 import CreateRoomModal from '../Modal';
-
-// const roomsInfo = [
-//   { roomName: 'roomName1', owner: 'owner', status: 0 },
-//   { roomName: 'roomName2', owner: 'owner', status: 0 },
-//   { roomName: 'roomName3', owner: 'owner', status: 1 },
-//   { roomName: 'roomName4', owner: 'owner', status: 0 },
-//   { roomName: 'roomName5', owner: 'owner', status: 0 },
-//   { roomName: 'roomName6', owner: 'owner', status: 1 },
-//   { roomName: 'roomName7', owner: 'owner', status: 1 },
-//   { roomName: 'roomName8', owner: 'owner', status: 0 },
-//   { roomName: 'roomName9', owner: 'owner', status: 1 },
-//   { roomName: 'roomName10', owner: 'owner', status: 0 },
-//   { roomName: 'roomName11', owner: 'owner', status: 0 },
-//   { roomName: 'roomName12', owner: 'owner', status: 0 },
-//   { roomName: 'roomName13', owner: 'owner', status: 0 },
-//   { roomName: 'roomName14', owner: 'owner', status: 0 },
-// ];
+import searchButtonUrl from '../../assets/Search.svg';
 
 const chat_backurl = 'http://127.0.0.1:3095';
 
@@ -39,7 +23,7 @@ async function postCreateRoom(
       password,
       owner,
     }),
-  }).then((res) => res.text());
+  }).then((res) => res.json());
 }
 const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
   const navigate = useNavigate();
@@ -52,15 +36,15 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
 
   const queryClient = useQueryClient();
 
-  const onChangeTitle = (e: any) => {
+  const onChangeTitle = useCallback((e: any) => {
     e.preventDefault();
     setTitle(e.target.value);
-  };
+  }, []);
 
-  const onChangePassword = (e: any) => {
+  const onChangePassword = useCallback((e: any) => {
     e.preventDefault();
     setPassword(e.target.value);
-  };
+  }, []);
 
   const token = localStorage.getItem('jwt_token');
   const options = {
@@ -68,12 +52,9 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  const {
-    data: rooms,
-    isLoading,
-    refetch,
-  } = useQuery<any>(['roomlist'], () =>
-    fetch(chat_backurl + `/rooms/`).then((res) => res.json())
+  const { data: rooms, isLoading: isLoadingRooms } = useQuery<any>(
+    ['roomlist'],
+    () => fetch(chat_backurl + `/rooms/`).then((res) => res.json())
   );
   const { data: user, isLoading: isLoadingUser } = useQuery<any>(['user'], () =>
     fetch(chat_backurl + '/user', options).then((res) => res.json())
@@ -85,9 +66,6 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
     }
   }, [rooms]);
 
-  // if (user) console.log(user);
-  console.log('rooms데이터: ', rooms);
-
   const onCloseCreateRoomModal = useCallback(() => {
     setShowCreateRoomModal(
       (prevShowCreateRoomModal) => !prevShowCreateRoomModal
@@ -98,7 +76,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
 
   const onNewRoom = useCallback(
     async (data: any) => {
-      console.log('newRoom 데이터: ', data);
+      // console.log('newRoom 데이터: ', data);
       queryClient.setQueryData(['roomlist'], () => {
         return [...rooms, data];
       });
@@ -106,15 +84,11 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
     [queryClient, rooms]
   );
 
-  // const onRemoveRoom = useCallback((data: any) => refetch(), [refetch]);
   const onRemoveRoom = useCallback(
     async (data: any) => {
-      // console.log("removeRoom 데이터: ", data);
-      // console.log("rooms.data: ", rooms.data);
       const new_rooms = rooms.filter(
         (room: any) => Number(room.id) !== Number(data)
       );
-      // console.log("rooms.data후: ", rooms.data);
       queryClient.setQueryData(['roomlist'], () => {
         return new_rooms;
       });
@@ -154,6 +128,8 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
       if (findRoomName.trim() === '') {
         setFilteredRooms(rooms);
         setFindRoomName('');
+        // console.log('rooms: ', rooms);
+        // console.log('filteredRooms: ', filteredRooms);
         return;
       }
       const newFilteredRooms = rooms.filter((v) => {
@@ -162,47 +138,63 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
       setFilteredRooms(newFilteredRooms);
       setFindRoomName('');
     },
-    [findRoomName]
+    [findRoomName, rooms]
   );
 
-  const onChangeInput = (e) => {
-    e.preventDefault();
-    setFindRoomName(e.target.value);
-    const newFilteredRooms = rooms.filter((v) => {
-      return v.title.includes(e.target.value.trimLeft());
-    });
-    setFilteredRooms(newFilteredRooms);
-  };
+  const onChangeInput = useCallback(
+    (e) => {
+      e.preventDefault();
+      setFindRoomName(e.target.value);
+      const newFilteredRooms = rooms.filter((v) => {
+        return v.title.includes(e.target.value.trimLeft());
+      });
+      setFilteredRooms(newFilteredRooms);
+    },
+    [rooms]
+  );
 
   const onEnterEvent = useCallback(
     (e: any) => {
-      fetch(chat_backurl + `/room/${e.target.dataset.id}`)
+      e.preventDefault();
+      const roominfoEl = e.target.closest('[data-id]');
+      const dataset_roomId = roominfoEl.getAttribute('data-id');
+      const dataset_hasPassword =
+        roominfoEl.getAttribute('data-password') === 'true';
+      console.log(dataset_roomId + '번 방에 입장합니다.');
+      fetch(chat_backurl + `/room/${dataset_roomId}`, options)
         .then((res) => res.json())
         .then((data) => {
+          console.log('memberList: ' + data.memberList);
+          console.log(
+            'kickedList + ' + data.kickList.map((v: any) => v.username)
+          );
+
           /* 기존 참여자 */
-          console.log('방 입장 데이터: ', data);
-          console.log('error체크1 user:', user);
+          const is_kicked = data.kickList.find(
+            (kickData: any) => kickData.username === user.username
+          );
+          if (is_kicked) {
+            // setErrorMessage('강퇴당한 유저입니다.');
+            console.log('강퇴당한 유저입니다.');
+            // queryClient.invalidateQueries(['chat', String(dataset_roomId)]);
+            navigate(`v3_rooms/${dataset_roomId}/chat`);
+            return;
+          }
           const is_member = data.memberList.find(
             (memberName: any) => memberName === user.username
           );
-          console.log('error체크2');
+
           if (is_member) {
             console.log('기존 참여자 입장');
-            navigate(`v3_rooms/${e.target.dataset.id}/chat`);
+            navigate(`v3_rooms/${dataset_roomId}/chat`);
             return;
           }
-          const is_kicked = data.kickList.find(
-            (memberName: any) => memberName === user.username
-          );
-          if (is_kicked) {
-            setErrorMessage('강퇴당한 유저입니다.');
-            return;
-          }
+
           /* 최초 입장 */
+          // TODO : api 문서에 따라 returnFail 수정
           if (data.status === 0) {
-            console.log('공개방 최초 입장하십니다');
             const token = localStorage.getItem('jwt_token');
-            fetch(chat_backurl + `/room/${e.target.dataset.id}`, {
+            fetch(chat_backurl + `/room/${dataset_roomId}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -210,9 +202,12 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               },
               body: JSON.stringify({}),
             }).then((res) => {
-              console.log(res);
+              // console.log(res);
               if (res.status === 200) {
-                navigate(`v3_rooms/${e.target.dataset.id}/chat`);
+                console.log('공개방 최초입장');
+                socket?.emit('join', dataset_roomId);
+                res.json();
+                navigate(`v3_rooms/${dataset_roomId}/chat`);
               } else {
                 setErrorMessage('방에 입장할 수 없습니다.');
               }
@@ -221,7 +216,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
           } else {
             /* 비공개방 */
             const password = prompt('비밀번호를 입력하세요');
-            fetch(chat_backurl + `/room/${e.target.dataset.id}`, {
+            fetch(chat_backurl + `/room/${dataset_roomId}`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -231,8 +226,10 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
             }).then((res) => {
               if (res.status === 200) {
                 console.log('비공개방 최초입장');
-                navigate(`v3_rooms/${e.target.dataset.id}/chat`);
-                return 'OK';
+                socket?.emit('join', dataset_roomId);
+                res.json();
+                navigate(`v3_rooms/${dataset_roomId}/chat`);
+                return;
               } else {
                 setErrorMessage('비밀번호가 틀렸습니다.');
               }
@@ -244,7 +241,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
     [user]
   );
 
-  if (isLoading || isLoadingUser) return <div>isLoading...</div>;
+  if (isLoadingRooms || isLoadingUser) return <div>isLoading...</div>;
 
   return (
     <div
@@ -280,7 +277,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
           }}
           onChange={onChangeInput}
           value={findRoomName}
-        ></input>
+        />
         <div
           style={{
             flex: 1,
@@ -290,7 +287,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
           }}
         >
           <img
-            src="../src/assets/Search.svg"
+            src={searchButtonUrl}
             style={{ width: '3rem', marginRight: '1rem', cursor: 'pointer' }}
             onClick={onSubmitRoomName}
           />
@@ -299,6 +296,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
       <div style={{ flex: 13 }}>
         <Scrollbars>
           {filteredRooms.map((roomInfo: any) => {
+            // console.log('roomInfo: ', roomInfo);
             return (
               <div
                 style={{
@@ -324,13 +322,15 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
                 >
                   {roomInfo.status === 0 ? (
                     <img
-                      src="../../public/padlock_opened.png"
+                      src="../../../public/padlock_opened.png"
                       style={{ height: '30%' }}
+                      alt="padlock_opened"
                     />
                   ) : (
                     <img
-                      src="../../public/padlock_locked.png"
+                      src="../../../public/padlock_locked.png"
                       style={{ height: '30%' }}
+                      alt="padlock_locked"
                     />
                   )}
                 </div>
@@ -366,6 +366,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               (prevShowCreateRoomModal) => !prevShowCreateRoomModal
             );
           }}
+          title="방 만들기"
         >
           <img
             src={createRoomButtonUrl}
@@ -375,6 +376,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               maxWidth: '100%',
               maxHeight: '100%',
             }}
+            alt="createRoomButton"
           />
         </button>
       </div>
@@ -428,6 +430,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
               width: '4rem',
               height: '4rem',
             }}
+            title="방 만들기(모달)"
           >
             <img
               src={createRoomButtonUrl}
@@ -437,6 +440,7 @@ const ChatRoom = ({ socket, Flex }: { socket: any; Flex: number }) => {
                 maxWidth: '100%',
                 maxHeight: '100%',
               }}
+              alt="createRoomButton(모달)"
             />
           </button>
         </form>

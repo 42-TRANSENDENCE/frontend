@@ -24,14 +24,13 @@ export const Container = styled.div`
     align-items: top;
     justify-content: top;
     overflow-y: scroll;
-  &::-webkit-scrollbar {
-    display: none; // 크롬, 사파리, 오페라, 엣지
-  }
+    &::-webkit-scrollbar {
+      display: none; // 크롬, 사파리, 오페라, 엣지
+    }
   }
   .Body {
     width: var(--body-width);
     height: var(--body-height);
-
 
     display: flex;
     flex-direction: column;
@@ -43,7 +42,7 @@ export const Container = styled.div`
       margin-bottom: var(--title-height);
     }
 
-    .BigButtons{
+    .BigButtons {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -51,7 +50,7 @@ export const Container = styled.div`
       gap: var(--html-padding-vertical);
       Button {
         --w: calc(var(--body-width) * 0.3);
-        width : var(--w);
+        width: var(--w);
         border: var(--border-width) solid black;
       }
     }
@@ -60,7 +59,7 @@ export const Container = styled.div`
 
 export const Label = styled.label`
   --label-height: calc(var(--body-width) / 40);
-  display:flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: var(--label-height);
@@ -75,23 +74,23 @@ export const Label = styled.label`
     line-height: var(--label-height);
     margin-bottom: calc(var(--label-height) / 2);
   }
-`
+`;
 
 export const TwoFactorInputContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap : calc(var(--body-width) * 0.4 / 24);
-`
+  gap: calc(var(--body-width) * 0.4 / 24);
+`;
 export const TwoFactorSingleInput = styled.input`
-  border-radius: calc(var(--body-width) * 0.4 / 27); 
+  border-radius: calc(var(--body-width) * 0.4 / 27);
   background: var(--color-gray);
   border: var(--border-width) solid black;
   width: calc(var(--body-width) * 0.4 / 9);
-  height:calc(var(--body-width) * 0.4 / 9);
+  height: calc(var(--body-width) * 0.4 / 9);
   font-size: calc(var(--body-width) * 0.4 / 18);
   text-align: center;
-`
+`;
 
 export const LongInput = styled.input`
   --input-width: calc(var(--body-width) / 5);
@@ -100,7 +99,7 @@ export const LongInput = styled.input`
   width: var(--input-width);
   height: var(--input-height);
   border-radius: calc(var(--input-height) / 4);
-  
+
   border: var(--border-width) solid black;
   transition: border 80ms ease-out, box-shadow 80ms ease-out;
   box-sizing: border-box;
@@ -112,13 +111,13 @@ export const LongInput = styled.input`
   &:focus {
     width: calc(var(--body-width) * 0.4);
   }
-`
+`;
 
 export const Conflict = styled.div`
   color: #e01e5a;
   font-weight: bold;
   text-align: center;
-`
+`;
 export const Form = styled.form`
   width: var(--body-width);
   height: var(--body-height);
@@ -126,4 +125,4 @@ export const Form = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`
+`;
