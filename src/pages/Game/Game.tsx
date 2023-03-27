@@ -8,7 +8,7 @@ import Waiting from './Waiting';
 import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
-import { Window } from '../../components/Window/Window';
+// import { Window } from '../../components/Window/Window';
 
 const Game = (): JSX.Element => {
   const [gamestate, setGamestate] = useState(GameState.Lobby);

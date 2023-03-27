@@ -9,7 +9,7 @@ import { Container } from '../../LogIn/styles';
 export const Design = () => {
   return (
     <>
-      <Container>
+      {/* <Container>
         <div className="Title">
           <Title title="PONG CHAT" home search />
         </div>
@@ -24,7 +24,7 @@ export const Design = () => {
             <ChatRoom />
           </div>
         </div>
-      </Container>
+      </Container> */}
     </>
   );
 };
