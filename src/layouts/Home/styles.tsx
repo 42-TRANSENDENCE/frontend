@@ -7,7 +7,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--html-padding-vertical);
-  justify-content: top;
+  /* justify-content: top; */
   align-items: center;
 
   .Title {
@@ -16,15 +16,16 @@ export const Container = styled.div`
 
     display: flex;
     flex-direction: column;
-    justify-content: top;
+    /* justify-content: top; */
   }
 
   .BodyOuter {
     width: var(--body-width);
     height: var(--body-height);
     display: flex;
-    align-items: top;
-    justify-content: top;
+    /* align-items: flex-start; */
+    justify-content: flex-start;
+    /* justify-content: top; */
     overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
@@ -44,7 +45,7 @@ export const Container = styled.div`
 
     display: flex;
     justify-content: space-between;
-    align-items: top;
+    /* align-items: top; */
     flex-direction: row;
     overflow: hidden;
 
@@ -61,6 +62,8 @@ export const Container = styled.div`
     }
 
     .LeftSide {
+      --section-width: calc(var(--body-width) * 0.34);
+      width: var(--section-width);
     }
 
     .MiddleSide {
@@ -73,7 +76,7 @@ export const Container = styled.div`
         align-items: center;
         justify-content: space-between;
         gap: var(--html-padding-vertical);
-        Button {
+        button {
           width: calc(var(--section-width) * 0.9);
           border: var(--border-width) solid black;
         }
@@ -85,7 +88,7 @@ export const Container = styled.div`
         align-items: center;
         justify-content: center;
         gap: var(--html-padding-horizontal);
-        Button {
+        button {
           width: calc(var(--section-width) * 0.35);
           border: var(--border-width) solid black;
         }
