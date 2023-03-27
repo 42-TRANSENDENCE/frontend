@@ -19,6 +19,7 @@ import {
   V2roomContainer,
 } from './style';
 import { Window } from '../../../components/Window/Window';
+import React from 'react';
 
 const chat_backurl = 'http://127.0.0.1:3095';
 

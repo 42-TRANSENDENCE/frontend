@@ -14,11 +14,11 @@ import { AppContainer } from './styles';
 
 import PrivateRoute from './PrivateRoute';
 const LogIn = loadable(() => import('../../pages/LogIn/LogIn'));
-const SignUp = loadable(() => import('../../pages/SignUp/SignUp'));
+const SignUp = loadable(() => import('../../pages/LogIn/SignUp'));
+const TwoFactor = loadable(() => import('../../pages/LogIn/TwoFactor'));
 const Home = loadable(() => import('../Home/Home'));
 const Chat = loadable(() => import('../../pages/Chat/Chat'));
 const Game = loadable(() => import('../../pages/Game/Game'));
-const TwoFactor = loadable(() => import('../../pages/TwoFactor/TwoFactor'));
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -35,6 +35,7 @@ const App = () => {
             <Route path="/home" element={<PrivateRoute component={Home} />} />
             <Route path="/chat/*" element={<PrivateRoute component={Chat} />} />
             <Route path="/game" element={<PrivateRoute component={Game} />} />
+            <Route path="/*" element={<div>NOTFOUND</div>} />
           </Routes>
           <ToastContainer
             position='top-right'
