@@ -18,7 +18,7 @@ export const useInput = (
       }
     }
   };
-  return { value, onChange };
+  return { value, setValue, onChange };
 };
 
 export default useInput;

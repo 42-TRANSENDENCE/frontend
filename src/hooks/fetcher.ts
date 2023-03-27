@@ -1,11 +1,8 @@
-// import { useQueryClient } from 'react-query';
-// import { useRefreshToken } from './query/user';
 import { useNavigate } from 'react-router-dom';
 
 const awsUrl = import.meta.env.VITE_AWS_URL;
 
 export function useFetcher() {
-  // const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const fetcherWrapper = (
@@ -29,7 +26,6 @@ export function useFetcher() {
               if (response.status === 401) navigate('/');
               else return response;
             })
-            // queryClient.invalidateQueries({ queryKey: ['auth/refresh'] });
           }
         }
         throw e;
