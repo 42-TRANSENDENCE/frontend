@@ -536,7 +536,7 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
         <Link to="/chat/v3_rooms" style={{ border: '0.2rem solid red' }}>
           <button
             onClick={() => {
-              socket?.emit('leave', roomId);
+              socket?.emit('leave', { roomId, userId: userData.username });
             }}
           >
             방 나가기
