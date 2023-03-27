@@ -17,14 +17,12 @@ import Title from '../../components/Title';
 import { Container } from '../LogIn/styles';
 import { Link } from 'react-router-dom';
 
-// ChatList마다 reRendering대신 reMounting을 하기 위해 roomId={roomId}를 넘겨줌
+// ChatList마다 reRendering대신 reMounting을 하기 위해 key={roomId}를 넘겨줌
 const ChatContainer = ({ socket: chat_socket, Flex }: any) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
 
-  return (
-    <ChatList socket={chat_socket} Flex={Flex} key={roomId} roomId={roomId} />
-  );
+  return <ChatList socket={chat_socket} Flex={Flex} key={roomId} />;
 };
 
 const Chat = () => {

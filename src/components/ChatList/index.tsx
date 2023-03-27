@@ -252,17 +252,9 @@ const ChatListComponent = ({
   );
 };
 
-const ChatList = ({
-  Flex,
-  socket,
-  roomId,
-}: {
-  Flex: number;
-  socket: any;
-  roomId: string | undefined;
-}) => {
-  // const params = useParams<{ roomId?: string }>();
-  // const { roomId } = params;
+const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
+  const params = useParams<{ roomId?: string }>();
+  const { roomId } = params;
   const [chat, setChat] = useState('');
   const scrollbarRef = useRef<Scrollbars>(null);
 
@@ -379,9 +371,12 @@ const ChatList = ({
     if (data === userData.username) {
       console.log('KickData: ', data, userData.username);
       console.log('강퇴당하셨습니다');
-      queryClient.invalidateQueries(['chat', roomId]);
-      queryClient.invalidateQueries(['room', roomId]);
+      setTimeout(() => {
+        queryClient.invalidateQueries(['chat', roomId]);
+        // queryClient.invalidateQueries(['room', roomId]);
+      }, 0);
       navigate('/chat/v3_rooms');
+
       // console.log('kick되기전 invalidate했음');
     } else {
       console.log(`${data}님이 강퇴당햇습니다`);
@@ -451,12 +446,10 @@ const ChatList = ({
     const response = chatError as Error;
     queryClient.invalidateQueries(['chat', roomId]);
     queryClient.invalidateQueries(['room', roomId]);
-    console.log('error컴포넌트: ', response.message);
 
     return (
       <div style={{ flex: 1.85 }}>
-        <div>방에 대한 권한이 없습니다</div>
-        <div>{response && response.message}</div>
+        <div>{response ? response.message : '방에 대한 권한이 없습니다'}</div>
         <Link to="/chat/v3_rooms">방 목록으로</Link>
       </div>
     );
