@@ -1,7 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
   html {
     --color-blue: #4495F7;
     --color-red: #F36A7B;
@@ -47,7 +46,7 @@ const GlobalStyles = createGlobalStyle`
     height: var(--page-height);
     background: var(--color-blue);
     color: black;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Rajdhani', sans-serif;
     border-radius: calc(min(var(--page-height), var(--page-width)) * 0.05);
     overflow: hidden;
   }
