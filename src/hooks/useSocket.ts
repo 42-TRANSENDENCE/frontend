@@ -1,8 +1,8 @@
 import { useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
-const server_public_ip = "44.195.129.81";
-const server_port = "80";
+const server_public_ip = import.meta.env.VITE_AWS_URL ;
+const server_port = import.meta.env.VITE_AWS_PORT;
 
 const sockets: { [key: string]: Socket } = {};
 const useSocket = (key?: string): [Socket | undefined, () => void] => {
