@@ -1,7 +1,9 @@
 import { createContext } from "react"
 import {io, Socket} from 'socket.io-client'
-const ServerPublicIp = "localhost";
-const ServerPort = "3000";
+
+
+const ServerPublicIp = "44.195.129.81";
+const ServerPort = "80";
 
 const SocketAddr = "ws://"+ServerPublicIp+":"+ServerPort+"/game"
 

@@ -1,7 +1,5 @@
-import React from 'react'
 import { useEffect } from "react";
 import {BigButton, SmallButton } from '../../../components/Button';
-import {Box} from '../../../components/Button/styles';
 import normalButton from "../../../assets/bigButton/normalButton.svg";
 import chaosButton from "../../../assets/bigButton/chaosButton.svg";
 import closeButton from "../../../assets/smallButton/modalCloseButton.svg";
@@ -17,22 +15,21 @@ const Lobby = (props: any) : JSX.Element => {
     }, []);
 
     function normal_game_clicked() {
-
+      console.log("normal game button clicked");
+      // data : QueueDto
+      game_socket.emit("join_queue");
     };
 
     function choas_game_clicked() {
-      
+      console.log("chaos game button clicked");
     }
 
     return (
         <LobbyContainer>
           <div className="box">
-            <div className='top'>
-              <SmallButton img_url={closeButton}/>
-            </div>
             <div className='body'>
-              <BigButton className="big" img_url={normalButton}/>
-              <BigButton className="big" img_url={chaosButton}/>
+              <BigButton className="big" img_url={normalButton} onClick={normal_game_clicked}/>
+              <BigButton className="big" img_url={chaosButton} onClick={choas_game_clicked}/>
             </div>
           </div>
         </LobbyContainer>
