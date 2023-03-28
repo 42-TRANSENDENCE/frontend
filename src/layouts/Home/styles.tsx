@@ -7,7 +7,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--html-padding-vertical);
-  justify-content: top;
   align-items: center;
 
   .Title {
@@ -16,19 +15,19 @@ export const Container = styled.div`
 
     display: flex;
     flex-direction: column;
-    justify-content: top;
   }
 
   .BodyOuter {
     width: var(--body-width);
     height: var(--body-height);
     display: flex;
-    align-items: top;
-    justify-content: top;
+    justify-content: center;
+    /* align-items: flex-start; */
     overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
     }
+    position: relative;
   }
 
   .Body {
@@ -37,21 +36,21 @@ export const Container = styled.div`
         var(--page-height) - 1 * var(--title-height) - 3 *
           var(--html-padding-vertical)
       ),
-      calc(var(--body-width) * (9 / 16))
+      calc(var(--body-width) * (7 / 16))
     );
     width: var(--body-width);
     height: var(--body-height);
 
     display: flex;
-    justify-content: space-between;
-    align-items: top;
+    /* justify-content: space-between; */
+    /* justify-content: flex-start; */
     flex-direction: row;
     overflow: hidden;
-
+    
     .Section {
       --section-width: calc(
         var(--body-width) * 0.33 - var(--html-padding-horizontal)
-      );
+        );
       width: var(--section-width);
       height: var(--body-height);
       display: flex;
@@ -61,6 +60,8 @@ export const Container = styled.div`
     }
 
     .LeftSide {
+      --section-width: calc(var(--body-width) * 0.34);
+      width: var(--section-width);
     }
 
     .MiddleSide {
@@ -73,7 +74,7 @@ export const Container = styled.div`
         align-items: center;
         justify-content: space-between;
         gap: var(--html-padding-vertical);
-        Button {
+        button {
           width: calc(var(--section-width) * 0.9);
           border: var(--border-width) solid black;
         }
@@ -85,7 +86,7 @@ export const Container = styled.div`
         align-items: center;
         justify-content: center;
         gap: var(--html-padding-horizontal);
-        Button {
+        button {
           width: calc(var(--section-width) * 0.35);
           border: var(--border-width) solid black;
         }

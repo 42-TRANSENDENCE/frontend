@@ -18,7 +18,7 @@ import {
   RoomContainer,
   V2roomContainer,
 } from './style';
-import { Window } from '../../../components/Window/Window';
+// import { Window } from '../../../components/Window/Window';
 import React from 'react';
 
 const chat_backurl = 'http://127.0.0.1:3095';
@@ -211,14 +211,15 @@ function V2rooms({ socket }: { socket: any }) {
 
   if (isLoading || isLoadingUser)
     return (
-      <Window height="10%" max_width="30%">
-        isLoading...
-      </Window>
+      // <Window height="10%" max_width="30%">
+      //   isLoading...
+      // </Window>
+      <></>
     );
 
   return (
     <V2roomContainer>
-      <Window title="V2_Rooms" sidebarToggle={true}>
+      {/* <Window title="V2_Rooms" sidebarToggle={true}>
         <RoomContainer onClick={() => setErrorMessage('')}>
           {rooms?.map((room: any) => {
             return (
@@ -306,7 +307,7 @@ function V2rooms({ socket }: { socket: any }) {
           <Link to="/chat/v2_dms/rock11">rock11 유저와 dm하기</Link>
           <Link to="/chat/v2_dms/rock33">rock33 유저와 dm하기</Link>
         </div>
-      </Window>
+      </Window> */}
     </V2roomContainer>
   );
 }
