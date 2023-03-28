@@ -46,7 +46,7 @@ function ChatsMenu({
   username: string;
   roomDatas: any;
   myUser: any;
-  roomId: string;
+  roomId: string | undefined;
   refetch: any;
 }) {
   console.log(roomDatas);

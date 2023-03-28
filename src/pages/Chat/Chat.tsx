@@ -85,7 +85,7 @@ const Chat = () => {
               </Routes>
             </div>
             <div className="RightSide Section">
-              <ChatRoom socket={chat_socket} Flex={1} />
+              <ChatRoom socket={chat_socket} />
             </div>
           </div>
         </div>
