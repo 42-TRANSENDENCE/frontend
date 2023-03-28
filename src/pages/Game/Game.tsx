@@ -47,14 +47,17 @@ const Game = (): JSX.Element => {
   }, []);
 
   const GameByState = (): JSX.Element => {
-    if (gamestate === GameState.Lobby) return <Lobby socket={socket} />;
-    else if (gamestate === GameState.Waiting)
-      return <Waiting socket={socket} />;
-    else if (gamestate === GameState.InGame)
-      return (
-        <Ingame socket={socket} roomId={room} setGamestate={setGamestate} />
-      );
-    return <h1>ERROR</h1>;
+    return  (
+      <div className="Body">
+        {{
+          [GameState.Lobby]   : <Lobby socket={socket} />,
+          [GameState.Waiting] : <Waiting socket={socket} />,
+          [GameState.InGame]  : <Ingame socket={socket}
+                                        roomId={room}
+                                        setGamestate={setGamestate} />
+        }[gamestate] }
+      </div>
+    ) ;
   };
 
   return (
@@ -62,9 +65,7 @@ const Game = (): JSX.Element => {
       <div className="Title">
         <Title title="PONG GAME" home={true} search={false} />
       </div>
-      <div className="Body">
-        <GameByState />
-      </div>
+      <GameByState />
       <div className="Footer">
         <Title title="PONG GAME" home={false} search={false} />
       </div>
