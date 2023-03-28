@@ -33,10 +33,6 @@ const Home = () => {
     setShowSettingModal(true);
   };
 
-  const onClickHome = () => {
-    navigate('/home');
-  };
-
   const onClickGame = () => {
     navigate('/game');
   };
