@@ -1,7 +1,8 @@
 import { useCallback } from "react";
 import { io, Socket } from "socket.io-client";
 
-const chat_backurl = "http://127.0.0.1:3095";
+const server_public_ip = "44.195.129.81";
+const server_port = "80";
 
 const sockets: { [key: string]: Socket } = {};
 const useSocket = (key?: string): [Socket | undefined, () => void] => {
@@ -13,11 +14,10 @@ const useSocket = (key?: string): [Socket | undefined, () => void] => {
   }, [key]);
   if (!key) return [undefined, disconnect];
   if (!sockets[key]) {
-    sockets[key] = io(`${chat_backurl}/${key}`, {
+    sockets[key] = io(`ws://${server_public_ip}:${server_port}/${key}`, {
       transports: ["websocket"],
     });
   }
-
   return [sockets[key], disconnect];
 };
 

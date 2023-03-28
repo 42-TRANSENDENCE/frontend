@@ -1,14 +1,16 @@
 import { useState, useContext, useEffect } from 'react';
 import { GameContext } from '../../contexts/GameSocket';
-import Title from '../../components/Title';
-import { GameState } from './enum';
+import useSocket from '../../hooks/useSocket';
 
+import { GameState } from './enum';
+import Title from '../../components/Title';
 import Lobby from './Lobby';
 import Waiting from './Waiting';
 import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
 const Game = (): JSX.Element => {
+  const [chat_socket, disconnect_game_socket] = useSocket('game');
   const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
   const socket = useContext(GameContext);
@@ -40,6 +42,7 @@ const Game = (): JSX.Element => {
       socket.off('joined_to_queue');
       socket.off('out_of_queue');
       socket.off('enter_to_game');
+      disconnect_game_socket();
     };
   }, []);
 
