@@ -26,6 +26,7 @@ const Ingame = (props: any) : JSX.Element => {
   const keyPressed = (e: KeyboardEvent) => {
     if (up_pressed === false && e.code === "ArrowUp") {
       up_pressed = true;
+      // data : GamePlayDto
       game_socket.emit("keypress", room_id, e.code);
     }
     if (down_pressed === false && e.code === "ArrowDown") {
@@ -80,7 +81,7 @@ const Ingame = (props: any) : JSX.Element => {
     window.addEventListener("keydown", default_keyoff);
     game_socket.on("game_start", gameStart);
     game_socket.on("game_over", gameOver);
-
+    // data : MatchDto
     game_socket.emit("ready", room_id);
     return () => {
       window.removeEventListener("keydown", default_keyoff);
