@@ -1,18 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
-import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
+import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
 import Title from '../../components/Title';
 import OnlineList from '../../components/OnlineList';
-import Profile, { ProfileEnum } from '../../components/Profile';
+import Profile, { ProfileEnum, ProfileProps } from '../../components/Profile';
 import gameButton from '../../assets/bigButton/gameButton.svg';
 import chatButton from '../../assets/bigButton/chatButton.svg';
 import settingButton from '../../assets/middleButton/settingButton.svg';
 import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import SettingModal from './HomeModal';
+
+function search(searchName: string): ProfileProps | null {
+  const user = useUserSearch(searchName).data;
+  if (!user) {
+    return null;
+  }
+  const userProfile: ProfileProps = {
+    imageSrc: 'image',
+    nickname: user.nickname,
+    win: 10,
+    lose: 10,
+    who: ProfileEnum.FRIEND
+  };
+  return userProfile;
+}
 
 const Home = () => {
   const [twoFactor, setTwoFactor] = useState(false);
@@ -20,9 +35,17 @@ const Home = () => {
   const navigate = useNavigate();
   const onClickLogOut = useLogout();
   const [showSettingModal, setShowSettingModal] = useState(false);
+  const [userSearch, setUserSearch] = useState<string>('');
+  const [popProfile, setPopProfile] = useState(false);
+  const [user, setUser] = useState<ProfileProps | null>(null);
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
+
+  useEffect(() => {
+    setUser(search(userSearch));
+    setPopProfile(true);
+  }, [userSearch]);
 
   const onCloseSettingModal = () => {
     setShowSettingModal(false);
@@ -45,7 +68,7 @@ const Home = () => {
     <>
       <Container>
         <div className='Title'>
-          <Title title='PONG HOME' home={true} search={true} />
+          <Title title='PONG HOME' home={true} search={true} setSearchUser={setUserSearch} />
         </div>
 
         <div className='BodyOuter'>
@@ -74,6 +97,15 @@ const Home = () => {
                   lose={5}
                   who={ProfileEnum.ME}
                 />
+                {popProfile && user && (
+                  <Profile
+                  imageSrc={user.imageSrc}
+                  nickname={user.nickname}
+                  win={user.win}
+                  lose={user.lose}
+                  who={user.who}
+                  />
+                )}
               </div>
               <div className='Notification'>
                 Notification
@@ -88,13 +120,13 @@ const Home = () => {
         onCloseModal={onCloseSettingModal}
         showCloseButton
       >
-            <SettingModal 
-              userAvatar={userAvatar}
-              twoFactor ={twoFactor}
-              setTwoFactor={setTwoFactor}
-              userInfoData={userInfoData}
-              onClickLogOut ={onClickLogOut}
-            />
+        <SettingModal 
+          userAvatar={userAvatar}
+          twoFactor ={twoFactor}
+          setTwoFactor={setTwoFactor}
+          userInfoData={userInfoData}
+          onClickLogOut ={onClickLogOut}
+        />
       </Modal>
     </>
   );
