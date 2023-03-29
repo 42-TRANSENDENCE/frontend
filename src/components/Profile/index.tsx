@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProfileContainer, Avatar } from './styles';
 import { MiddleButton, SmallButton } from '../Button';
 import friendAddButton from '../../assets/middleButton/friendAddButton.svg';
@@ -14,7 +13,7 @@ export enum ProfileEnum {
   OTHERS
 };
 
-type ProfileProps = {
+export type ProfileProps = {
   imageSrc: string;
   nickname: string | undefined;
   win: number;
@@ -32,8 +31,6 @@ function Profile({ imageSrc, nickname, win, lose, who }: ProfileProps) {
   } else if (who === ProfileEnum.OTHERS) {
     color = "var(--color-gray)"
   }
-
-
   
   return (
     <ProfileContainer color={color}>
