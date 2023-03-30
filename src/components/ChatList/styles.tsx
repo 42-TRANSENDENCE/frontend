@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 /* ChatListContainer */
 export const ChatListContainer = styled.div`
@@ -23,11 +23,19 @@ export const ChatListContainer = styled.div`
 `;
 
 export const ChatListsBar = styled.div`
-  flex: 9;
+  // flex: 26;
+  --w: var(--width);
+  --h: calc(var(--height) * (25 / 30));
+  width: var(--w);
+  height: var(--h);
 `;
 
 export const SendChatBar = styled.div`
-  flex: 1;
+  // flex: 3;
+  --w: var(--width);
+  --h: calc(var(--height) * (3 / 30));
+  width: var(--w);
+  height: var(--h);
   display: flex;
   margin-bottom: 1rem;
 
@@ -63,7 +71,11 @@ export const SendChatBar = styled.div`
 `;
 
 export const GoBackBar = styled.div`
-  flex: 0.3;
+  // flex: 1;
+  --w: var(--width);
+  --h: calc(var(--height) * (1 / 30));
+  width: var(--w);
+  height: var(--h);
   display: flex;
   justify-content: space-evenly;
 
@@ -81,8 +93,8 @@ export const ChatLists = styled.div`
 export const ChatItem = styled.div<{ other?: boolean }>`
   margin: 0.5rem;
   display: flex;
-  justify-content: 'flex-start';
-  flex-direction: ${(props) => (props.other ? 'row-reverse' : 'row')};
+  justify-content: "flex-start";
+  flex-direction: ${(props) => (props.other ? "row-reverse" : "row")};
   position: relative;
 `;
 
@@ -91,11 +103,11 @@ export const ChatBubble = styled.div<{ other?: boolean }>`
   padding: 1.5rem;
   max-width: 97%;
   border-radius: 1rem;
-  background-color: ${(props) => (props.other ? '#FFF' : '#F0F0F0')};
-  color: ${(props) => (props.other ? '#000' : '#555')};
+  background-color: ${(props) => (props.other ? "#FFF" : "#F0F0F0")};
+  color: ${(props) => (props.other ? "#000" : "#555")};
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     width: 0;
     height: 0;
@@ -103,19 +115,19 @@ export const ChatBubble = styled.div<{ other?: boolean }>`
     border-width: 0.625rem;
     border-color: ${(props) =>
       props.other
-        ? '#FFF transparent transparent transparent'
-        : '#F0F0F0 transparent transparent transparent'};
+        ? "#FFF transparent transparent transparent"
+        : "#F0F0F0 transparent transparent transparent"};
     top: -0.63rem;
-    ${(props) => (props.other ? 'right' : 'left')}: -0.625rem;
+    ${(props) => (props.other ? "right" : "left")}: -0.625rem;
     transform: ${(props) =>
-      props.other ? 'rotate(-135deg)' : 'rotate(135deg)'};
+      props.other ? "rotate(-135deg)" : "rotate(135deg)"};
   }
 `;
 
 export const ChatProfile = styled.div<{ other?: boolean }>`
   display: flex;
   margin-bottom: 0.5rem;
-  /* ${(props) => (props.other ? 'right' : 'left')}: 0; */
+  /* ${(props) => (props.other ? "right" : "left")}: 0; */
 
   & > img {
     width: 2rem;
