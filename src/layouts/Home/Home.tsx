@@ -12,7 +12,7 @@ import gameButton from '../../assets/bigButton/gameButton.svg';
 import chatButton from '../../assets/bigButton/chatButton.svg';
 import settingButton from '../../assets/middleButton/settingButton.svg';
 import logoutButton from '../../assets/middleButton/logoutButton.svg';
-import SettingModal from './HomeModal';
+import SettingModal from './Modal/HomeModal';
 
 const Home = () => {
   const [twoFactor, setTwoFactor] = useState(false);

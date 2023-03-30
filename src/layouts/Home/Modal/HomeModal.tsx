@@ -1,22 +1,29 @@
 import React, {useState, useCallback} from 'react'
-import Modal from '../../components/Modal';
-import { MiddleButton } from '../../components/Button';
-import { Avatar, InputName, Label } from './styles'
+import Modal from '../../../components/Modal';
+import { MiddleButton } from '../../../components/Button';
+import { Avatar,
+         InputName,
+         Label, 
+         ModalAvatar, 
+         ModalContainer, 
+         ModalNickName,
+         TwoFactorPart,
+         WithdrawalButton} from './styles'
 import { Switch as MuiTogleSwitch } from '@mui/material';
-import logoutButton from '../../assets/middleButton/logoutButton.svg';
+import logoutButton from '../../../assets/middleButton/logoutButton.svg';
 
-import { isValidNickname } from '../../hooks/user';
-import { useInput } from '../../hooks/useInput';
-import { useChangeNickname } from '../../hooks/mutation/user';
-import { useUploadAvatar } from '../../hooks/mutation/user';
-import { useUserDelete} from '../../hooks/user';
-import { useFetcher } from '../../hooks/fetcher';
+import { isValidNickname } from '../../../hooks/user';
+import { useInput } from '../../../hooks/useInput';
+import { useChangeNickname } from '../../../hooks/mutation/user';
+import { useUploadAvatar } from '../../../hooks/mutation/user';
+import { useUserDelete} from '../../../hooks/user';
+import { useFetcher } from '../../../hooks/fetcher';
 import { useQueryClient } from 'react-query';
 
-import avatarSubmitButton from '../../assets/middleButton/AvatarSubmitButton.svg';
-import avatarUploadButton from '../../assets/middleButton/AvatarUploadButton.svg';
-import nicknameSubmitButton from '../../assets/middleButton/nicknameSubmitButton.svg';
-import userDeleteButton from '../../assets/middleButton/userDeleteButton.svg';
+import avatarSubmitButton from '../../../assets/middleButton/AvatarSubmitButton.svg';
+import avatarUploadButton from '../../../assets/middleButton/AvatarUploadButton.svg';
+import nicknameSubmitButton from '../../../assets/middleButton/nicknameSubmitButton.svg';
+import userDeleteButton from '../../../assets/middleButton/userDeleteButton.svg';
 
 type ImageFileType = File | null;
 
@@ -109,20 +116,14 @@ const SettingModal = (props : any) : JSX.Element=> {
     return (
       <ModalAvatar>
         <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
-
         <div>
-        
           <label htmlFor='file-upload' className='custom-file-upload'>
-            <img src={avatarUploadButton} alt='Image' />
+              <img src={avatarUploadButton} alt='Image' />
+              <input id='file-upload' type='file' onChange={handleFileChange} />
           </label>
-
-          <input id='file-upload' type='file' onChange={handleFileChange} />
-          
           <MiddleButton img_url={avatarSubmitButton} onClick={onClickChangeProfileImage} />
-          
-          {isLoading && <p>Uploading avatar...</p>}
-        
         </div>
+        {isLoading && <p>Uploading avatar...</p>}        
       </ModalAvatar>
     )
   }
@@ -147,7 +148,8 @@ const SettingModal = (props : any) : JSX.Element=> {
   const TwoFactorComp = () : JSX.Element => {
     return (
       <TwoFactorPart>
-        <Label>Enable two factor authentication
+        <Label>
+          <p>Enable two factor authentication</p>
           <MuiTogleSwitch checked={twoFactor} onChange={toggleTwoFactor} />
         </Label>
         {qrCodeImage && (<TwoFactorModal qrCodeImage={qrCodeImage} onClickLogOut={onClickLogOut}/>)}
@@ -160,10 +162,8 @@ const SettingModal = (props : any) : JSX.Element=> {
       <ModalContainer>
         <AvatarComp/>
         <NickNameComp/>
+        <TwoFactorComp/>
       </ModalContainer>
-
-      <TwoFactorComp/>
-
       <WithdrawalButton>
         <MiddleButton img_url={userDeleteButton} onClick={onClickUserDelete} />
       </WithdrawalButton>
@@ -185,64 +185,3 @@ const TwoFactorModal = ( props : any ) : JSX.Element => {
 
 export default SettingModal
 
-//======================STYLED================================
-
-import styled from 'styled-components'
-
-const ModalContainer = styled.div`
-  background: white;
-  border: 0.3rem solid black;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`
-
-const ModalAvatar = styled.div`
-  background: pink;
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: space-evenly;
-  padding: 1rem;
-
-  .div{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly
-  }
-`
-const ModalNickName = styled.div`
-  background: pink;
-  width: 100%;
-  form {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: space-evenly;
-    padding: 1rem;
-  }
-`
-
-const TwoFactorPart = styled.div`
-  background: white;
-  border: 0.3rem solid black;
-  border-radius: 1rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  align-items: center;
-  overflow: hidden;
-  margin: 1rem ;
-`
-
-const WithdrawalButton = styled.div`
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  margin: 1rem 0;
-  justify-content: right;
-  align-items: center;
-  
-`
