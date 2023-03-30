@@ -14,86 +14,68 @@ export const CreateModal = styled.div`
   position: fixed;
   left: 0;
   top: 0;
-  /* z-index: 1022; */
   & > div {
     --modal-width : min(440px, calc(var(--width) * 0.3));
-    --modal-height: calc(var(--modal-width));
+    --modal-height: calc(var(--modal-width) * 6/5);
 
     user-select: none;
 
     width: var(--modal-width);
     height: var(--modal-height);
-    padding: calc(var(--modal-width) * 0.02);
-    padding-top : calc(var(--modal-width) * 0.02 + 2.4rem);
+    padding: calc(var(--modal-width) * 0.01);
+    padding-top : calc(var(--modal-width) * 0.12);
+    padding-bottom : 0;
     background-color: #4495F7;
     border-radius: calc(var(--modal-width) * 0.05);
     border: var(--border-width) solid black;
     
-    display: inline-block;
-    flex-direction: column;
-    position : relative;
-  }
-
-  #file-upload {
-    display: none;
-  }
-  .custom-file-upload {
-    --w: min(max(10vw, 100px), 150px);
-    width: var(--w);
-    aspect-ratio: 4/3;
-    border-radius: calc(var(--w) * 45 / 200);
-    border: calc(var(--w) * 6 / 200) solid black;
-
     display: flex;
-    justify-content: center;
+    position : relative;
+    flex-direction: column;
+    justify-content: start;
     align-items: center;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    img {
-      width: 100%;
-      margin: 0;
-    }
-    cursor: pointer;
-
-    &:hover {
-      opacity: 0.9;
-      transform: scale(0.98);
-    }
-
-    &:active {
-      opacity: 0.4;
-    }
+    text-align: center;
   }
+
 `;
 
 export const CloseModalButton = styled.button`
+  width: calc(var(--modal-width) * 0.1);
+  height: calc(var(--modal-width) * 0.1);
   position: absolute;
-  top : 0;
-  right: 0;
-  background: transparent;
+  top : calc(var(--modal-width) * 0.01);
+  right: calc(var(--modal-width) * 0.01);
   border: none;
-  font-size: 30px;
+  background: transparent;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
   img {
-    width: 2rem;
-    border-radius: 2rem;
-    border: 0.3rem solid black;
+    box-sizing: border-box;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: calc(var(--border-width) / 2) solid black;
   }
 `;
 
 export const InfoModalButton = styled.button<{ tooltip: string }>`
+  width: calc(var(--modal-width) * 0.1);
+  height: calc(var(--modal-width) * 0.1);
   position: absolute;
-  top : 0;
-  left: 0;
-  background: transparent;
+  top : calc(var(--modal-width) * 0.01);
+  left: calc(var(--modal-width) * 0.01);
   border: none;
-  font-size: 30px;
+  background: transparent;
+  margin: 0;
+  padding: 0;
   cursor: pointer;
   img {
-    width: 2rem;
-    border-radius: 2rem;
-    border: 0.3rem solid black;
+    box-sizing: border-box;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: calc(var(--border-width) / 2) solid black;
   }
   
   ${({ tooltip }) =>
