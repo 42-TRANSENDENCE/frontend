@@ -3,8 +3,6 @@ import { CloseModalButton, CreateModal, InfoModalButton } from './styles';
 import modalCloseButton from '../../assets/smallButton/modalCloseButton.svg';
 import modalInfoButton from '../../assets/smallButton/modalQuestionButton.svg';
 
-const chat_backurl = 'http://127.0.0.1:3095';
-
 export default function Modal({
   children,
   onCloseModal,

@@ -2,9 +2,14 @@ import {
   ChatBubble,
   // ChatBubbleTail,
   ChatItem,
+  ChatListContainer,
   ChatLists,
+  ChatListsBar,
+  ChatListsContainer,
   ChatMain,
   ChatProfile,
+  GoBackBar,
+  SendChatBar,
 } from './styles';
 import chatSendButtonUrl from '../../assets/smallButton/chatSendButton.svg';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -249,7 +254,7 @@ const ChatListComponent = ({
   );
 };
 
-const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
+const ChatList = ({ socket }: { socket: any }) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
   const [chat, setChat] = useState('');
@@ -453,19 +458,8 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
   }
 
   return (
-    <div
-      style={{
-        borderRadius: '2rem',
-        border: '0.3rem solid black',
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        flex: Flex,
-      }}
-    >
-      <div style={{ flex: 9 }}>
+    <ChatListContainer>
+      <ChatListsBar>
         <Scrollbars autoHide ref={scrollbarRef}>
           <ChatListComponent
             chatDatas={chatDatas}
@@ -475,65 +469,25 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
           />
           <ToastContainer limit={1} />
         </Scrollbars>
-      </div>
-      <form
-        style={{
-          flex: 1,
-          width: '100%',
-          display: 'flex',
-          marginBottom: '1rem',
-        }}
-        onSubmit={onSubumitChat}
-      >
+      </ChatListsBar>
+      <SendChatBar onSubmit={onSubumitChat}>
         <textarea
-          style={{
-            flex: 8,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '2rem',
-            border: '0.3rem solid black',
-            padding: '1rem',
-            overflow: 'hidden',
-            resize: 'none',
-          }}
           onChange={onChangeChat}
           onKeyDown={handleKeyDown}
           value={chat}
-        ></textarea>
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <button
-            style={{
-              padding: '0.5rem',
-              borderRadius: '1rem',
-              backgroundColor: '#FCF451',
-              border: '0.3rem solid black',
-              width: '4rem',
-              height: '4rem',
-            }}
-            onClick={onSubumitChat}
-          >
-            <img
-              src={chatSendButtonUrl}
-              style={{ maxWidth: '100%', maxHeight: '100%' }}
-            />
+          title="chat"
+        />
+        <div>
+          <button onClick={onSubumitChat} title="submitChatButton">
+            <img src={chatSendButtonUrl} title="submitChatButtonImage" />
           </button>
         </div>
-      </form>
-      <div
-        style={{ flex: 0.3, display: 'flex', justifyContent: 'space-evenly' }}
-      >
-        <Link to="/chat/v3_rooms" style={{ border: '0.2rem solid red' }}>
+      </SendChatBar>
+      <GoBackBar>
+        <Link to="/chat/v3_rooms">
           <button>방 목록으로</button>
         </Link>
-        <Link to="/chat/v3_rooms" style={{ border: '0.2rem solid red' }}>
+        <Link to="/chat/v3_rooms">
           <button
             onClick={() => {
               socket?.emit('leave', { roomId, userId: userData.username });
@@ -542,8 +496,8 @@ const ChatList = ({ Flex, socket }: { Flex: number; socket: any }) => {
             방 나가기
           </button>
         </Link>
-      </div>
-    </div>
+      </GoBackBar>
+    </ChatListContainer>
   );
 };
 

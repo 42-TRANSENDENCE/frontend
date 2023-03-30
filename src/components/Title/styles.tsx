@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components';
 
 export const TitleContainer = styled.div`
   box-sizing: border-box;
@@ -12,30 +12,30 @@ export const TitleContainer = styled.div`
   border-radius: calc(var(--title-height) / 2);
   border: var(--border-width) solid black;
   overflow: hidden;
-  
+
   .Home {
-    --button-size: calc(var(--title-height) * 0.6); 
+    --button-size: calc(var(--title-height) * 0.6);
     height: var(--button-size);
     aspect-ratio: 1;
     position: absolute;
     left: calc(var(--title-height) * 0.125);
-    
-    img{
+
+    img {
       width: 100%;
       aspect-ratio: 1;
       border-radius: 50%;
       background-color: var(--color-yellow);
     }
   }
-  
+
   .Search {
-    --button-size: calc(var(--title-height) * 0.5); 
+    --button-size: calc(var(--title-height) * 0.5);
     position: absolute;
     width: fit-content;
     height: var(--button-size);
     right: calc(var(--title-height) * 0.125);
   }
-  
+
   .Title {
     background: white;
     width: 100%;
@@ -43,7 +43,7 @@ export const TitleContainer = styled.div`
     align-items: center;
     justify-content: center;
 
-    span{
+    span {
       background-color: none;
       font-weight: 400;
       line-height: calc(var(--title-height) * 0.5);
@@ -51,7 +51,6 @@ export const TitleContainer = styled.div`
       border-top: var(--border-width) solid black;
     }
   }
-
 
   /* @media screen and (max-width: 600px) {
     div.Title {
@@ -67,36 +66,33 @@ export const TitleContainer = styled.div`
 
 /** */
 
-const backgroundColor = "#2A2E37";
-const searchBgColor = "transparent";
-const iconColor = "rgb(52, 54, 62)";
-const transition = "all .5s ease";
+const backgroundColor = '#2A2E37';
+const searchBgColor = 'transparent';
+const iconColor = 'rgb(52, 54, 62)';
+const transition = 'all .5s ease';
 
 export const SearchWrapper = styled.div<{ isOpen: boolean }>`
-
   background-color: ${searchBgColor};
   width: 0;
   height: var(--button-size);
-  
+
   position: absolute;
   right: 0;
   transition: ${transition};
   border-radius: calc(var(--button-size) * 0.5);
-  
+
   ${(props) =>
     props.isOpen &&
     css`
       width: max(15vw, 100px);
-  `}
-
-  /* @media screen and (min-width: 250px) and (max-width: 600px) {
+    `}/* @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
       width: 3.25rem;
     }
   }
   @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
-      width: ${(props) => (props.isOpen ? "13.25rem" : "3.25rem")};
+      width: ${(props) => (props.isOpen ? '13.25rem' : '3.25rem')};
     }
   }
 
@@ -111,7 +107,7 @@ export const SearchBox = styled.input`
   width: calc(100% - var(--button-size) * 1.5 - 5px);
   height: 120%;
   background-color: transparent;
-  
+
   color: black;
   font-size: 2rem;
 
@@ -142,31 +138,29 @@ export const SearchButton = styled.span<{ isOpen: boolean }>`
   right: 0;
   top: 0;
   cursor: pointer;
-
- 
 `;
 
 export const SearchIcon = styled.span<{ isOpen: boolean }>`
-  --circle-diameter : calc(var(--button-size) * 0.7);
-  --line-width : calc(var(--button-size) * 0.09);
+  --circle-diameter: calc(var(--button-size) * 0.7);
+  --line-width: calc(var(--button-size) * 0.09);
   box-sizing: border-box;
   width: var(--circle-diameter);
   aspect-ratio: 1;
-  border-radius:  calc(var(--circle-diameter) / 2);
+  border-radius: calc(var(--circle-diameter) / 2);
   border: var(--line-width) solid ${iconColor};
   display: block;
   position: relative;
   transition: ${transition};
-  
+
   &:before {
-    content: "";
+    content: '';
     position: absolute;
     display: block;
     background-color: ${iconColor};
 
     width: var(--line-width);
     height: calc(var(--button-size) * 0.5);
-    
+
     left: calc(var(--button-size) * 0.6);
     top: calc(var(--button-size) * 0.4);
     transform: rotate(-45deg);
@@ -174,7 +168,7 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   }
 
   &:after {
-    content: "";
+    content: '';
     height: calc(var(--button-size) * 0.5);
     width: var(--line-width);
     position: absolute;
@@ -189,9 +183,9 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   ${(props) =>
     props.isOpen &&
     css`
-      --circle-diameter : calc(var(--button-size)* 0.9);
-      top : calc(var(--button-size)* 0.05);
-      left : calc(var(--button-size)* 0.05);
+      --circle-diameter: calc(var(--button-size) * 0.9);
+      top: calc(var(--button-size) * 0.05);
+      left: calc(var(--button-size) * 0.05);
       margin: 0;
       width: var(--circle-diameter);
       border-radius: calc(var(--circle-diameter) / 2);
