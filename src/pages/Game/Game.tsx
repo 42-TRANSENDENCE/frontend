@@ -10,10 +10,10 @@ import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
 const Game = (): JSX.Element => {
-  // const [socket, disconnect_game_socket] = useSocket('game');
+  const [socket, disconnect_game_socket] = useSocket('game');
   const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
-  const socket = useContext(GameContext);
+  // const socket = useContext(GameContext);
 
   useEffect(() => {
     console.log(' [ RENDERING ] : game page : ');
@@ -42,7 +42,7 @@ const Game = (): JSX.Element => {
       socket?.off('joined_to_queue');
       socket?.off('out_of_queue');
       socket?.off('enter_to_game');
-      // disconnect_game_socket();
+      disconnect_game_socket();
     };
   }, []);
 
