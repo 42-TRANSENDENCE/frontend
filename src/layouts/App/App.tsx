@@ -25,7 +25,7 @@ const App = () => {
   return (
     <AppContainer>
       <QueryClientProvider client={queryClient}>
-      {/* <GameContext.Provider value={gameSocket}> */}
+      <GameContext.Provider value={gameSocket}>
         <Router>
           <Routes>
             <Route path="/" element={<Navigate replace to="/login" />} />
@@ -50,7 +50,7 @@ const App = () => {
             theme='dark'
           />
         </Router>
-      {/* </GameContext.Provider> */}
+      </GameContext.Provider>
       </QueryClientProvider>
     </AppContainer>
   );
