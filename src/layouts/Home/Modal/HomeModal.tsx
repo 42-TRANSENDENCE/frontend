@@ -39,7 +39,7 @@ const SettingModal = (props: any): JSX.Element => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const changeNickname = useChangeNickname();
-  // const onClickUserDelete = useUserDelete();
+  const userDelete = useUserDelete();
   const fetcher = useFetcher();
   const queryClient = useQueryClient();
 
@@ -202,7 +202,7 @@ const SettingModal = (props: any): JSX.Element => {
       {isDeleteModalOpen && (
         <WithdrawalModal
           message="Are you sure you want to delete the user?"
-          onConfirm={useUserDelete}
+          onConfirm={userDelete}
           onCancel={() => setIsDeleteModalOpen(false)}
         />
       )}
