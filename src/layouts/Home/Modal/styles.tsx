@@ -202,3 +202,64 @@ export const WithdrawalButton = styled.div`
     border: calc(var(--border-width)) solid black;
   }
 `
+
+export const WithdrawalModalContainer = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
+  opacity: ${props => props.isOpen ? 1 : 0};
+  transition: visibility 0s, opacity 0.3s ease-in-out;
+`;
+
+export const WithdrawalModalContent = styled.div`
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  text-align: center;
+`;
+
+export const WithdrawalModalMessage = styled.div`
+  margin-bottom: 20px;
+`;
+
+export const ConfirmButton = styled.button`
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 16px;
+  margin-right: 10px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: #0062cc;
+  }
+`;
+
+export const CancelButton = styled.button`
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 16px;
+  margin-left: 10px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: #ddd;
+  }
+`;

@@ -10,7 +10,8 @@ import {
   ModalNickName,
   TwoFactorPart,
   WithdrawalButton
-} from './styles'
+} from './styles';
+import WithdrawalModal from './WithdrawalModal';
 import { Switch as MuiTogleSwitch } from '@mui/material';
 import logoutButton from '../../../assets/middleButton/logoutButton.svg';
 
@@ -38,7 +39,7 @@ const SettingModal = (props: any): JSX.Element => {
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
 
   const changeNickname = useChangeNickname();
-  const onClickUserDelete = useUserDelete();
+  // const onClickUserDelete = useUserDelete();
   const fetcher = useFetcher();
   const queryClient = useQueryClient();
 
@@ -70,6 +71,13 @@ const SettingModal = (props: any): JSX.Element => {
       changeNickname.mutate(newNickname.value);
     }, [newNickname, changeNickname]
   );
+
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const onClickUserDelete = () => {
+    setIsDeleteModalOpen(true);
+  };
 
   const toggleTwoFactor = () => {
     const api = userInfoData?.isTwoFactorAuthenticationEnabled ? '/2fa/turn-off' : '/2fa/turn-on';
@@ -191,6 +199,13 @@ const SettingModal = (props: any): JSX.Element => {
       <WithdrawalButton>
         <MiddleButton img_url={userDeleteButton} onClick={onClickUserDelete} />
       </WithdrawalButton>
+      {isDeleteModalOpen && (
+        <WithdrawalModal
+          message="Are you sure you want to delete the user?"
+          onConfirm={useUserDelete}
+          onCancel={() => setIsDeleteModalOpen(false)}
+        />
+      )}
     </>
   )
 }
