@@ -98,7 +98,20 @@ export const Container = styled.div`
       .Profile {
         --w: calc(var(--section-width) * 0.8);
         width: var(--w);
+        position: relative;
       }
+
+      .Profile > :first-child {
+        position: relative;
+      }
+      
+      .Profile > :last-child.pop-profile {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+
       .Notification {
         --w: calc(var(--section-width) * 0.95);
         --h: calc(var(--w) * 0.2);

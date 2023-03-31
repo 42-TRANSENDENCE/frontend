@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
-import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
+import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
@@ -13,38 +13,47 @@ import chatButton from '../../assets/bigButton/chatButton.svg';
 import settingButton from '../../assets/middleButton/settingButton.svg';
 import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import SettingModal from './HomeModal';
-
-function search(searchName: string): ProfileProps | null {
-  const user = useUserSearch(searchName).data;
-  if (!user) {
-    return null;
-  }
-  const userProfile: ProfileProps = {
-    imageSrc: 'image',
-    nickname: user.nickname,
-    win: 10,
-    lose: 10,
-    who: ProfileEnum.FRIEND
-  };
-  return userProfile;
-}
+import { useFetcher } from '../../hooks/fetcher';
+import { toast } from 'react-toastify';
 
 const Home = () => {
   const [twoFactor, setTwoFactor] = useState(false);
-  
+
   const navigate = useNavigate();
   const onClickLogOut = useLogout();
   const [showSettingModal, setShowSettingModal] = useState(false);
-  const [userSearch, setUserSearch] = useState<string>('');
+  const [userSearch, setUserSearch] = useState<string | null>(null);
   const [popProfile, setPopProfile] = useState(false);
   const [user, setUser] = useState<ProfileProps | null>(null);
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
 
+  const fetcher = useFetcher();
+
   useEffect(() => {
-    setUser(search(userSearch));
-    setPopProfile(true);
+    if (userSearch) {
+      fetcher('/users/search/' + userSearch, {
+        method: 'GET',
+        credentials: 'include'
+      })
+        .then(response => {
+          if (response.ok) {
+            response.json().then(data => {
+              const userProfile: ProfileProps = {
+                imageSrc: 'logoutButton',
+                nickname: data.nickname,
+                win: 10,
+                lose: 10,
+                who: ProfileEnum.FRIEND
+              };
+              setUser(userProfile);
+              setPopProfile(true);
+            })
+          }
+          else toast.error('User not found (' + userSearch + ')');
+        })
+    }
   }, [userSearch]);
 
   const onCloseSettingModal = () => {
@@ -91,20 +100,22 @@ const Home = () => {
             <div className="RightSide Section">
               <div className="Profile">
                 <Profile
-                  imageSrc={URL.createObjectURL(userAvatar ? userAvatar : new Blob())}
-                  nickname={userInfoData?.nickname}
-                  win={15}
-                  lose={5}
-                  who={ProfileEnum.ME}
+                  profile={{
+                    imageSrc: URL.createObjectURL(userAvatar ? userAvatar : new Blob()),
+                    nickname: userInfoData?.nickname,
+                    win: 15,
+                    lose: 5,
+                    who: ProfileEnum.ME,
+                  }}
+                  setPopProfile={setPopProfile}
                 />
                 {popProfile && user && (
-                  <Profile
-                  imageSrc={user.imageSrc}
-                  nickname={user.nickname}
-                  win={user.win}
-                  lose={user.lose}
-                  who={user.who}
-                  />
+                  <div className='pop-profile'>
+                    <Profile
+                      profile={user}
+                      setPopProfile={setPopProfile}
+                    />
+                  </div>
                 )}
               </div>
               <div className='Notification'>
@@ -120,12 +131,12 @@ const Home = () => {
         onCloseModal={onCloseSettingModal}
         showCloseButton
       >
-        <SettingModal 
+        <SettingModal
           userAvatar={userAvatar}
-          twoFactor ={twoFactor}
+          twoFactor={twoFactor}
           setTwoFactor={setTwoFactor}
           userInfoData={userInfoData}
-          onClickLogOut ={onClickLogOut}
+          onClickLogOut={onClickLogOut}
         />
       </Modal>
     </>

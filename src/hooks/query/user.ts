@@ -2,6 +2,7 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useFetcher } from '../fetcher';
 import { toast } from 'react-toastify';
+import { ProfileProps, ProfileEnum } from '../../components/Profile';
 
 export interface UserInfo {
   id: number,
@@ -44,21 +45,21 @@ export const useUserAvatar = () => {
   return data;
 }
 
-export const useUserSearch = (nickname: string) => {
-  const fetcher = useFetcher();
-  const data = useQuery<UserInfo>({
-    queryKey: ['userSearch'],
-    queryFn: async () => {
-      const response = await fetcher('/users/search' + nickname, {
-        method: 'GET',
-        credentials: 'include'
-      })
-      if (response.ok) return response.json();
-      else toast.error('User not found');
-    }
-  });
-  return data;
-}
+// export const useUserSearch = (nickname: string) => {
+//   const fetcher = useFetcher();
+//   const data = useQuery<UserInfo>({
+//     queryKey: ['userSearch'],
+//     queryFn: async () => {
+//       const response = await fetcher('/users/search' + nickname, {
+//         method: 'GET',
+//         credentials: 'include'
+//       })
+//       if (response.ok) return response.json();
+//       else toast.error('User not found');
+//     }
+//   });
+//   return data;
+// }
 
 // export const useUser2FA = () => {
 //   const fetcher = useFetcher();
