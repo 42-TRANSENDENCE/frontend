@@ -1,8 +1,5 @@
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 import { useFetcher } from '../fetcher';
-import { toast } from 'react-toastify';
-import { ProfileProps, ProfileEnum } from '../../components/Profile';
 
 export interface UserInfo {
   id: number,
@@ -16,7 +13,7 @@ export const useUserInfo = () => {
   const data = useQuery<UserInfo>({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      const response = await fetcher(`/users`, {
+      const response = await fetcher('/users', {
         method: 'GET',
         credentials: 'include',
       })
@@ -33,7 +30,7 @@ export const useUserAvatar = () => {
   const data = useQuery({
     queryKey: ['userAvatar'],
     queryFn: async () => {
-      const response = await fetcher(`/users/avatar`, {
+      const response = await fetcher('/users/avatar', {
         method: 'GET',
         credentials: 'include',
       })
@@ -44,6 +41,7 @@ export const useUserAvatar = () => {
   });
   return data;
 }
+
 
 // export const useUserSearch = (nickname: string) => {
 //   const fetcher = useFetcher();
