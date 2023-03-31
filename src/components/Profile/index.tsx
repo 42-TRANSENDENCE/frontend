@@ -1,9 +1,7 @@
 import { ProfileContainer, Avatar } from './styles';
 import { MiddleButton, SmallButton } from '../Button';
 import friendAddButton from '../../assets/middleButton/friendAddButton.svg';
-import friendBlockButton from '../../assets/middleButton/friendBlockButton.svg';
 import friendDeleteButton from '../../assets/middleButton/friendDeleteButton.svg';
-import friendUnblockButton from '../../assets/middleButton/friendUnblockButton.svg';
 import closeButton from '../../assets/smallButton/modalCloseButton.svg';
 import { useAddFriend } from '../../hooks/mutation/friend';
 import { useCallback } from 'react';
@@ -11,7 +9,6 @@ import { useCallback } from 'react';
 export enum ProfileEnum {
   ME = 0,
   FRIEND,
-  BANNED,
   OTHERS
 };
 
@@ -29,8 +26,6 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
   let color = "black";
   if (profile.who === ProfileEnum.FRIEND) {
     color = "var(--color-green)";
-  } else if (profile.who === ProfileEnum.BANNED) {
-    color = "var(--color-red)";
   } else if (profile.who === ProfileEnum.OTHERS) {
     color = "var(--color-gray)"
   }
@@ -65,20 +60,13 @@ return (
         </h3>
       </div>
 
-      {profile.who === ProfileEnum.BANNED && (
-        <div className='Buttons'>
-          <MiddleButton img_url={friendUnblockButton} />
-        </div>
-      )}
       {profile.who === ProfileEnum.FRIEND && (
         <div className='Buttons'>
-          <MiddleButton img_url={friendBlockButton} />
           <MiddleButton img_url={friendDeleteButton} />
         </div>
       )}
       {profile.who === ProfileEnum.OTHERS && (
         <div className='Buttons'>
-          <MiddleButton img_url={friendBlockButton} />
           <MiddleButton img_url={friendAddButton} onClick={onClickAddFriend} />
         </div>
       )}
