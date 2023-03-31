@@ -27,36 +27,15 @@ export default function Modal({
   if (!show) return null;
   return (
     <CreateModal onClick={onCloseModal}>
-      <div
-        onClick={stopPropagation}
-        style={{
-          backgroundColor: '#4495F7',
-          borderRadius: '2rem',
-          border: '0.3rem solid black',
-        }}
-      >
+      <div onClick={stopPropagation}>
         {showCloseButton && (
           <CloseModalButton onClick={onCloseModal}>
-            <img
-              src={modalCloseButton}
-              style={{
-                width: '2rem',
-                borderRadius: '2rem',
-                border: '0.3rem solid black',
-              }}
-            />
+            <img src={modalCloseButton} />
           </CloseModalButton>
         )}
         {showInfoButton && (
           <InfoModalButton tooltip={tooltipText}>
-            <img
-              src={modalInfoButton}
-              style={{
-                width: '2rem',
-                borderRadius: '2rem',
-                border: '0.3rem solid black',
-              }}
-            />
+            <img src={modalInfoButton}/>
           </InfoModalButton>
         )}
         {children}

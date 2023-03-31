@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { GameContext } from '../../contexts/GameSocket';
-// import useSocket from '../../hooks/useSocket';
+import useSocket from '../../hooks/useSocket';
 
 import { GameState } from './enum';
 import Title from '../../components/Title';
@@ -10,39 +10,39 @@ import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
 const Game = (): JSX.Element => {
-  // const [chat_socket, disconnect_game_socket] = useSocket('game');
+  const [socket, disconnect_game_socket] = useSocket('game');
   const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
-  const socket = useContext(GameContext);
+  // const socket = useContext(GameContext);
 
   useEffect(() => {
     console.log(' [ RENDERING ] : game page : ');
-    socket.emit('lobby_initialize');
+    socket?.emit('lobby_initialize');
     return () => {
-      socket.emit('lobby_terminate');
-      socket.emit('quit_queue');
+      socket?.emit('lobby_terminate');
+      socket?.emit('quit_queue');
       console.log(' [ STOP ] : game page');
     };
   }, []);
 
   useEffect(() => {
-    socket.on('joined_to_queue', () => {
+    socket?.on('joined_to_queue', () => {
       console.log('qeueue');
       setGamestate(GameState.Waiting);
     });
-    socket.on('out_of_queue', () => {
+    socket?.on('out_of_queue', () => {
       setGamestate(GameState.Lobby);
     });
-    socket.on('enter_to_game', (roomId) => {
+    socket?.on('enter_to_game', (roomId) => {
       setRoom(roomId);
       console.log('room :', room, roomId);
       setGamestate(GameState.InGame);
     });
     return () => {
-      socket.off('joined_to_queue');
-      socket.off('out_of_queue');
-      socket.off('enter_to_game');
-      // disconnect_game_socket();
+      socket?.off('joined_to_queue');
+      socket?.off('out_of_queue');
+      socket?.off('enter_to_game');
+      disconnect_game_socket();
     };
   }, []);
 

@@ -8,7 +8,7 @@ import Title from '../../components/Title';
 import loginButton from '../../assets/bigButton/2FALoginButton.svg';
 
 const TwoFactor = () => {
-  const awsUrl = import.meta.env.VITE_AWS_URL;
+  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}`;
   const [password, setPassword] = useState('');
   const ref1 = useRef<HTMLInputElement>(null);
   const ref2 = useRef<HTMLInputElement>(null);
