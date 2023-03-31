@@ -5,6 +5,8 @@ import friendBlockButton from '../../assets/middleButton/friendBlockButton.svg';
 import friendDeleteButton from '../../assets/middleButton/friendDeleteButton.svg';
 import friendUnblockButton from '../../assets/middleButton/friendUnblockButton.svg';
 import closeButton from '../../assets/smallButton/modalCloseButton.svg';
+import { useAddFriend } from '../../hooks/mutation/friend';
+import { useCallback } from 'react';
 
 export enum ProfileEnum {
   ME = 0,
@@ -14,6 +16,7 @@ export enum ProfileEnum {
 };
 
 export type ProfileProps = {
+  id: number;
   imageSrc: string;
   nickname: string | undefined;
   win: number;
@@ -32,48 +35,56 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
     color = "var(--color-gray)"
   }
 
+  const addFriend = useAddFriend();
+
   const onClickClose = () => {
     setPopProfile(false);
   }
-  
-  return (
-    <ProfileContainer color={color}>
-      <div className="AvatarBox">
-        {profile.who !== ProfileEnum.ME && (<SmallButton img_url={closeButton} onClick={onClickClose} />)}
-        <Avatar src={profile.imageSrc} alt="Profile Image" />
-      </div>
-      <div className="InfoBox">
 
-        <div className="Text">
-          <h1 style={{ margin: '10px 0' }}>{profile.nickname}</h1>
-          <h3>
-            Win: {profile.win}
-          </h3>
-          <h3>
-            Lose: {profile.lose}
-          </h3>
+  const onClickAddFriend = useCallback(
+    () => {
+      addFriend.mutate(profile.id);
+    }, [profile.id, addFriend]
+  )
+
+return (
+  <ProfileContainer color={color}>
+    <div className="AvatarBox">
+      {profile.who !== ProfileEnum.ME && (<SmallButton img_url={closeButton} onClick={onClickClose} />)}
+      <Avatar src={profile.imageSrc} alt="Profile Image" />
+    </div>
+    <div className="InfoBox">
+
+      <div className="Text">
+        <h1 style={{ margin: '10px 0' }}>{profile.nickname}</h1>
+        <h3>
+          Win: {profile.win}
+        </h3>
+        <h3>
+          Lose: {profile.lose}
+        </h3>
+      </div>
+
+      {profile.who === ProfileEnum.BANNED && (
+        <div className='Buttons'>
+          <MiddleButton img_url={friendUnblockButton} />
         </div>
-
-        {profile.who === ProfileEnum.BANNED && (
-          <div className='Buttons'>
-            <MiddleButton img_url={friendUnblockButton} />
-          </div>
-        )}
-        {profile.who === ProfileEnum.FRIEND && (
-          <div className='Buttons'>
-            <MiddleButton img_url={friendBlockButton} />
-            <MiddleButton img_url={friendDeleteButton} />
-          </div>
-        )}
-        {profile.who === ProfileEnum.OTHERS && (
-          <div className='Buttons'>
-            <MiddleButton img_url={friendBlockButton} />
-            <MiddleButton img_url={friendAddButton} />
-          </div>
-        )}
-      </div>
-    </ProfileContainer>
-  );
+      )}
+      {profile.who === ProfileEnum.FRIEND && (
+        <div className='Buttons'>
+          <MiddleButton img_url={friendBlockButton} />
+          <MiddleButton img_url={friendDeleteButton} />
+        </div>
+      )}
+      {profile.who === ProfileEnum.OTHERS && (
+        <div className='Buttons'>
+          <MiddleButton img_url={friendBlockButton} />
+          <MiddleButton img_url={friendAddButton} onClick={onClickAddFriend} />
+        </div>
+      )}
+    </div>
+  </ProfileContainer>
+);
 }
 
 export default Profile;
