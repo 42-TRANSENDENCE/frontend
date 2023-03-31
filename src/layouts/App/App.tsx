@@ -46,7 +46,7 @@ const App = () => {
             rtl={false}
             pauseOnFocusLoss
             draggable
-            pauseOnHover
+            pauseOnHover={false}
             theme='dark'
           />
         </Router>
