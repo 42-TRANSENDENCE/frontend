@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
 import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
+import { useReceivedFriendList } from '../../hooks/query/friend';
+import { useApproveFriend, useDeleteRequestFriend } from '../../hooks/mutation/friend';
+import { UserInfo } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
@@ -28,6 +31,10 @@ const Home = () => {
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
+  const userFriendReceived = useReceivedFriendList().data;
+  const friendReceivedList: UserInfo[] = userFriendReceived;
+  const approveFriend = useApproveFriend();
+  const deleteRequestFriend = useDeleteRequestFriend();
 
   const fetcher = useFetcher();
 
@@ -41,11 +48,12 @@ const Home = () => {
           if (response.ok) {
             response.json().then(data => {
               const userProfile: ProfileProps = {
+                id: data.id,
                 imageSrc: 'logoutButton',
                 nickname: data.nickname,
                 win: 10,
                 lose: 10,
-                who: ProfileEnum.FRIEND
+                who: ProfileEnum.OTHERS
               };
               setUser(userProfile);
               setPopProfile(true);
@@ -54,6 +62,7 @@ const Home = () => {
           else toast.error('User not found (' + userSearch + ')');
         })
     }
+    setUserSearch(null);
   }, [userSearch]);
 
   const onCloseSettingModal = () => {
@@ -73,6 +82,18 @@ const Home = () => {
     navigate('/chat');
   };
 
+  const onClickApproveFriend = useCallback(
+    (id: number) => {
+      approveFriend.mutate(id);
+    }, [friendReceivedList, approveFriend]
+  );
+
+  const onClickDeleteRequestFriend = useCallback(
+    (id: number) => {
+      deleteRequestFriend.mutate(id);
+    }, [friendReceivedList, deleteRequestFriend]
+  );
+
   return (
     <>
       <Container>
@@ -83,7 +104,7 @@ const Home = () => {
         <div className='BodyOuter'>
           <div className='Body'>
             <div className="LeftSide Section">
-              <OnlineList Flex={1.8} />
+              <OnlineList />
             </div>
 
             <div className="MiddleSide Section">
@@ -101,6 +122,7 @@ const Home = () => {
               <div className="Profile">
                 <Profile
                   profile={{
+                    id: userInfoData?.id ? userInfoData.id : 0,
                     imageSrc: URL.createObjectURL(userAvatar ? userAvatar : new Blob()),
                     nickname: userInfoData?.nickname,
                     win: 15,
@@ -120,6 +142,15 @@ const Home = () => {
               </div>
               <div className='Notification'>
                 Notification
+                {friendReceivedList?.map((userinfo: any) => {
+                  return (
+                    <div style={{flexDirection: 'row'}}>
+                      {userinfo.nickname}
+                      <button onClick={() => onClickApproveFriend(userinfo.id)}>Approve</button>
+                      <button onClick={() => onClickDeleteRequestFriend(userinfo.id)}>Delete</button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
