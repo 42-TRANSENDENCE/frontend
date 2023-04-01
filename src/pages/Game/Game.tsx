@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from 'react';
-import { GameContext } from '../../contexts/GameSocket';
 import useSocket from '../../hooks/useSocket';
 
 import { GameState } from './enum';
@@ -13,7 +12,6 @@ const Game = (): JSX.Element => {
   const [socket, disconnect_game_socket] = useSocket('game');
   const [gamestate, setGamestate] = useState(GameState.Lobby);
   const [room, setRoom] = useState(null);
-  // const socket = useContext(GameContext);
 
   useEffect(() => {
     console.log(' [ RENDERING ] : game page : ');

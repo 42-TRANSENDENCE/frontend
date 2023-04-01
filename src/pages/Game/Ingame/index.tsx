@@ -3,14 +3,13 @@ import { Socket } from "socket.io-client";
 import { GameState } from "../enum";
 import { PlayContainer, CanvasContainer } from "./styles";
 
-import Profile, { ProfileEnum } from '../../..//components/Profile';
-import friends from '../../../assets/friends.svg';
 
 import Canvas__background from "./Canvas__background";
 import Canvas__foreground from "./Canvas__foreground";
 
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
+
 
 const Ingame = (props: any) : JSX.Element => {
   const game_socket: Socket = props.socket;
@@ -46,6 +45,9 @@ const Ingame = (props: any) : JSX.Element => {
     }
   };
 
+  // 게임 시작 시 상대 플레이어 정보 받아와야 함.
+  // 본인 프로필은 home에서 받아올 수 있지만, 그냥 독립적으로 여기서 다시 fetch하기로....
+  // 그럼 p1_id와 p2_id가 필요하고, 여기서 플레이어의 아이디로
   const gameStart = (p1_id: string): void => {
     console.log("시작");
     if (p1_id !== game_socket.id) {
@@ -69,13 +71,6 @@ const Ingame = (props: any) : JSX.Element => {
     }, 5000);
   };
 
-  const quitGame = () => {
-    alert("나가?");
-    if (timeout !== undefined) clearTimeout(timeout);
-    game_socket.emit("quit_game");
-    setState(GameState.Lobby);
-  };
-
   useEffect(() => {
     console.log("게임으로 들어옴");
     window.addEventListener("keydown", default_keyoff);
@@ -94,8 +89,8 @@ const Ingame = (props: any) : JSX.Element => {
 
   return (
     <PlayContainer>
-
       <CanvasContainer className="CanvasContainer">
+        <p className="PlayerName Player1"> PLAYER1 </p>
         <Canvas__background
           socket={game_socket}
           width={CANV_WIDTH}
@@ -108,6 +103,7 @@ const Ingame = (props: any) : JSX.Element => {
           width={CANV_WIDTH}
           height={CANV_HEIGHT}
         />
+        <p className="PlayerName Player2"> PLAYER2 </p>
       </CanvasContainer>
   </PlayContainer>
   );

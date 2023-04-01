@@ -46,7 +46,8 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
   )
 
   const onClickClose = () => {
-    setPopProfile(false);
+    if (setPopProfile !== null)
+      setPopProfile(false);
   }
 
 return (
