@@ -188,7 +188,7 @@ any) {
       )}
       <ChatMain>
         <span>{chatData.user}</span>
-        <span>{chatData.createdAt}</span>
+        <span>{chatData.hms}</span>
         <ChatBubble
           other={chatData.user !== myUser.username}
           style={{ whiteSpace: 'pre-wrap' }}
@@ -225,21 +225,24 @@ function ChatListComponent({
   // );
 
   let obj: { [key: string]: any[] } = {};
+  const obj_keys: any[] = [];
   chatDatas.forEach((chatData: any) => {
-    const date = dayjs(String(chatData.createdAt));
-    console.log(date);
+    const date = dayjs(chatData.createdAt);
     const key = date.format('YYYY-MM-DD');
     const hms = date.format('h:mm:ss a');
-
-    if (!(key in obj)) obj[key] = [hms, chatData.chat];
-    else obj[key].push([hms, chatData.chat]);
+    if (!(key in obj)) {
+      obj[key] = [{ ...chatData, hms: hms, chat: chatData.chat }];
+      obj_keys.push(key);
+    } else {
+      obj[key].push({ ...chatData, hms: hms, chat: chatData.chat });
+    }
   });
-
-  console.log(JSON.stringify(obj));
+  obj_keys.sort((a, b) => a.localeCompare(b));
+  // console.log('obj: ', obj);
 
   return (
     <ChatLists>
-      {chatDatas.map((chatData: any, index: number) => (
+      {/* {chatDatas.map((chatData: any, index: number) => (
         <EachChat
           key={index}
           index={index}
@@ -248,7 +251,27 @@ function ChatListComponent({
           myUser={myUser}
           roomId={roomId} // selectedChatIndex={selectedChatIndex} handleProfileImageClick={handleProfileImageClick}
         />
-      ))}
+      ))} */}
+      {obj_keys.map((obj_key, index) => {
+        return (
+          <div key={index}>
+            <div>{obj_key}입니다</div>
+            {obj[obj_key].map((chatData, index2) => {
+              return (
+                <EachChat
+                  key={index2}
+                  index={index2}
+                  chatData={chatData}
+                  roomDatas={roomDatas}
+                  myUser={myUser}
+                  roomId={roomId}
+                />
+              );
+            })}
+          </div>
+        );
+      })}
+      <></>
     </ChatLists>
   );
 }

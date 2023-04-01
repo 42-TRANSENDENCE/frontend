@@ -221,9 +221,13 @@ export const ChatProfile = styled.div<{ other?: boolean }>`
   }
 `;
 
-export const ChatMain = styled.div`
+export const ChatMain = styled.div<{ other?: boolean }>`
   display: flex;
   flex-direction: column;
+  & > span {
+    text-align: ${(props) => (props.other ? 'right' : 'left')};
+    /* text-align: right; */
+  }
 `;
 
 export const ChatsMenuContainer = styled.div`
