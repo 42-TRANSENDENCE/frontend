@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState, useRef } from 'react';
 import {
   SearchBox,
   SearchWrapper,
@@ -7,13 +7,10 @@ import {
   SearchIcon,
 } from './styles';
 import HomeButtonUrl from '../../assets/home.svg';
-import SearchButtonUrl from '../../assets/search.svg';
-import { Navigate } from 'react-router';
 import { Link } from 'react-router-dom';
 
-const Title = ({ title, home, search }: any): JSX.Element => {
-  const onClickHome = useCallback(() => {}, []);
-  const onClickSearch = useCallback(() => {}, []);
+const Title = ({ title, home, search, setSearchUser }: any): JSX.Element => {
+  const onClickHome = useCallback(() => { }, []);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [nickname, setNickname] = useState<string>('');
@@ -25,8 +22,12 @@ const Title = ({ title, home, search }: any): JSX.Element => {
     []
   );
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleSearchToggle = useCallback((e: any) => {
     e.stopPropagation();
+    setNickname('');
+    inputRef.current?.focus();
     setIsOpen((prevIsOpen) => !prevIsOpen);
   }, []);
 
@@ -34,8 +35,7 @@ const Title = ({ title, home, search }: any): JSX.Element => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       if (!nickname?.trim()) return;
-      console.log(nickname);
-      /** nickname을 이용한 Logic 위치 */
+      setSearchUser(nickname);
       setNickname('');
       console.log(navigator.userAgent);
       const isSafari = /^((?!chrome|android).)*safari/i.test(
@@ -52,17 +52,17 @@ const Title = ({ title, home, search }: any): JSX.Element => {
     <TitleContainer>
 
       {home && (
-          <div className="Home">
-            <Link to="/home">
-              <div>
-                <img
-                  src={HomeButtonUrl}
-                  onClick={onClickHome}
-                  alt="Home"
-                />
-              </div>
-            </Link>
-          </div>
+        <div className="Home">
+          <Link to="/home">
+            <div>
+              <img
+                src={HomeButtonUrl}
+                onClick={onClickHome}
+                alt="Home"
+              />
+            </div>
+          </Link>
+        </div>
       )}
 
       <div className="Title">
@@ -70,26 +70,28 @@ const Title = ({ title, home, search }: any): JSX.Element => {
       </div>
 
       {search && (
-          <div className="Search">
-            <form onSubmit={onSubmitNickname}>
-              <SearchWrapper isOpen={isOpen}>
-                <SearchBox
-                  type="search"
-                  value={nickname}
-                  onChange={onChangeNickname}
-                />
+        <div className="Search">
+          <form onSubmit={onSubmitNickname}>
+            <SearchWrapper isOpen={isOpen}>
+              <SearchBox
+                type="search"
+                value={nickname}
+                onChange={onChangeNickname}
+                autoFocus={true}
+                ref={inputRef}
+              />
 
-                <SearchButton
-                  className="SearchButton"
-                  isOpen={isOpen}
-                  onClickCapture={handleSearchToggle}
-                >
-                  <SearchIcon isOpen={isOpen} />
-                </SearchButton>
+              <SearchButton
+                className="SearchButton"
+                isOpen={isOpen}
+                onClickCapture={handleSearchToggle}
+              >
+                <SearchIcon isOpen={isOpen} />
+              </SearchButton>
 
-              </SearchWrapper>
-            </form>
-          </div>
+            </SearchWrapper>
+          </form>
+        </div>
       )}
 
     </TitleContainer>

@@ -66,7 +66,9 @@ export const ProfileContainer = styled.div<any>`
       height: 40%;
       display: flex;
       flex-direction: row;
-      justify-content: space-evenly;
+      justify-content: flex-end;
+      padding-right: 3vw;
+      padding-bottom: 1vw;
       Button {
         width: 30%;
       }

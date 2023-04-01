@@ -105,15 +105,15 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
 
 export const SearchBox = styled.input`
   width: calc(100% - var(--button-size) * 1.5 - 5px);
-  height: 120%;
+  height: calc(1.2 * var(--button-size));
   background-color: transparent;
 
   color: black;
-  font-size: 2rem;
+  font-size: var(--button-size);
 
   position: absolute;
   right: calc(var(--button-size) + 5px);
-  top: -10%;
+  top: calc(-0.1 * var(--button-size));
 
   border-radius: 10px;
   border: 2px solid gray;

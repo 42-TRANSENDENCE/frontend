@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
 import { useFetcher } from '../fetcher';
 
 export interface UserInfo {
@@ -9,14 +8,12 @@ export interface UserInfo {
   isTwoFactorAuthenticationEnabled: boolean
 }
 
-
-
 export const useUserInfo = () => {
   const fetcher = useFetcher();
   const data = useQuery<UserInfo>({
     queryKey: ['userInfo'],
     queryFn: async () => {
-      const response = await fetcher(`/users`, {
+      const response = await fetcher('/users', {
         method: 'GET',
         credentials: 'include',
       })
@@ -33,7 +30,7 @@ export const useUserAvatar = () => {
   const data = useQuery({
     queryKey: ['userAvatar'],
     queryFn: async () => {
-      const response = await fetcher(`/users/avatar`, {
+      const response = await fetcher('/users/avatar', {
         method: 'GET',
         credentials: 'include',
       })
@@ -44,6 +41,23 @@ export const useUserAvatar = () => {
   });
   return data;
 }
+
+
+// export const useUserSearch = (nickname: string) => {
+//   const fetcher = useFetcher();
+//   const data = useQuery<UserInfo>({
+//     queryKey: ['userSearch'],
+//     queryFn: async () => {
+//       const response = await fetcher('/users/search' + nickname, {
+//         method: 'GET',
+//         credentials: 'include'
+//       })
+//       if (response.ok) return response.json();
+//       else toast.error('User not found');
+//     }
+//   });
+//   return data;
+// }
 
 // export const useUser2FA = () => {
 //   const fetcher = useFetcher();

@@ -1,7 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyles = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
   html {
     --color-blue: #4495F7;
     --color-red: #F36A7B;
@@ -38,20 +37,21 @@ const GlobalStyles = createGlobalStyle`
     // page 가로 세로, title 가로 세로, 테두리 두께 공통.
     --page-width : min(1920px, calc(100vw - 2*var(--html-padding-horizontal)));
     --page-height : calc(100vh - 2*var(--html-padding-vertical));
+    /* --page-height : min(1080px, calc(100vh - 2*var(--html-padding-vertical))); */
 
     --title-width: calc(var(--page-width) * 0.90);
     --title-height : calc(var(--title-width) * (8 / 180));
     
     --body-width: var(--title-width);
     --body-height: calc(var(--page-height) - 1*var(--title-height) - 3*var(--html-padding-vertical));
-    --border-width: min(5px, calc(min(var(--body-width), var(--body-height)) * 8 / 1800));
+    --border-width: min(5px, calc(var(--body-width) * 8 / 1800));
   
     width: var(--page-width);
     height: var(--page-height);
     background: var(--color-blue);
     color: black;
-    font-family: 'Poppins', sans-serif;
-    border-radius: 20px;
+    font-family: 'Rajdhani', sans-serif;
+    border-radius: calc(min(var(--page-height), var(--page-width)) * 0.05);
     overflow: hidden;
   }
 `;
