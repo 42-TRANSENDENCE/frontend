@@ -7,6 +7,7 @@ import {
   ChatListsBar,
   ChatMain,
   ChatProfile,
+  ChatsMenuContainer,
   GoBackBar,
   SendChatBar,
 } from './styles';
@@ -19,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import styled from 'styled-components';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
+import dayjs from 'dayjs';
 
 export const ChatElement = styled.section`
   position: relative;
@@ -47,7 +49,7 @@ async function postChat(
   return res;
 }
 
-const ChatsMenu = ({
+function ChatsMenu({
   username,
   roomDatas,
   myUser,
@@ -57,7 +59,7 @@ const ChatsMenu = ({
   roomDatas: any;
   myUser: any;
   roomId: string;
-}) => {
+}) {
   const token = localStorage.getItem('jwt_token');
 
   const kickMutation = useMutation(async () => {
@@ -116,17 +118,7 @@ const ChatsMenu = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'absolute',
-        backgroundColor: 'gray',
-        borderRadius: '10px',
-        padding: '10px',
-        fontSize: '16px',
-        zIndex: 1,
-        top: '2rem',
-      }}
-    >
+    <ChatsMenuContainer>
       {myUser.username === roomDatas.owner ? (
         myUser.username === username ? (
           <div>나는 방장입니다</div>
@@ -157,61 +149,58 @@ const ChatsMenu = ({
           <div>친구로써 차단하기</div>
         </>
       )}
-    </div>
+    </ChatsMenuContainer>
   );
-};
+}
 
-const EachChat = React.memo(
-  ({
-    index,
-    chatData,
-    roomDatas,
-    myUser,
-    roomId,
-  }: // selectedChatIndex,
-  // handleProfileImageClick,
-  any) => {
-    const [selectedChatProfile, setSelectedChatProfile] =
-      useState<boolean>(false);
+const EachChat = React.memo(function ({
+  index,
+  chatData,
+  roomDatas,
+  myUser,
+  roomId,
+}: // selectedChatIndex, handleProfileImageClick,
+any) {
+  const [selectedChatProfile, setSelectedChatProfile] =
+    useState<boolean>(false);
 
-    const handleChatProfileClick = useCallback((e: any) => {
-      e.stopPropagation();
-      setSelectedChatProfile((prev) => !prev);
-    }, []);
+  const handleChatProfileClick = useCallback((e: any) => {
+    e.stopPropagation();
+    setSelectedChatProfile((prev) => !prev);
+  }, []);
 
-    return (
-      <ChatItem other={chatData.user !== myUser.username} key={index}>
-        <ChatProfile>
-          <img
-            src={chatData.imgSrc}
-            alt="User profile"
-            onClick={handleChatProfileClick}
-          />
-        </ChatProfile>
-        {selectedChatProfile && (
-          <ChatsMenu
-            username={chatData.user}
-            roomDatas={roomDatas}
-            myUser={myUser}
-            roomId={roomId}
-          />
-        )}
-        <ChatMain>
-          <span>{chatData.user}</span>
-          <span>{chatData.createdAt}</span>
-          <ChatBubble
-            other={chatData.user !== myUser.username}
-            style={{ whiteSpace: 'pre-wrap' }}
-          >
-            {chatData.chat}
-          </ChatBubble>
-        </ChatMain>
-      </ChatItem>
-    );
-  }
-);
+  return (
+    <ChatItem other={chatData.user !== myUser.username} key={index}>
+      <ChatProfile>
+        <img
+          src={chatData.imgSrc}
+          alt="User profile"
+          onClick={handleChatProfileClick}
+        />
+      </ChatProfile>
+      {selectedChatProfile && (
+        <ChatsMenu
+          username={chatData.user}
+          roomDatas={roomDatas}
+          myUser={myUser}
+          roomId={roomId}
+        />
+      )}
+      <ChatMain>
+        <span>{chatData.user}</span>
+        <span>{chatData.createdAt}</span>
+        <ChatBubble
+          other={chatData.user !== myUser.username}
+          style={{ whiteSpace: 'pre-wrap' }}
+        >
+          {chatData.chat}
+        </ChatBubble>
+      </ChatMain>
+    </ChatItem>
+  );
+});
 
-const ChatListComponent = ({
+function ChatListComponent({
   chatDatas,
   roomDatas,
   myUser,
@@ -221,11 +210,11 @@ const ChatListComponent = ({
   roomDatas: any;
   myUser: any;
   roomId: string | undefined;
-}) => {
+}) {
   // const [selectedChatIndex, setSelectedChatIndex] = useState(-1);
   // const handleProfileImageClick = useCallback(
   //   (index: number) => {
-  //     console.log(index);
+  // console.log(index);
   //     if (selectedChatIndex === index) {
   //       setSelectedChatIndex(-1);
   //       return;
@@ -234,6 +223,19 @@ const ChatListComponent = ({
   //   },
   //   [selectedChatIndex]
   // );
+
+  let obj: { [key: string]: any[] } = {};
+  chatDatas.forEach((chatData: any) => {
+    const date = dayjs(String(chatData.createdAt));
+    console.log(date);
+    const key = date.format('YYYY-MM-DD');
+    const hms = date.format('h:mm:ss a');
+
+    if (!(key in obj)) obj[key] = [hms, chatData.chat];
+    else obj[key].push([hms, chatData.chat]);
+  });
+
+  console.log(JSON.stringify(obj));
 
   return (
     <ChatLists>
@@ -244,14 +246,12 @@ const ChatListComponent = ({
           chatData={chatData}
           roomDatas={roomDatas}
           myUser={myUser}
-          roomId={roomId}
-          // selectedChatIndex={selectedChatIndex}
-          // handleProfileImageClick={handleProfileImageClick}
+          roomId={roomId} // selectedChatIndex={selectedChatIndex} handleProfileImageClick={handleProfileImageClick}
         />
       ))}
     </ChatLists>
   );
-};
+}
 
 const ChatList = ({ socket }: { socket: any }) => {
   const params = useParams<{ roomId?: string }>();
@@ -259,7 +259,7 @@ const ChatList = ({ socket }: { socket: any }) => {
   const [chat, setChat] = useState('');
   const scrollbarRef = useRef<Scrollbars>(null);
 
-  console.log(`현재 roomId: ${roomId} 에 있는 상태입니다.`);
+  // console.log(`현재 roomId: ${roomId} 에 있는 상태입니다.`);
   const token = localStorage.getItem('jwt_token');
   const options = {
     method: 'GET',
@@ -279,14 +279,14 @@ const ChatList = ({ socket }: { socket: any }) => {
       options
     );
     const res = await response.json();
-    console.log('[[[myQueryDatas-chatDatas]]] \n' + JSON.stringify(res));
+    // console.log('[[[myQueryDatas-chatDatas]]] \n' + JSON.stringify(res));
     if (!response.ok) {
       const error = new Error('not ok!');
       error.message = res.message;
-      console.log('!response.ok ', error.message, error.stack);
+      // console.log('!response.ok ', error.message, error.stack);
       throw error;
     } else {
-      console.log('[[response.ok]]', JSON.stringify(chatError));
+      // console.log('[[response.ok]]', JSON.stringify(chatError));
     }
     return res;
   });
@@ -301,20 +301,20 @@ const ChatList = ({ socket }: { socket: any }) => {
     async () => {
       const response = await fetch(chat_backurl + `/room/${roomId}`, options);
       const res = await response.json();
-      console.log('[[[myQueryDatas-roomDatas]]] \n' + JSON.stringify(res));
+      // console.log('[[[myQueryDatas-roomDatas]]] \n' + JSON.stringify(res));
       return res;
     }
   );
-  console.log(
-    '전체적인 데이터 - ',
-    roomId,
-    '번 방에서의 채팅 데이터(chatDatas): ',
-    chatDatas,
-    '에러는 ',
-    chatError,
-    'isErorrChats는 ',
-    isErrorChats
-  );
+  // console.log(
+  //   '전체적인 데이터 - ',
+  //   roomId,
+  //   '번 방에서의 채팅 데이터(chatDatas): ',
+  //   chatDatas,
+  //   '에러는 ',
+  //   chatError,
+  //   'isErorrChats는 ',
+  //   isErrorChats
+  // );
 
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -329,7 +329,7 @@ const ChatList = ({ socket }: { socket: any }) => {
 
   const onMessage = useCallback(
     async (data: any) => {
-      console.log('onMessage데이터: ', data);
+      // console.log('onMessage데이터: ', data);
       queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
@@ -363,24 +363,21 @@ const ChatList = ({ socket }: { socket: any }) => {
     [queryClient, roomId, userData]
   );
   const onJoin = useCallback(function (data: any) {
-    console.log('JoinData: ', data);
+    // console.log('JoinData: ', data);
   }, []);
   const onExit = useCallback(function (data: any) {
-    console.log('LeaveData: ', data);
+    // console.log('LeaveData: ', data);
   }, []);
   const onKick = function (data: any) {
     if (data === userData.username) {
-      console.log('KickData: ', data, userData.username);
-      console.log('강퇴당하셨습니다');
+      // console.log('KickData: ', data, userData.username);
+      // console.log('강퇴당하셨습니다');
       setTimeout(() => {
         queryClient.invalidateQueries(['chat', roomId]);
-        // queryClient.invalidateQueries(['room', roomId]);
       }, 0);
       navigate('/chat/v3_rooms');
-
-      // console.log('kick되기전 invalidate했음');
     } else {
-      console.log(`${data}님이 강퇴당햇습니다`);
+      // console.log(`${data}님이 강퇴당햇습니다`);
     }
   };
   const onRole = useCallback(function (data: any) {
@@ -388,15 +385,15 @@ const ChatList = ({ socket }: { socket: any }) => {
   }, []);
 
   useEffect(() => {
-    console.log('ChatList useEffect 실행됨');
+    // console.log('ChatList useEffect 실행됨');
     return () => {
-      console.log('ChatList useEffect 종료됨');
+      // console.log('ChatList useEffect 종료됨');
     };
   }, []);
 
   useEffect(() => {
     if (userData) {
-      console.log('소켓 기능이 on 되었습니다! (join, exit, message)');
+      // console.log('소켓 기능이 on 되었습니다! (join, exit, message)');
       socket?.on('message', onMessage);
       socket?.on('join', onJoin);
       socket?.on('exit', onExit);
@@ -405,7 +402,7 @@ const ChatList = ({ socket }: { socket: any }) => {
       socket?.on('role', onRole);
     }
     return () => {
-      console.log('소켓 기능이 off 되었습니다! (join, exit, message)');
+      // console.log('소켓 기능이 off 되었습니다! (join, exit, message)');
       socket?.off('message', onMessage);
       socket?.off('join', onJoin);
       socket?.off('exit', onExit);
@@ -484,10 +481,11 @@ const ChatList = ({ socket }: { socket: any }) => {
       </SendChatBar>
       <GoBackBar>
         <Link to="/chat/v3_rooms">
-          <button>방 목록으로</button>
+          <button className="goBack">방 목록으로</button>
         </Link>
         <Link to="/chat/v3_rooms">
           <button
+            className="leaveRoom"
             onClick={() => {
               socket?.emit('leave', { roomId, userId: userData.username });
             }}

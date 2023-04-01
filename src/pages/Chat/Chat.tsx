@@ -38,6 +38,13 @@ const Chat = () => {
 
   return (
     <>
+      <Routes>
+        <Route path="createUsers" element={<Create_fakeUsers />} />
+        <Route
+          path="getUsers/:id"
+          element={<Get_fakeUsers socket={chat_socket} />}
+        />
+      </Routes>
       <Container>
         <div className="Title">
           <Title title="PONG CHAT" home search />
@@ -45,7 +52,7 @@ const Chat = () => {
         <div className="BodyOuter">
           <div className="Body">
             <div className="LeftSide Section">
-              <OnlineList Flex={1} />
+              <OnlineList />
             </div>
 
             <div className="MiddleSide Section">
@@ -89,14 +96,6 @@ const Chat = () => {
           </div>
         </div>
       </Container>
-      <Routes>
-        <Route path="createUsers" element={<Create_fakeUsers />} />
-        <Route
-          path="getUsers/:id"
-          element={<Get_fakeUsers socket={chat_socket} />}
-        />
-        <Route path="design/*" element={<Design />} />
-      </Routes>
     </>
   );
 };

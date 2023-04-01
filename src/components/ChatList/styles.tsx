@@ -37,15 +37,17 @@ export const SendChatBar = styled.div`
   width: var(--w);
   height: var(--h);
   display: flex;
-  margin: 1rem 0;
+  margin: calc(var(--h) * 0.3) 0;
+  align-items: center;
 
   & > textarea {
     /* flex: 8; */
     width: calc(var(--w) * 0.8);
+    height: min(calc(var(--h) * 0.2), calc(var(--w) * 0.01));
     display: flex;
-    border-radius: 2rem;
+    border-radius: calc(var(--h) * 0.3);
     border: var(--border-width) solid black;
-    padding: 1rem;
+    padding: calc(var(--h) * 0.3);
     overflow: hidden;
     resize: none;
   }
@@ -57,7 +59,7 @@ export const SendChatBar = styled.div`
     align-items: center;
     & > button {
       /* padding: 1.8rem; */
-      border-radius: 1rem;
+      border-radius: calc(var(--h) * 0.1);
       background-color: #fcf451;
       border: var(--border-width) solid black;
       height: min(calc(var(--h) * 0.8), calc(var(--w) * 0.24));
@@ -79,21 +81,81 @@ export const GoBackBar = styled.div`
   height: var(--h);
   display: flex;
   justify-content: space-evenly;
-  font-size: min(calc(var(--h) * 0.8), calc(var(--w)));
+  /* font-size: min(calc(var(--h) * 0.9), calc(var(--w) * 0.1)); */
+  font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
+  /* font-size: 15 px; */
 
   & > a {
-    border: 0.2rem solid red;
-
     & > button {
-      border: none;
+      /* display: inline-block; */
+      border: var(--border-width) solid black;
+      border-radius: calc(var(--h) * 0.3);
       margin: 0;
       padding: 0;
       background-color: white;
-      color: inherit;
+      color: #376277;
       font-family: inherit;
       font-size: inherit;
+      font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s ease;
       outline: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      padding: calc(var(--height) * 0.02) calc(var(--width) * 0.01);
+
+      &.goBack:hover {
+        background-color: #18f123;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        opacity: 0.8;
+      }
+      &.leaveRoom:hover {
+        background-color: #fe3838;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        opacity: 0.8;
+      }
+
+      &:active {
+        animation: shake 0.3s;
+        transform: translateY(2px);
+        box-shadow: none;
+        opacity: 0.8;
+      }
+
+      @keyframes shake {
+        0% {
+          transform: translateX(0);
+        }
+        10% {
+          transform: translateX(-5px);
+        }
+        20% {
+          transform: translateX(5px);
+        }
+        30% {
+          transform: translateX(-5px);
+        }
+        40% {
+          transform: translateX(5px);
+        }
+        50% {
+          transform: translateX(-5px);
+        }
+        60% {
+          transform: translateX(5px);
+        }
+        70% {
+          transform: translateX(-5px);
+        }
+        80% {
+          transform: translateX(5px);
+        }
+        90% {
+          transform: translateX(-5px);
+        }
+        100% {
+          transform: translateX(0);
+        }
+      }
     }
   }
 `;
@@ -116,7 +178,7 @@ export const ChatItem = styled.div<{ other?: boolean }>`
 
 export const ChatBubble = styled.div<{ other?: boolean }>`
   position: relative;
-  padding: 1rem;
+  padding: calc(var(--h) * 0.02);
   max-width: 97%;
   border-radius: 1rem;
   background-color: ${(props) => (props.other ? '#FFF' : '#F0F0F0')};
@@ -129,12 +191,16 @@ export const ChatBubble = styled.div<{ other?: boolean }>`
     height: 0;
     border-style: solid;
     border-width: 0.625rem;
+    /* border-width: calc(var(--h) * 0.025); */
     border-color: ${(props) =>
       props.other
         ? '#FFF transparent transparent transparent'
         : '#F0F0F0 transparent transparent transparent'};
-    top: -0.63rem;
+    top: -0.625rem;
+    /* top: calc(var(--h) * -0.0245); */
     ${(props) => (props.other ? 'right' : 'left')}: -0.625rem;
+    /* ${(props) =>
+      props.other ? 'right' : 'left'}: calc(var(--h) * -0.025); */
     transform: ${(props) =>
       props.other ? 'rotate(-135deg)' : 'rotate(135deg)'};
   }
@@ -158,4 +224,14 @@ export const ChatProfile = styled.div<{ other?: boolean }>`
 export const ChatMain = styled.div`
   display: flex;
   flex-direction: column;
+`;
+
+export const ChatsMenuContainer = styled.div`
+  position: absolute;
+  background-color: gray;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
+  z-index: 1;
+  top: calc(var(--w) * 0.3 * 0.4);
 `;
