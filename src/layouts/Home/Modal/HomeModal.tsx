@@ -1,22 +1,23 @@
-import React, {useState, useCallback} from 'react'
+import React, { useState, useCallback } from 'react'
 import Modal from '../../../components/Modal';
 import { MiddleButton } from '../../../components/Button';
-import { Avatar,
-         InputName,
-         Label, 
-         ModalAvatar, 
-         ModalContainer, 
-         ModalNickName,
-         TwoFactorPart,
-         WithdrawalButton} from './styles'
+import {
+  Avatar,
+  InputName,
+  Label,
+  ModalAvatar,
+  ModalContainer,
+  ModalNickName,
+  TwoFactorPart,
+  WithdrawalButton
+} from './styles';
+import WithdrawalModal from './WithdrawalModal';
 import { Switch as MuiTogleSwitch } from '@mui/material';
 import logoutButton from '../../../assets/middleButton/logoutButton.svg';
 
-import { isValidNickname } from '../../../hooks/user';
+import { isValidNickname, useUserDelete } from '../../../hooks/user';
 import { useInput } from '../../../hooks/useInput';
-import { useChangeNickname } from '../../../hooks/mutation/user';
-import { useUploadAvatar } from '../../../hooks/mutation/user';
-import { useUserDelete} from '../../../hooks/user';
+import { useChangeNickname, useUploadAvatar } from '../../../hooks/mutation/user';
 import { useFetcher } from '../../../hooks/fetcher';
 import { useQueryClient } from 'react-query';
 
@@ -27,39 +28,20 @@ import userDeleteButton from '../../../assets/middleButton/userDeleteButton.svg'
 
 type ImageFileType = File | null;
 
-const SettingModal = (props : any) : JSX.Element=> {
-  const {userAvatar,twoFactor,setTwoFactor,userInfoData,onClickLogOut} = props;
+const SettingModal = (props: any): JSX.Element => {
+  const { userAvatar, twoFactor, setTwoFactor, userInfoData, onClickLogOut } = props;
 
   const [qrCodeImage, setQrCodeImage] = useState<string | null>(null);
   const [file, setFile] = useState<ImageFileType>(null);
-  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const { mutate, isLoading } = useUploadAvatar();
 
   const newNickname = useInput('', isValidNickname);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+
   const changeNickname = useChangeNickname();
-  const { mutate, isLoading } = useUploadAvatar();
-  const onClickUserDelete = useUserDelete();
+  const userDelete = useUserDelete();
   const fetcher = useFetcher();
   const queryClient = useQueryClient();
-   
-  const onNicknameChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      newNickname.onChange(e);
-      setIsSubmitDisabled(e.target.value.length < 3);
-    },[newNickname]
-  );
-
-  const onSubmit = useCallback(
-    (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      changeNickname.mutate(newNickname.value);
-    }, [newNickname, changeNickname]
-  );
-
-  const onClickChangeProfileImage = useCallback(
-    () => {
-      mutate(file);
-    }, [file, mutate]
-  );
 
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +51,33 @@ const SettingModal = (props : any) : JSX.Element=> {
       }
     }, []
   );
+
+  const onClickChangeProfileImage = useCallback(
+    () => {
+      mutate(file);
+    }, [file, mutate]
+  );
+
+  const onNicknameChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      newNickname.onChange(e);
+      setIsSubmitDisabled(e.target.value.length < 3);
+    }, [newNickname]
+  );
+
+  const onSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      changeNickname.mutate(newNickname.value);
+    }, [newNickname, changeNickname]
+  );
+
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const onClickUserDelete = () => {
+    setIsDeleteModalOpen(true);
+  };
 
   const toggleTwoFactor = () => {
     const api = userInfoData?.isTwoFactorAuthenticationEnabled ? '/2fa/turn-off' : '/2fa/turn-on';
@@ -112,23 +121,23 @@ const SettingModal = (props : any) : JSX.Element=> {
       });
   };
 
-  const AvatarComp = () : JSX.Element => {
+  const AvatarComp = (): JSX.Element => {
     return (
       <ModalAvatar>
         <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
         <div>
           <label htmlFor='file-upload' className='custom-file-upload'>
-              <img src={avatarUploadButton} alt='Image' />
-              <input id='file-upload' type='file' onChange={handleFileChange} />
+            <img src={avatarUploadButton} alt='Image' />
           </label>
+          <input id='file-upload' type='file' onChange={handleFileChange} />
           <MiddleButton img_url={avatarSubmitButton} onClick={onClickChangeProfileImage} />
+          {isLoading && <p>Uploading avatar...</p>}
         </div>
-        {isLoading && <p>Uploading avatar...</p>}        
       </ModalAvatar>
     )
   }
 
-  const NickNameComp = () : JSX.Element => {
+  const NickNameComp = (): JSX.Element => {
     return (
       <ModalNickName>
         <form onSubmit={onSubmit}>
@@ -145,14 +154,14 @@ const SettingModal = (props : any) : JSX.Element=> {
     )
   }
 
-  const TwoFactorComp = () : JSX.Element => {
+  const TwoFactorComp = (): JSX.Element => {
     return (
       <TwoFactorPart>
         <Label>
           <p>Enable two factor authentication</p>
           <MuiTogleSwitch checked={twoFactor} onChange={toggleTwoFactor} />
         </Label>
-        {qrCodeImage && (<TwoFactorModal qrCodeImage={qrCodeImage} onClickLogOut={onClickLogOut}/>)}
+        {qrCodeImage && (<TwoFactorModal qrCodeImage={qrCodeImage} onClickLogOut={onClickLogOut} />)}
       </TwoFactorPart>
     );
   }
@@ -160,20 +169,50 @@ const SettingModal = (props : any) : JSX.Element=> {
   return (
     <>
       <ModalContainer>
-        <AvatarComp/>
-        <NickNameComp/>
-        <TwoFactorComp/>
+        {/* <AvatarComp /> */}
+        <ModalAvatar>
+          <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
+          <div>
+            <label htmlFor='file-upload' className='custom-file-upload'>
+              <img src={avatarUploadButton} alt='Image' />
+            </label>
+            <input id='file-upload' type='file' onChange={handleFileChange} />
+            <MiddleButton img_url={avatarSubmitButton} onClick={onClickChangeProfileImage} />
+            {isLoading && <p>Uploading avatar...</p>}
+          </div>
+        </ModalAvatar>
+        {/* <NickNameComp /> */}
+        <ModalNickName>
+          <form onSubmit={onSubmit}>
+            <Label id='nickname-label'>
+              <InputName
+                placeholder='new nickname'
+                {...newNickname}
+                onChange={onNicknameChange}
+              />
+            </Label>
+            <MiddleButton img_url={nicknameSubmitButton} type='submit' disabled={isSubmitDisabled} />
+          </form>
+        </ModalNickName>
+        <TwoFactorComp />
       </ModalContainer>
       <WithdrawalButton>
         <MiddleButton img_url={userDeleteButton} onClick={onClickUserDelete} />
       </WithdrawalButton>
+      {isDeleteModalOpen && (
+        <WithdrawalModal
+          message="Are you sure you want to delete the user?"
+          onConfirm={userDelete}
+          onCancel={() => setIsDeleteModalOpen(false)}
+        />
+      )}
     </>
   )
 }
 
-const TwoFactorModal = ( props : any ) : JSX.Element => {
-  const {qrCodeImage, onClickLogOut} = props;
-  
+const TwoFactorModal = (props: any): JSX.Element => {
+  const { qrCodeImage, onClickLogOut } = props;
+
   return (
     <Modal show={qrCodeImage} onCloseModal={onClickLogOut}>
       <img src={qrCodeImage} />
@@ -184,4 +223,3 @@ const TwoFactorModal = ( props : any ) : JSX.Element => {
 }
 
 export default SettingModal
-
