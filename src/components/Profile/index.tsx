@@ -3,7 +3,7 @@ import { MiddleButton, SmallButton } from '../Button';
 import friendAddButton from '../../assets/middleButton/friendAddButton.svg';
 import friendDeleteButton from '../../assets/middleButton/friendDeleteButton.svg';
 import closeButton from '../../assets/smallButton/modalCloseButton.svg';
-import { useAddFriend } from '../../hooks/mutation/friend';
+import { useAddFriend, useDeleteFriend } from '../../hooks/mutation/friend';
 import { useCallback } from 'react';
 
 export enum ProfileEnum {
@@ -31,16 +31,23 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
   }
 
   const addFriend = useAddFriend();
-
-  const onClickClose = () => {
-    setPopProfile(false);
-  }
+  const deleteFriend = useDeleteFriend();
 
   const onClickAddFriend = useCallback(
     () => {
       addFriend.mutate(profile.id);
     }, [profile.id, addFriend]
   )
+
+  const onClickDeleteFriend = useCallback(
+    () => {
+      deleteFriend.mutate(profile.id);
+    }, [profile.id, deleteFriend]
+  )
+
+  const onClickClose = () => {
+    setPopProfile(false);
+  }
 
 return (
   <ProfileContainer color={color}>
@@ -62,7 +69,7 @@ return (
 
       {profile.who === ProfileEnum.FRIEND && (
         <div className='Buttons'>
-          <MiddleButton img_url={friendDeleteButton} />
+          <MiddleButton img_url={friendDeleteButton} onClick={onClickDeleteFriend} />
         </div>
       )}
       {profile.who === ProfileEnum.OTHERS && (
