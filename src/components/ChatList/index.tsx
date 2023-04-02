@@ -22,7 +22,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
 import dayjs from 'dayjs';
 import { MiddleButton } from '../Button';
-import { useUserInfo } from '@/hooks/query/user';
+import { useUserInfo } from '../../hooks/query/user';
 
 export const ChatElement = styled.section`
   position: relative;

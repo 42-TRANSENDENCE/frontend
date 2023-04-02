@@ -6,7 +6,7 @@ import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg'
 import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
 import { ChatRoomContainer, CreateRoom, RoomList, SearchRoom } from './styles';
-import { useUserInfo } from '@/hooks/query/user';
+import { useUserInfo } from '../../hooks/query/user';
 
 // const chat_backurl = 'http://127.0.0.1:3095';
 const server_public_ip = import.meta.env.VITE_AWS_URL;
