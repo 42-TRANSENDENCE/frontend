@@ -7,14 +7,16 @@ import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
 import { ChatRoomContainer, CreateRoom, RoomList, SearchRoom } from './styles';
 
-const chat_backurl = 'http://127.0.0.1:3095';
+// const chat_backurl = 'http://127.0.0.1:3095';
+const server_public_ip = import.meta.env.VITE_AWS_URL;
+const server_port = import.meta.env.VITE_AWS_PORT;
 
 async function postCreateRoom(
   title: string,
   password: string,
   owner: string
 ): Promise<string> {
-  return await fetch(`${chat_backurl}/rooms`, {
+  return await fetch(`http://${server_public_ip}:${server_port}/rooms`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -53,19 +55,26 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  const { data: rooms, isLoading: isLoadingRooms } = useQuery<any>(
+  const { data: roomDatas, isLoading: isLoadingRooms } = useQuery<any>(
     ['roomlist'],
-    () => fetch(chat_backurl + `/rooms/`).then((res) => res.json())
+    () =>
+      fetch(`http://${server_public_ip}:${server_port}/rooms/`).then((res) =>
+        res.json()
+      )
   );
-  const { data: user, isLoading: isLoadingUser } = useQuery<any>(['user'], () =>
-    fetch(chat_backurl + '/user', options).then((res) => res.json())
+  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
+    ['user'],
+    () =>
+      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
+        (res) => res.json()
+      )
   );
 
   useEffect(() => {
-    if (rooms && findRoomName === '') {
-      setFilteredRooms(rooms);
+    if (roomDatas && findRoomName === '') {
+      setFilteredRooms(roomDatas);
     }
-  }, [rooms]);
+  }, [roomDatas]);
 
   const onCloseCreateRoomModal = useCallback(() => {
     setShowCreateRoomModal(
@@ -79,22 +88,22 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     async (data: any) => {
       // console.log('newRoom 데이터: ', data);
       queryClient.setQueryData(['roomlist'], () => {
-        return [...rooms, data];
+        return [...roomDatas, data];
       });
     },
-    [queryClient, rooms]
+    [queryClient, roomDatas]
   );
 
   const onRemoveRoom = useCallback(
     async (data: any) => {
-      const new_rooms = rooms.filter(
+      const new_rooms = roomDatas.filter(
         (room: any) => Number(room.id) !== Number(data)
       );
       queryClient.setQueryData(['roomlist'], () => {
         return new_rooms;
       });
     },
-    [queryClient, rooms]
+    [queryClient, roomDatas]
   );
 
   useEffect(() => {
@@ -119,7 +128,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
   const onCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutateRoom({ title, password, owner: user.username });
+    mutateRoom({ title, password, owner: userData.username });
     onCloseCreateRoomModal();
   };
 
@@ -127,29 +136,29 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     (e: any) => {
       e.preventDefault();
       if (findRoomName.trim() === '') {
-        setFilteredRooms(rooms);
+        setFilteredRooms(roomDatas);
         setFindRoomName('');
         return;
       }
-      const newFilteredRooms = rooms.filter((v: any) => {
+      const newFilteredRooms = roomDatas.filter((v: any) => {
         return v.title === findRoomName.trimLeft();
       });
       setFilteredRooms(newFilteredRooms);
       setFindRoomName('');
     },
-    [findRoomName, rooms]
+    [findRoomName, roomDatas]
   );
 
   const onChangeInput = useCallback(
     (e: any) => {
       e.preventDefault();
       setFindRoomName(e.target.value);
-      const newFilteredRooms = rooms.filter((v: any) => {
+      const newFilteredRooms = roomDatas.filter((v: any) => {
         return v.title.includes(e.target.value.trimLeft());
       });
       setFilteredRooms(newFilteredRooms);
     },
-    [rooms]
+    [roomDatas]
   );
 
   const onEnterEvent = useCallback(
@@ -160,7 +169,10 @@ const ChatRoom = ({ socket }: { socket: any }) => {
       const dataset_hasPassword =
         roominfoEl.getAttribute('data-password') === 'true';
       console.log(dataset_roomId + '번 방에 입장합니다.');
-      fetch(chat_backurl + `/room/${dataset_roomId}`, options)
+      fetch(
+        `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
+        options
+      )
         .then((res) => res.json())
         .then((data) => {
           console.log('memberList: ' + data.memberList);
@@ -170,7 +182,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
           /* 기존 참여자 */
           const is_kicked = data.kickList.find(
-            (kickData: any) => kickData.username === user.username
+            (kickData: any) => kickData.username === userData.username
           );
           if (is_kicked) {
             console.log('강퇴당한 유저입니다.');
@@ -178,7 +190,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
             return;
           }
           const is_member = data.memberList.find(
-            (memberName: any) => memberName === user.username
+            (memberName: any) => memberName === userData.username
           );
 
           if (is_member) {
@@ -191,14 +203,17 @@ const ChatRoom = ({ socket }: { socket: any }) => {
           // TODO : api 문서에 따라 returnFail 수정
           if (data.status === 0) {
             const token = localStorage.getItem('jwt_token');
-            fetch(chat_backurl + `/room/${dataset_roomId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({}),
-            }).then((res) => {
+            fetch(
+              `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({}),
+              }
+            ).then((res) => {
               // console.log(res);
               if (res.status === 200) {
                 console.log('공개방 최초입장');
@@ -213,14 +228,17 @@ const ChatRoom = ({ socket }: { socket: any }) => {
           } else {
             /* 비공개방 */
             const password = prompt('비밀번호를 입력하세요');
-            fetch(chat_backurl + `/room/${dataset_roomId}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({ password }),
-            }).then((res) => {
+            fetch(
+              `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ password }),
+              }
+            ).then((res) => {
               if (res.status === 200) {
                 console.log('비공개방 최초입장');
                 socket?.emit('join', dataset_roomId);
@@ -235,7 +253,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
           }
         });
     },
-    [user]
+    [userData]
   );
 
   if (isLoadingRooms || isLoadingUser) return <div>isLoading...</div>;

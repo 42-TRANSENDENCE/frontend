@@ -10,43 +10,48 @@ import {
   ChatsMenuContainer,
   GoBackBar,
   SendChatBar,
-} from "./styles";
-import chatSendButtonUrl from "../../assets/smallButton/chatSendButton.svg";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars";
-import React from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import styled from "styled-components";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { isError, useMutation, useQuery, useQueryClient } from "react-query";
-import dayjs from "dayjs";
-import { MiddleButton } from "../Button";
+} from './styles';
+import chatSendButtonUrl from '../../assets/smallButton/chatSendButton.svg';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
+import React from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import styled from 'styled-components';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
+import dayjs from 'dayjs';
+import { MiddleButton } from '../Button';
 
 export const ChatElement = styled.section`
   position: relative;
 `;
 
-const chat_backurl = "http://127.0.0.1:3095";
+// const chat_backurl = "http://127.0.0.1:3095";
+const server_public_ip = import.meta.env.VITE_AWS_URL;
+const server_port = import.meta.env.VITE_AWS_PORT;
 
 async function postChat(
   roomId: string,
   data: any,
   username: string
 ): Promise<string> {
-  const token = localStorage.getItem("jwt_token");
-  let res = await fetch(`${chat_backurl}/room/${roomId}/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      createdAt: new Date(),
-      chat: data,
-      user: username,
-    }),
-  }).then((res) => res.json());
+  const token = localStorage.getItem('jwt_token');
+  let res = await fetch(
+    `http://${server_public_ip}:${server_port}/room/${roomId}/chat`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        createdAt: new Date(),
+        chat: data,
+        user: username,
+      }),
+    }
+  ).then((res) => res.json());
   return res;
 }
 
@@ -61,15 +66,15 @@ function ChatsMenu({
   myUser: any;
   roomId: string;
 }) {
-  const token = localStorage.getItem("jwt_token");
+  const token = localStorage.getItem('jwt_token');
 
   const kickMutation = useMutation(async () => {
     const response = await fetch(
-      `${chat_backurl}/room/${roomId}/kick/${username}`,
+      `http://${server_public_ip}:${server_port}/room/${roomId}/kick/${username}`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({}),
@@ -83,38 +88,47 @@ function ChatsMenu({
     kickMutation.mutate();
   };
   const onBanOther = async () => {
-    let res = await fetch(`${chat_backurl}/room/${roomId}/ban/${username}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({}),
-    });
+    let res = await fetch(
+      `http://${server_public_ip}:${server_port}/room/${roomId}/ban/${username}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
     return res.json();
   };
 
   const onAdminOther = async () => {
-    let res = await fetch(`${chat_backurl}/room/${roomId}/admin/${username}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({}),
-    });
+    let res = await fetch(
+      `http://${server_public_ip}:${server_port}/room/${roomId}/admin/${username}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
     return res.json();
   };
 
   const onMuteOther = async () => {
-    let res = await fetch(`${chat_backurl}/room/${roomId}/mute/${username}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({}),
-    });
+    let res = await fetch(
+      `http://${server_public_ip}:${server_port}/room/${roomId}/mute/${username}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
     return res.json();
   };
 
@@ -192,7 +206,7 @@ any) {
         <span>{chatData.hms}</span>
         <ChatBubble
           other={chatData.user !== myUser.username}
-          style={{ whiteSpace: "pre-wrap" }}
+          style={{ whiteSpace: 'pre-wrap' }}
         >
           {chatData.chat}
         </ChatBubble>
@@ -229,8 +243,8 @@ function ChatListComponent({
   const obj_keys: any[] = [];
   chatDatas.forEach((chatData: any) => {
     const date = dayjs(chatData.createdAt);
-    const key = date.format("YYYY-MM-DD");
-    const hms = date.format("h:mm:ss a");
+    const key = date.format('YYYY-MM-DD');
+    const hms = date.format('h:mm:ss a');
     if (!(key in obj)) {
       obj[key] = [{ ...chatData, hms: hms, chat: chatData.chat }];
       obj_keys.push(key);
@@ -242,13 +256,13 @@ function ChatListComponent({
   // console.log('obj: ', obj);
   const weekDays: { [key: string]: string } = useMemo(
     () => ({
-      Sunday: "일",
-      Monday: "월",
-      Tuesday: "화",
-      Wednesday: "수",
-      Thursday: "목",
-      Friday: "금",
-      Saturday: "토",
+      Sunday: '일',
+      Monday: '월',
+      Tuesday: '화',
+      Wednesday: '수',
+      Thursday: '목',
+      Friday: '금',
+      Saturday: '토',
     }),
     []
   );
@@ -266,7 +280,7 @@ function ChatListComponent({
           />
         ))} */}
       {obj_keys.map((obj_key, index) => {
-        const week = weekDays[dayjs(obj_key).locale("ko").format("dddd")];
+        const week = weekDays[dayjs(obj_key).locale('ko').format('dddd')];
 
         return (
           <div key={index}>
@@ -298,13 +312,13 @@ function ChatListComponent({
 const ChatList = ({ socket }: { socket: any }) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
-  const [chat, setChat] = useState("");
+  const [chat, setChat] = useState('');
   const scrollbarRef = useRef<Scrollbars>(null);
 
   // console.log(`현재 roomId: ${roomId} 에 있는 상태입니다.`);
-  const token = localStorage.getItem("jwt_token");
+  const token = localStorage.getItem('jwt_token');
   const options = {
-    method: "GET",
+    method: 'GET',
     headers: { Authorization: `Bearer ${token}` },
   };
 
@@ -315,15 +329,15 @@ const ChatList = ({ socket }: { socket: any }) => {
     error: chatError,
     refetch: refetchChatList,
     isLoadingError: isLoadingErrorChats,
-  } = useQuery<any>(["chat", roomId], async () => {
+  } = useQuery<any>(['chat', roomId], async () => {
     const response = await fetch(
-      `${chat_backurl}/room/${roomId}/chat`,
+      `http://${server_public_ip}:${server_port}/room/${roomId}/chat`,
       options
     );
     const res = await response.json();
     // console.log('[[[myQueryDatas-chatDatas]]] \n' + JSON.stringify(res));
     if (!response.ok) {
-      const error = new Error("not ok!");
+      const error = new Error('not ok!');
       error.message = res.message;
       // console.log('!response.ok ', error.message, error.stack);
       throw error;
@@ -334,14 +348,20 @@ const ChatList = ({ socket }: { socket: any }) => {
   });
 
   const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
-    ["user"],
-    () => fetch(chat_backurl + "/user", options).then((res) => res.json())
+    ['user'],
+    () =>
+      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
+        (res) => res.json()
+      )
   );
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
-    ["room", roomId],
+    ['room', roomId],
     async () => {
-      const response = await fetch(chat_backurl + `/room/${roomId}`, options);
+      const response = await fetch(
+        `http://${server_public_ip}:${server_port}/room/${roomId}`,
+        options
+      );
       const res = await response.json();
       // console.log('[[[myQueryDatas-roomDatas]]] \n' + JSON.stringify(res));
       return res;
@@ -364,7 +384,7 @@ const ChatList = ({ socket }: { socket: any }) => {
     ({ chat, userData }) => postChat(roomId!, chat, userData.username),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["chat", roomId]);
+        queryClient.invalidateQueries(['chat', roomId]);
       },
     }
   );
@@ -372,7 +392,7 @@ const ChatList = ({ socket }: { socket: any }) => {
   const onMessage = useCallback(
     async (data: any) => {
       // console.log('onMessage데이터: ', data);
-      queryClient.setQueryData(["chat", roomId], (chatData: any) => {
+      queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
       // console.log(data, userData.username);
@@ -393,7 +413,7 @@ const ChatList = ({ socket }: { socket: any }) => {
           scrollbarRef.current?.scrollToBottom();
         }, 50);
       } else {
-        toast.success("새 메시지가 도착했습니다.", {
+        toast.success('새 메시지가 도착했습니다.', {
           onClick() {
             scrollbarRef.current?.scrollToBottom();
           },
@@ -415,9 +435,9 @@ const ChatList = ({ socket }: { socket: any }) => {
       // console.log('KickData: ', data, userData.username);
       // console.log('강퇴당하셨습니다');
       setTimeout(() => {
-        queryClient.invalidateQueries(["chat", roomId]);
+        queryClient.invalidateQueries(['chat', roomId]);
       }, 0);
-      navigate("/chat/v3_rooms");
+      navigate('/chat/v3_rooms');
     } else {
       // console.log(`${data}님이 강퇴당햇습니다`);
     }
@@ -436,20 +456,20 @@ const ChatList = ({ socket }: { socket: any }) => {
   useEffect(() => {
     if (userData) {
       // console.log('소켓 기능이 on 되었습니다! (join, exit, message)');
-      socket?.on("message", onMessage);
-      socket?.on("join", onJoin);
-      socket?.on("exit", onExit);
+      socket?.on('message', onMessage);
+      socket?.on('join', onJoin);
+      socket?.on('exit', onExit);
       // socket?.emit('join', roomId);
-      socket?.on("kick", onKick);
-      socket?.on("role", onRole);
+      socket?.on('kick', onKick);
+      socket?.on('role', onRole);
     }
     return () => {
       // console.log('소켓 기능이 off 되었습니다! (join, exit, message)');
-      socket?.off("message", onMessage);
-      socket?.off("join", onJoin);
-      socket?.off("exit", onExit);
-      socket?.off("kick", onKick);
-      socket?.off("role", onRole);
+      socket?.off('message', onMessage);
+      socket?.off('join', onJoin);
+      socket?.off('exit', onExit);
+      socket?.off('kick', onKick);
+      socket?.off('role', onRole);
       // socket?.emit('leave', roomId);
     };
   }, [userData]);
@@ -467,7 +487,7 @@ const ChatList = ({ socket }: { socket: any }) => {
     e.preventDefault();
     if (!chat?.trim()) return;
     mutateChat({ chat, userData });
-    setChat("");
+    setChat('');
   };
 
   function handleKeyDown(event: any) {
@@ -476,11 +496,11 @@ const ChatList = ({ socket }: { socket: any }) => {
       event.preventDefault();
       if (!chat?.trim()) return;
       mutateChat({ chat, userData });
-      setChat("");
+      setChat('');
     } else if (event.keyCode === 13 && event.shiftKey) {
       // Add a new line
       event.preventDefault();
-      setChat((prevChat) => prevChat + "\n");
+      setChat((prevChat) => prevChat + '\n');
     }
   }
 
@@ -488,12 +508,12 @@ const ChatList = ({ socket }: { socket: any }) => {
     return <div />;
   if (isErrorChats) {
     const response = chatError as Error;
-    queryClient.invalidateQueries(["chat", roomId]);
-    queryClient.invalidateQueries(["room", roomId]);
+    queryClient.invalidateQueries(['chat', roomId]);
+    queryClient.invalidateQueries(['room', roomId]);
 
     return (
       <div style={{ flex: 1.85 }}>
-        <div>{response ? response.message : "방에 대한 권한이 없습니다"}</div>
+        <div>{response ? response.message : '방에 대한 권한이 없습니다'}</div>
         <Link to="/chat/v3_rooms">방 목록으로</Link>
       </div>
     );
@@ -529,7 +549,7 @@ const ChatList = ({ socket }: { socket: any }) => {
           <button
             className="leaveRoom"
             onClick={() => {
-              socket?.emit("leave", { roomId, userId: userData.username });
+              socket?.emit('leave', { roomId, userId: userData.username });
             }}
           >
             방 나가기

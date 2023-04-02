@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GlobalStyles from '../../styles/global';
-import { Navigate, Route, Routes, useParams } from 'react-router';
-import V2rooms from './v2_rooms';
-import V2dms from './v2_dms';
-import V2chats from './v2_chats';
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router';
 import useSocket from '../../hooks/useSocket';
 import Create_fakeUsers from './create_fakeusers';
 import Get_fakeUsers from './get_fakeusers';
-import { Design } from './design';
-//
-import styled from 'styled-components';
 import ChatList from '../../components/ChatList';
 import ChatRoom from '../../components/ChatRoom';
 import OnlineList from '../../components/OnlineList';
@@ -21,6 +22,7 @@ import { Link } from 'react-router-dom';
 const ChatContainer = ({ socket: chat_socket }: any) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
+  const roomId_ref = useRef(roomId);
 
   return <ChatList socket={chat_socket} key={roomId} />;
 };
