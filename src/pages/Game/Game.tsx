@@ -29,9 +29,9 @@ const Game = (): JSX.Element => {
     clientSocket.on('out_of_queue', () => {
       setGamestate(GameState.Lobby);
     });
-    clientSocket.on('match_maked', (roomId) => {
-      setRoom(roomId);
-      console.log('room :', room, roomId);
+    clientSocket.on('match_maked', (data : any) => {
+      setRoom(data.roomId);
+      console.log('room :', room, data.roomId);
       setGamestate(GameState.InGame);
     });
     return () => {
