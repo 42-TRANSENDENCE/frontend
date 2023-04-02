@@ -3,17 +3,17 @@ import cancelButton from "../../../assets/bigButton/cancelButton.svg"
 import { useEffect } from "react";
 
 const Waiting = (props: any) => {
-  const game_socket = props.socket;
+  const client_socket = props.socket;
 
   function quit_queue(): void {
     console.log("cancel 버튼 누름");
-    game_socket.emit("leave_queue");
+    client_socket.emit("leave_queue");
   }
 
   useEffect(() => {
     console.log("queue에 들어옴");
     return () => {
-      game_socket.emit("leave_queue");
+      client_socket.emit("leave_queue");
       console.log("queue에서 나감.");
     };
   }, []);
