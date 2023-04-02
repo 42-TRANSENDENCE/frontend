@@ -29,7 +29,7 @@ const Game = (): JSX.Element => {
     clientSocket.on('out_of_queue', () => {
       setGamestate(GameState.Lobby);
     });
-    clientSocket.on('enter_to_game', (roomId) => {
+    clientSocket.on('match_maked', (roomId) => {
       setRoom(roomId);
       console.log('room :', room, roomId);
       setGamestate(GameState.InGame);
@@ -37,7 +37,7 @@ const Game = (): JSX.Element => {
     return () => {
       clientSocket.off('joined_to_queue');
       clientSocket.off('out_of_queue');
-      clientSocket.off('enter_to_game');
+      clientSocket.off('match_maked');
     };
   }, []);
 
