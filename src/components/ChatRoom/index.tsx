@@ -84,12 +84,54 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     setTitle('');
   }, []);
 
+  /**
+       * new_data = {
+          id: room_id++,
+          title,
+          owner,
+          password,
+          status: password ? 1 : 0,
+          muteList: [],
+          kickList: [],
+          memberList: [],
+          adminList: [],
+          createdAt: new Date(),
+        };
+       * 
+       */
+  function enterByOwnerAtInitial(data: any) {
+    console.log();
+    fetch(`http://${server_public_ip}:${server_port}/room/${data.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(
+        data.status === 1 ? { password: data.password } : {}
+      ),
+    }).then((res) => {
+      if (res.status === 200) {
+        console.log('방장이 최초입장');
+        socket?.emit('join', data.id);
+        res.json();
+        navigate(`v3_rooms/${data.id}/chat`);
+        return;
+      } else {
+        setErrorMessage('비밀번호가 틀렸습니다.');
+      }
+    });
+  }
+
   const onNewRoom = useCallback(
     async (data: any) => {
       // console.log('newRoom 데이터: ', data);
       queryClient.setQueryData(['roomlist'], () => {
         return [...roomDatas, data];
       });
+      if (data.owner === userData.username) {
+        enterByOwnerAtInitial(data);
+      }
     },
     [queryClient, roomDatas]
   );

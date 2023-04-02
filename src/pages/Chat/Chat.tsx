@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import GlobalStyles from '../../styles/global';
 import {
   Navigate,
@@ -19,17 +19,26 @@ import { Container } from '../../layouts/Home/styles';
 import { Link } from 'react-router-dom';
 
 // ChatList마다 reRendering대신 reMounting을 하기 위해 key={roomId}를 넘겨줌
-const ChatContainer = ({ socket: chat_socket }: any) => {
+const ChatContainer = forwardRef(({ socket: chat_socket }: any, ref: any) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
-  const roomId_ref = useRef(roomId);
+  const navigate = useNavigate();
+
+  // console.log('ref.current: ', ref.current);
+  if (ref.current === roomId) {
+    ref.current = -1;
+    // console.log('같은 roomId이므로 chat으로 갑니다');
+    navigate('/chat');
+  }
+  ref.current = roomId;
 
   return <ChatList socket={chat_socket} key={roomId} />;
-};
+});
 
 const Chat = () => {
   const [chat_socket, disconnect_chat_socket] = useSocket('v2_chat');
   console.log('connecting chat_socket: ', chat_socket);
+  const roomId_ref = useRef(-1);
 
   useEffect(() => {
     return () => {
@@ -63,7 +72,9 @@ const Chat = () => {
                 <Route path="v3_rooms/*">
                   <Route
                     path=":roomId/chat"
-                    element={<ChatContainer socket={chat_socket} />}
+                    element={
+                      <ChatContainer socket={chat_socket} ref={roomId_ref} />
+                    }
                   />
                   <Route
                     path="*"
