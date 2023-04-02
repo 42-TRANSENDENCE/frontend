@@ -16,6 +16,7 @@
     "@types/loadable__component": "^5.13.4",
     "@types/prop-types": "^15.7.5",
     "@types/socket.io-client": "^3.0.0",
+    "dayjs": "^1.11.7",
     "react": "^18.2.0",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^18.2.0",

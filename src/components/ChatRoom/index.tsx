@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg';
 import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
-import { ChatRoomContainer } from './styles';
+import { ChatRoomContainer, CreateRoom, RoomList, SearchRoom } from './styles';
 
 const chat_backurl = 'http://127.0.0.1:3095';
 
@@ -129,8 +129,6 @@ const ChatRoom = ({ socket }: { socket: any }) => {
       if (findRoomName.trim() === '') {
         setFilteredRooms(rooms);
         setFindRoomName('');
-        // console.log('rooms: ', rooms);
-        // console.log('filteredRooms: ', filteredRooms);
         return;
       }
       const newFilteredRooms = rooms.filter((v: any) => {
@@ -175,9 +173,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
             (kickData: any) => kickData.username === user.username
           );
           if (is_kicked) {
-            // setErrorMessage('강퇴당한 유저입니다.');
             console.log('강퇴당한 유저입니다.');
-            // queryClient.invalidateQueries(['chat', String(dataset_roomId)]);
             navigate(`v3_rooms/${dataset_roomId}/chat`);
             return;
           }
@@ -246,80 +242,36 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
   return (
     <ChatRoomContainer>
-      <form
-        style={{
-          flex: 1,
-          width: '100%',
-          display: 'flex',
-          marginBottom: '1rem',
-        }}
-        onSubmit={onSubmitRoomName}
-      >
+      <SearchRoom onSubmit={onSubmitRoomName}>
         <input
-          style={{
-            flex: 9,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: '2rem',
-            border: '0.3rem solid black',
-            padding: '1rem',
-          }}
+          title="searchInput"
           onChange={onChangeInput}
           value={findRoomName}
         />
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <img
-            src={searchButtonUrl}
-            style={{ width: '3rem', marginRight: '1rem', cursor: 'pointer' }}
-            onClick={onSubmitRoomName}
-          />
-        </div>
-      </form>
-      <div style={{ flex: 13 }}>
-        <Scrollbars>
+        <span>
+          <img src={searchButtonUrl} onClick={onSubmitRoomName} />
+        </span>
+      </SearchRoom>
+      <RoomList>
+        <Scrollbars autoHide>
           {filteredRooms.map((roomInfo: any) => {
-            // console.log('roomInfo: ', roomInfo);
             return (
               <div
-                style={{
-                  width: '96%',
-                  height: '10%',
-                  borderRadius: '2rem',
-                  border: '0.3rem solid black',
-                  margin: '0.3rem 0',
-                  padding: '0.1rem 7.9rem 3rem 1rem',
-                  position: 'relative',
-                }}
+                className="eachRoom"
                 data-id={roomInfo.id}
                 data-password={roomInfo.status !== 0 ? 'true' : 'false'}
                 key={roomInfo.id}
                 onClick={onEnterEvent}
               >
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: '1rem',
-                    height: '100%',
-                  }}
-                >
+                <div>
                   {roomInfo.status === 0 ? (
                     <img
                       src="../../../public/padlock_opened.png"
-                      style={{ height: '30%' }}
                       alt="padlock_opened"
                     />
                   ) : (
                     <img
                       src="../../../public/padlock_locked.png"
-                      style={{ height: '30%' }}
                       alt="padlock_locked"
                     />
                   )}
@@ -334,22 +286,9 @@ const ChatRoom = ({ socket }: { socket: any }) => {
             );
           })}
         </Scrollbars>
-      </div>
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
+      </RoomList>
+      <CreateRoom>
         <button
-          style={{
-            padding: '0.5rem',
-            borderRadius: '1rem',
-            backgroundColor: '#4495F7',
-            border: '0.3rem solid black',
-          }}
           onClick={(e) => {
             e.preventDefault();
             setShowCreateRoomModal(
@@ -358,18 +297,9 @@ const ChatRoom = ({ socket }: { socket: any }) => {
           }}
           title="방 만들기"
         >
-          <img
-            src={createRoomButtonUrl}
-            style={{
-              width: '30px',
-              height: '30px',
-              maxWidth: '100%',
-              maxHeight: '100%',
-            }}
-            alt="createRoomButton"
-          />
+          <img src={createRoomButtonUrl} alt="createRoomButton" />
         </button>
-      </div>
+      </CreateRoom>
       <CreateRoomModal
         show={showCreateRoomModal}
         onCloseModal={onCloseCreateRoomModal}

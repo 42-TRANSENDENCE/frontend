@@ -1,9 +1,7 @@
-import { Children, useCallback, useState } from 'react';
-import { CloseModalButton, CreateModal, InfoModalButton } from './styles';
-import modalCloseButton from '../../assets/smallButton/modalCloseButton.svg';
-import modalInfoButton from '../../assets/smallButton/modalQuestionButton.svg';
-
-// const chat_backurl = `http://${import.meta.env.VITE_AWS_URL}`;
+import { Children, useCallback, useState } from "react";
+import { CloseModalButton, CreateModal, InfoModalButton } from "./styles";
+import modalCloseButton from "../../assets/smallButton/modalCloseButton.svg";
+import modalInfoButton from "../../assets/smallButton/modalQuestionButton.svg";
 
 export default function Modal({
   children,
@@ -35,7 +33,7 @@ export default function Modal({
         )}
         {showInfoButton && (
           <InfoModalButton tooltip={tooltipText}>
-            <img src={modalInfoButton}/>
+            <img src={modalInfoButton} />
           </InfoModalButton>
         )}
         {children}

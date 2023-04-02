@@ -18,11 +18,11 @@ import { Container } from '../../layouts/Home/styles';
 import { Link } from 'react-router-dom';
 
 // ChatList마다 reRendering대신 reMounting을 하기 위해 key={roomId}를 넘겨줌
-const ChatContainer = ({ socket: chat_socket, Flex }: any) => {
+const ChatContainer = ({ socket: chat_socket }: any) => {
   const params = useParams<{ roomId?: string }>();
   const { roomId } = params;
 
-  return <ChatList socket={chat_socket} Flex={Flex} key={roomId} />;
+  return <ChatList socket={chat_socket} key={roomId} />;
 };
 
 const Chat = () => {
@@ -38,6 +38,13 @@ const Chat = () => {
 
   return (
     <>
+      <Routes>
+        <Route path="createUsers" element={<Create_fakeUsers />} />
+        <Route
+          path="getUsers/:id"
+          element={<Get_fakeUsers socket={chat_socket} />}
+        />
+      </Routes>
       <Container>
         <div className="Title">
           <Title title="PONG CHAT" home search />
@@ -45,7 +52,7 @@ const Chat = () => {
         <div className="BodyOuter">
           <div className="Body">
             <div className="LeftSide Section">
-              <OnlineList Flex={1} />
+              <OnlineList />
             </div>
 
             <div className="MiddleSide Section">
@@ -54,14 +61,13 @@ const Chat = () => {
                 <Route path="v3_rooms/*">
                   <Route
                     path=":roomId/chat"
-                    element={<ChatContainer socket={chat_socket} Flex={1.85} />}
+                    element={<ChatContainer socket={chat_socket} />}
                   />
                   <Route
                     path="*"
                     element={
                       <div
                         style={{
-                          flex: '1.85',
                           display: 'flex',
                           flexDirection: 'column',
                         }}
@@ -90,14 +96,6 @@ const Chat = () => {
           </div>
         </div>
       </Container>
-      <Routes>
-        <Route path="createUsers" element={<Create_fakeUsers />} />
-        <Route
-          path="getUsers/:id"
-          element={<Get_fakeUsers socket={chat_socket} />}
-        />
-        <Route path="design/*" element={<Design />} />
-      </Routes>
     </>
   );
 };

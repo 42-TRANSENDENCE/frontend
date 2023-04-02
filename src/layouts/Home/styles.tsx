@@ -21,8 +21,12 @@ export const Container = styled.div`
     width: var(--body-width);
     height: var(--body-height);
     display: flex;
+<<<<<<< HEAD
+    justify-content: flex-start;
+=======
     justify-content: center;
     /* align-items: flex-start; */
+>>>>>>> 966e9d3844ba25f695e96b7c8753c23a44d99090
     overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
@@ -42,8 +46,12 @@ export const Container = styled.div`
     height: var(--body-height);
 
     display: flex;
+<<<<<<< HEAD
+    justify-content: space-between;
+=======
     /* justify-content: space-between; */
     /* justify-content: flex-start; */
+>>>>>>> 966e9d3844ba25f695e96b7c8753c23a44d99090
     flex-direction: row;
     overflow: hidden;
     
@@ -60,8 +68,6 @@ export const Container = styled.div`
     }
 
     .LeftSide {
-      --section-width: calc(var(--body-width) * 0.34);
-      width: var(--section-width);
     }
 
     .MiddleSide {

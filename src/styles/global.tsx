@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyles = createGlobalStyle`
   html {
@@ -28,6 +28,10 @@ const GlobalStyles = createGlobalStyle`
     height: 100vh;
     padding: var(--html-padding-vertical) var(--html-padding-horizontal);
     overflow: hidden;
+
+    /* -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none; */
   }
   body {
     // page 가로 세로, title 가로 세로, 테두리 두께 공통.
@@ -50,6 +54,6 @@ const GlobalStyles = createGlobalStyle`
     border-radius: calc(min(var(--page-height), var(--page-width)) * 0.05);
     overflow: hidden;
   }
-`
+`;
 
-export default GlobalStyles
+export default GlobalStyles;
