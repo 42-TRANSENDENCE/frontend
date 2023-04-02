@@ -113,9 +113,11 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     }).then((res) => {
       if (res.status === 200) {
         console.log('방장이 최초입장');
-        socket?.emit('join', data.id);
+        socket?.emit('join', String(data.id));
         res.json();
-        navigate(`v3_rooms/${data.id}/chat`);
+        setTimeout(() => {
+          navigate(`v3_rooms/${data.id}/chat`);
+        }, 50);
         return;
       } else {
         setErrorMessage('비밀번호가 틀렸습니다.');
