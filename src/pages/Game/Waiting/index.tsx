@@ -13,6 +13,7 @@ const Waiting = (props: any) => {
   useEffect(() => {
     console.log("queue에 들어옴");
     return () => {
+      game_socket.emit("quit_queue");
       console.log("queue에서 나감.");
     };
   }, []);
@@ -20,10 +21,10 @@ const Waiting = (props: any) => {
   return (
     <>
       <LobbyContainer>
-          <div className="box">
-              <BigButton img_url={cancelButton} onClick={quit_queue}/>
-          </div>
-        </LobbyContainer>
+        <div className="box">
+            <BigButton img_url={cancelButton} onClick={quit_queue}/>
+        </div>
+      </LobbyContainer>
     </>
   );
 };

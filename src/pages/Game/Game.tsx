@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import useSocket from '../../hooks/useSocket';
+import { SocketContext } from "../../contexts/ClientSocket";
 
 import { GameState } from './enum';
 import Title from '../../components/Title';
@@ -9,38 +9,35 @@ import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
 const Game = (): JSX.Element => {
-  const [socket, disconnect_game_socket] = useSocket('game');
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
+  const [gamestate, setGamestate] = useState(GameState.InGame);
   const [room, setRoom] = useState(null);
+  const clientSocket = useContext(SocketContext);
 
   useEffect(() => {
     console.log(' [ RENDERING ] : game page : ');
-    socket?.emit('lobby_initialize');
     return () => {
-      socket?.emit('lobby_terminate');
-      socket?.emit('quit_queue');
+      clientSocket.emit('leave_queue'); //quit_queue 에서 leave_qeuue로 바뀜
       console.log(' [ STOP ] : game page');
     };
   }, []);
 
   useEffect(() => {
-    socket?.on('joined_to_queue', () => {
+    clientSocket.on('joined_to_queue', () => {
       console.log('qeueue');
       setGamestate(GameState.Waiting);
     });
-    socket?.on('out_of_queue', () => {
+    clientSocket.on('out_of_queue', () => {
       setGamestate(GameState.Lobby);
     });
-    socket?.on('enter_to_game', (roomId) => {
+    clientSocket.on('enter_to_game', (roomId) => {
       setRoom(roomId);
       console.log('room :', room, roomId);
       setGamestate(GameState.InGame);
     });
     return () => {
-      socket?.off('joined_to_queue');
-      socket?.off('out_of_queue');
-      socket?.off('enter_to_game');
-      disconnect_game_socket();
+      clientSocket.off('joined_to_queue');
+      clientSocket.off('out_of_queue');
+      clientSocket.off('enter_to_game');
     };
   }, []);
 
@@ -48,10 +45,9 @@ const Game = (): JSX.Element => {
     return  (
       <div className="Body">
         {{
-          [GameState.Lobby]   : <Lobby socket={socket} />,
-          [GameState.Waiting] : <Waiting socket={socket} />,
-          [GameState.InGame]  : <Ingame socket={socket}
-                                        roomId={room}
+          [GameState.Lobby]   : <Lobby socket={clientSocket} />,
+          [GameState.Waiting] : <Waiting socket={clientSocket} />,
+          [GameState.InGame]  : <Ingame roomId={room}
                                         setGamestate={setGamestate} />
         }[gamestate] }
       </div>
