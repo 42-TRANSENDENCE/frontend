@@ -7,13 +7,13 @@ const Waiting = (props: any) => {
 
   function quit_queue(): void {
     console.log("cancel 버튼 누름");
-    game_socket.emit("quit_queue");
+    game_socket.emit("leave_queue");
   }
 
   useEffect(() => {
     console.log("queue에 들어옴");
     return () => {
-      game_socket.emit("quit_queue");
+      game_socket.emit("leave_queue");
       console.log("queue에서 나감.");
     };
   }, []);
