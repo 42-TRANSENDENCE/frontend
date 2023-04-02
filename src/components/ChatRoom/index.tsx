@@ -6,6 +6,7 @@ import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg'
 import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
 import { ChatRoomContainer, CreateRoom, RoomList, SearchRoom } from './styles';
+import { useUserInfo } from '@/hooks/query/user';
 
 // const chat_backurl = 'http://127.0.0.1:3095';
 const server_public_ip = import.meta.env.VITE_AWS_URL;
@@ -62,13 +63,14 @@ const ChatRoom = ({ socket }: { socket: any }) => {
         res.json()
       )
   );
-  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
-    ['user'],
-    () =>
-      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
-        (res) => res.json()
-      )
-  );
+  // const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
+  //   ['user'],
+  //   () =>
+  //     fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
+  //       (res) => res.json()
+  //     )
+  // );
+  const { data: userData, isLoading: isLoadingUser } = useUserInfo();
 
   useEffect(() => {
     if (roomDatas && findRoomName === '') {
@@ -131,7 +133,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
       queryClient.setQueryData(['roomlist'], () => {
         return [...roomDatas, data];
       });
-      if (data.owner === userData.username) {
+      if (data.owner === userData?.id) {
         enterByOwnerAtInitial(data);
       }
     },
@@ -172,7 +174,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
   const onCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutateRoom({ title, password, owner: userData.username });
+    mutateRoom({ title, password, owner: userData?.id });
     onCloseCreateRoomModal();
   };
 
@@ -226,7 +228,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
           /* 기존 참여자 */
           const is_kicked = data.kickList.find(
-            (kickData: any) => kickData.username === userData.username
+            (kickData: any) => kickData.username === userData?.id
           );
           if (is_kicked) {
             console.log('강퇴당한 유저입니다.');
@@ -234,7 +236,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
             return;
           }
           const is_member = data.memberList.find(
-            (memberName: any) => memberName === userData.username
+            (memberName: any) => memberName === userData?.id
           );
 
           if (is_member) {

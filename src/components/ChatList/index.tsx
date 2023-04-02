@@ -22,6 +22,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
 import dayjs from 'dayjs';
 import { MiddleButton } from '../Button';
+import { useUserInfo } from '@/hooks/query/user';
 
 export const ChatElement = styled.section`
   position: relative;
@@ -347,13 +348,14 @@ const ChatList = ({ socket }: { socket: any }) => {
     return res;
   });
 
-  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
-    ['user'],
-    () =>
-      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
-        (res) => res.json()
-      )
-  );
+  // const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
+  //   ['user'],
+  //   () =>
+  //     fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
+  //       (res) => res.json()
+  //     )
+  // );
+  const { data: userData, isLoading: isLoadingUser } = useUserInfo();
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
     ['room', roomId],
@@ -381,7 +383,7 @@ const ChatList = ({ socket }: { socket: any }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { mutate: mutateChat } = useMutation<unknown, unknown, any, unknown>(
-    ({ chat, userData }) => postChat(roomId!, chat, userData.username),
+    ({ chat, userData }) => postChat(roomId!, chat, userData.id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['chat', roomId]);
@@ -395,8 +397,8 @@ const ChatList = ({ socket }: { socket: any }) => {
       queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
-      // console.log(data, userData.username);
-      if (data.user === userData.username) {
+      // console.log(data, userData.id);
+      if (data.user === userData?.id) {
         setTimeout(() => {
           scrollbarRef.current?.scrollToBottom();
         }, 10);
@@ -431,8 +433,8 @@ const ChatList = ({ socket }: { socket: any }) => {
     // console.log('LeaveData: ', data);
   }, []);
   const onKick = function (data: any) {
-    if (data === userData.username) {
-      // console.log('KickData: ', data, userData.username);
+    if (data === userData?.id) {
+      // console.log('KickData: ', data, userData.id);
       // console.log('강퇴당하셨습니다');
       setTimeout(() => {
         queryClient.invalidateQueries(['chat', roomId]);
@@ -549,7 +551,7 @@ const ChatList = ({ socket }: { socket: any }) => {
           <button
             className="leaveRoom"
             onClick={() => {
-              socket?.emit('leave', { roomId, userId: userData.username });
+              socket?.emit('leave', { roomId, userId: userData?.id });
             }}
           >
             방 나가기
