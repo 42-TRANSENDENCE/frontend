@@ -19,10 +19,9 @@ export type ProfileProps = {
   win: number;
   lose: number;
   who: ProfileEnum;
-  // me, friend, ban, unknown
 };
 
-function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProfile: any }) {
+function Profile({ profile, setPopProfile, setUserSearch }: { profile: ProfileProps, setPopProfile: any, setUserSearch: any }) {
   let color = "black";
   if (profile.who === ProfileEnum.FRIEND) {
     color = "var(--color-green)";
@@ -46,7 +45,8 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
   )
 
   const onClickClose = () => {
-    if (setPopProfile !== null)
+    // setUserSearch(null);
+    // if (setPopProfile !== null)
       setPopProfile(false);
   }
 
