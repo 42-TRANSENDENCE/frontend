@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
-import { useUserInfo, useUserAvatar } from '../../hooks/query/user';
-import { useReceivedFriendList } from '../../hooks/query/friend';
-import { useApproveFriend, useDeleteRequestFriend } from '../../hooks/mutation/friend';
+import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
+import { useReceivedFriendList, usePendingFriendList } from '../../hooks/query/friend';
+import { useApproveFriend, useDeleteRequestFriend, useRefuseFriend } from '../../hooks/mutation/friend';
 import { UserInfo } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
@@ -16,8 +16,6 @@ import chatButton from '../../assets/bigButton/chatButton.svg';
 import settingButton from '../../assets/middleButton/settingButton.svg';
 import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import SettingModal from './Modal/HomeModal';
-import { useFetcher } from '../../hooks/fetcher';
-import { toast } from 'react-toastify';
 
 const Home = () => {
   const [twoFactor, setTwoFactor] = useState(false);
@@ -33,37 +31,24 @@ const Home = () => {
   const userAvatar = useUserAvatar().data;
   const userFriendReceived = useReceivedFriendList().data;
   const friendReceivedList: UserInfo[] = userFriendReceived;
+  const userFriendPending = usePendingFriendList().data;
+  const friendPendingList: UserInfo[] = userFriendPending;
   const approveFriend = useApproveFriend();
+  const refuseFriend = useRefuseFriend();
   const deleteRequestFriend = useDeleteRequestFriend();
-
-  const fetcher = useFetcher();
-
+  const userSearchTest = useUserSearch();
+  
   useEffect(() => {
     if (userSearch) {
-      fetcher('/users/search/' + userSearch, {
-        method: 'GET',
-        credentials: 'include'
-      })
-        .then(response => {
-          if (response.ok) {
-            response.json().then(data => {
-              const userProfile: ProfileProps = {
-                id: data.id,
-                imageSrc: 'logoutButton',
-                nickname: data.nickname,
-                win: 10,
-                lose: 10,
-                who: ProfileEnum.OTHERS
-              };
-              setUser(userProfile);
-              setPopProfile(true);
-            })
-          }
-          else toast.error('User not found (' + userSearch + ')');
-        })
+      userSearchTest.refetch({
+        userSearch,
+        userInfoData,
+        setPopProfile,
+        setUser
+      });
     }
     setUserSearch(null);
-  }, [userSearch]);
+  }, [userSearch, approveFriend]);
 
   const onCloseSettingModal = () => {
     setShowSettingModal(false);
@@ -88,10 +73,16 @@ const Home = () => {
     }, [friendReceivedList, approveFriend]
   );
 
+  const onClickRefuseRequestFriend = useCallback(
+    (id: number) => {
+      refuseFriend.mutate(id);
+    }, [friendReceivedList, refuseFriend]
+  );
+
   const onClickDeleteRequestFriend = useCallback(
     (id: number) => {
       deleteRequestFriend.mutate(id);
-    }, [friendReceivedList, deleteRequestFriend]
+    }, [friendPendingList, deleteRequestFriend]
   );
 
   return (
@@ -130,12 +121,14 @@ const Home = () => {
                     who: ProfileEnum.ME,
                   }}
                   setPopProfile={setPopProfile}
+                  setUserSearch={setUserSearch}
                 />
                 {popProfile && user && (
                   <div className='pop-profile'>
                     <Profile
                       profile={user}
                       setPopProfile={setPopProfile}
+                      setUserSearch={setUserSearch}
                     />
                   </div>
                 )}
@@ -144,12 +137,20 @@ const Home = () => {
                 Notification
                 {friendReceivedList?.map((userinfo: any) => {
                   return (
-                    <div style={{flexDirection: 'row'}}>
+                    <div style={{ flexDirection: 'row' }}>
                       {userinfo.nickname}
                       <button onClick={() => onClickApproveFriend(userinfo.id)}>Approve</button>
-                      <button onClick={() => onClickDeleteRequestFriend(userinfo.id)}>Delete</button>
+                      <button onClick={() => onClickRefuseRequestFriend(userinfo.id)}>Refuse</button>
                     </div>
                   );
+                })}
+                {friendPendingList?.map((userinfo: any) => {
+                  return (
+                    <div style={{ flexDirection: 'row' }}>
+                      {userinfo.nickname}
+                      <button onClick={() => onClickDeleteRequestFriend(userinfo.id)}>Cancel</button>
+                    </div>
+                  )
                 })}
               </div>
             </div>
