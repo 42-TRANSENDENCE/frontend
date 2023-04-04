@@ -2,15 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
 import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
-import { useReceivedFriendList, usePendingFriendList } from '../../hooks/query/friend';
-import { useApproveFriend, useDeleteRequestFriend, useRefuseFriend } from '../../hooks/mutation/friend';
-import { UserInfo } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
 import Title from '../../components/Title';
 import OnlineList from '../../components/OnlineList';
 import Profile, { ProfileEnum, ProfileProps } from '../../components/Profile';
+import Notification from '../../components/Notification';
 import gameButton from '../../assets/bigButton/gameButton.svg';
 import chatButton from '../../assets/bigButton/chatButton.svg';
 import settingButton from '../../assets/middleButton/settingButton.svg';
@@ -29,15 +27,8 @@ const Home = () => {
 
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
-  const userFriendReceived = useReceivedFriendList().data;
-  const friendReceivedList: UserInfo[] = userFriendReceived;
-  const userFriendPending = usePendingFriendList().data;
-  const friendPendingList: UserInfo[] = userFriendPending;
-  const approveFriend = useApproveFriend();
-  const refuseFriend = useRefuseFriend();
-  const deleteRequestFriend = useDeleteRequestFriend();
   const userSearchTest = useUserSearch();
-  
+
   useEffect(() => {
     if (userSearch) {
       userSearchTest.refetch({
@@ -66,27 +57,6 @@ const Home = () => {
   const onClickChat = () => {
     navigate('/chat');
   };
-
-  const onClickApproveFriend = useCallback(
-    (id: number) => {
-      approveFriend.mutate(id);
-      setPopProfile(false);
-    }, [friendReceivedList, approveFriend]
-  );
-
-  const onClickRefuseRequestFriend = useCallback(
-    (id: number) => {
-      refuseFriend.mutate(id);
-      setPopProfile(false);
-    }, [friendReceivedList, refuseFriend]
-  );
-
-  const onClickDeleteRequestFriend = useCallback(
-    (id: number) => {
-      deleteRequestFriend.mutate(id);
-      setPopProfile(false);
-    }, [friendPendingList, deleteRequestFriend]
-  );
 
   return (
     <>
@@ -135,24 +105,7 @@ const Home = () => {
                 )}
               </div>
               <div className='Notification'>
-                Notification
-                {friendReceivedList?.map((userinfo: any) => {
-                  return (
-                    <div style={{ flexDirection: 'row' }}>
-                      {userinfo.nickname}
-                      <button onClick={() => onClickApproveFriend(userinfo.id)}>Approve</button>
-                      <button onClick={() => onClickRefuseRequestFriend(userinfo.id)}>Refuse</button>
-                    </div>
-                  );
-                })}
-                {friendPendingList?.map((userinfo: any) => {
-                  return (
-                    <div style={{ flexDirection: 'row' }}>
-                      {userinfo.nickname}
-                      <button onClick={() => onClickDeleteRequestFriend(userinfo.id)}>Cancel</button>
-                    </div>
-                  )
-                })}
+                <Notification />
               </div>
             </div>
           </div>
