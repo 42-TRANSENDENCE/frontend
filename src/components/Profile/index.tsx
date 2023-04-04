@@ -19,7 +19,6 @@ export type ProfileProps = {
   win: number;
   lose: number;
   who: ProfileEnum;
-  // me, friend, ban, unknown
 };
 
 function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProfile: any }) {
@@ -36,18 +35,19 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
   const onClickAddFriend = useCallback(
     () => {
       addFriend.mutate(profile.id);
+      setPopProfile(false);
     }, [profile.id, addFriend]
   )
 
   const onClickDeleteFriend = useCallback(
     () => {
       deleteFriend.mutate(profile.id);
+      setPopProfile(false);
     }, [profile.id, deleteFriend]
   )
 
   const onClickClose = () => {
-    if (setPopProfile !== null)
-      setPopProfile(false);
+    setPopProfile(false);
   }
 
 return (
