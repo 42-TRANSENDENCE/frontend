@@ -1,11 +1,15 @@
 import { useQuery } from 'react-query';
 import { useFetcher } from '../fetcher';
+import { toast } from 'react-toastify';
+import { ProfileEnum, ProfileProps } from '../../components/Profile';
 
 export interface UserInfo {
   id: number,
   nickname: string,
   status: string,
-  isTwoFactorAuthenticationEnabled: boolean
+  isTwoFactorAuthenticationEnabled: boolean,
+  win: number,
+  lose: number
 }
 
 export const useUserInfo = () => {
@@ -43,21 +47,60 @@ export const useUserAvatar = () => {
 }
 
 
-// export const useUserSearch = (nickname: string) => {
-//   const fetcher = useFetcher();
-//   const data = useQuery<UserInfo>({
-//     queryKey: ['userSearch'],
-//     queryFn: async () => {
-//       const response = await fetcher('/users/search' + nickname, {
-//         method: 'GET',
-//         credentials: 'include'
-//       })
-//       if (response.ok) return response.json();
-//       else toast.error('User not found');
-//     }
-//   });
-//   return data;
-// }
+
+interface Props {
+  userSearch: string;
+  userInfoData: any;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
+}
+
+type UseUserSearchReturnType = {
+  refetch: (props: Props) => void;
+  queryKey: string;
+};
+
+export const useUserSearch = (): UseUserSearchReturnType => {
+  const fetcher = useFetcher();
+  const queryKey = 'userSearch';
+  const queryFn = async ({ userSearch, userInfoData, setPopProfile, setUser }: Props) => {
+    const response = await fetcher('/users/search/' + userSearch, {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (response.ok) {
+      response.json().then(data => {
+        if (data.id === userInfoData.id) {
+          setPopProfile(false);
+          return;
+        }
+        const bufferObj: { type: "Buffer", data: [] } = { type: data.avatar.type, data: data.avatar.data };
+        const uint8Array = new Uint8Array(bufferObj.data);
+        const blob = new Blob([uint8Array], { type: "application/octet-stream" });
+        const userProfile: ProfileProps = {
+          id: data.id,
+          imageSrc: URL.createObjectURL(blob),
+          nickname: data.nickname,
+          win: data.win,
+          lose: data.lose,
+          who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS
+        };
+        setUser(userProfile);
+        setPopProfile(true);
+      });
+      return response;
+    } else {
+      toast.error('User not found (' + userSearch + ')');
+    }
+  };
+
+  return {
+    refetch: (props: Props) => queryFn(props),
+    queryKey: queryKey,
+  };
+};
+
+
 
 // export const useUser2FA = () => {
 //   const fetcher = useFetcher();
