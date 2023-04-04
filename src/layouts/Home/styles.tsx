@@ -46,12 +46,7 @@ export const Container = styled.div`
     height: var(--body-height);
 
     display: flex;
-<<<<<<< HEAD
     justify-content: space-between;
-=======
-    /* justify-content: space-between; */
-    /* justify-content: flex-start; */
->>>>>>> 966e9d3844ba25f695e96b7c8753c23a44d99090
     flex-direction: row;
     overflow: hidden;
     
