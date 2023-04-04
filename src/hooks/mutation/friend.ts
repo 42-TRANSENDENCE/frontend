@@ -14,6 +14,10 @@ export function useAddFriend(): UseMutationResult<void, Error, number, MutationF
       },
       credentials: 'include',
     })
+      .then(response => {
+        if (response.status === 201)
+          toast.success('Friend requested');
+      })
   }
 
   return useMutation({
