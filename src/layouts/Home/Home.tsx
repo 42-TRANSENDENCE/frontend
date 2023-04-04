@@ -48,7 +48,7 @@ const Home = () => {
       });
     }
     setUserSearch(null);
-  }, [userSearch, approveFriend]);
+  }, [userSearch]);
 
   const onCloseSettingModal = () => {
     setShowSettingModal(false);
@@ -70,18 +70,21 @@ const Home = () => {
   const onClickApproveFriend = useCallback(
     (id: number) => {
       approveFriend.mutate(id);
+      setPopProfile(false);
     }, [friendReceivedList, approveFriend]
   );
 
   const onClickRefuseRequestFriend = useCallback(
     (id: number) => {
       refuseFriend.mutate(id);
+      setPopProfile(false);
     }, [friendReceivedList, refuseFriend]
   );
 
   const onClickDeleteRequestFriend = useCallback(
     (id: number) => {
       deleteRequestFriend.mutate(id);
+      setPopProfile(false);
     }, [friendPendingList, deleteRequestFriend]
   );
 
@@ -121,14 +124,12 @@ const Home = () => {
                     who: ProfileEnum.ME,
                   }}
                   setPopProfile={setPopProfile}
-                  setUserSearch={setUserSearch}
                 />
                 {popProfile && user && (
                   <div className='pop-profile'>
                     <Profile
                       profile={user}
                       setPopProfile={setPopProfile}
-                      setUserSearch={setUserSearch}
                     />
                   </div>
                 )}
