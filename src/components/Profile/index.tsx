@@ -21,7 +21,7 @@ export type ProfileProps = {
   who: ProfileEnum;
 };
 
-function Profile({ profile, setPopProfile, setUserSearch }: { profile: ProfileProps, setPopProfile: any, setUserSearch: any }) {
+function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProfile: any }) {
   let color = "black";
   if (profile.who === ProfileEnum.FRIEND) {
     color = "var(--color-green)";
@@ -35,19 +35,19 @@ function Profile({ profile, setPopProfile, setUserSearch }: { profile: ProfilePr
   const onClickAddFriend = useCallback(
     () => {
       addFriend.mutate(profile.id);
+      setPopProfile(false);
     }, [profile.id, addFriend]
   )
 
   const onClickDeleteFriend = useCallback(
     () => {
       deleteFriend.mutate(profile.id);
+      setPopProfile(false);
     }, [profile.id, deleteFriend]
   )
 
   const onClickClose = () => {
-    // setUserSearch(null);
-    // if (setPopProfile !== null)
-      setPopProfile(false);
+    setPopProfile(false);
   }
 
 return (
