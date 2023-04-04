@@ -3,3 +3,9 @@ export enum GameState {
     Waiting,
     InGame
 }
+
+export enum GameMode {
+    NORMAL = 'NORMAL',
+    SPECIAL = 'SPECIAL',
+}
+  

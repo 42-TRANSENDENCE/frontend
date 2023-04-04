@@ -9,7 +9,7 @@ import {
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { gameSocket, GameContext } from '../../contexts/GameSocket';
+import { ClientSocket, SocketContext } from '../../contexts/ClientSocket';
 import { AppContainer } from './styles';
 
 import PrivateRoute from './PrivateRoute';
@@ -25,7 +25,7 @@ const App = () => {
   return (
     <AppContainer>
       <QueryClientProvider client={queryClient}>
-      {/* <GameContext.Provider value={gameSocket}> */}
+      <SocketContext.Provider value={ClientSocket}>
         <Router>
           <Routes>
             <Route path="/" element={<Navigate replace to="/login" />} />
@@ -50,7 +50,7 @@ const App = () => {
             theme='dark'
           />
         </Router>
-      {/* </GameContext.Provider> */}
+      </SocketContext.Provider>
       </QueryClientProvider>
     </AppContainer>
   );

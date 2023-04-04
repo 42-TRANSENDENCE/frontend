@@ -1,11 +1,11 @@
 import { useEffect } from "react";
-import {BigButton, SmallButton } from '../../../components/Button';
+import { BigButton } from '../../../components/Button';
 import normalButton from "../../../assets/bigButton/normalButton.svg";
 import chaosButton from "../../../assets/bigButton/chaosButton.svg";
-import closeButton from "../../../assets/smallButton/modalCloseButton.svg";
+import { GameMode } from "../enum"
 
 const Lobby = (props: any) : JSX.Element => {
-    const game_socket = props.socket;
+    const client_socket = props.socket;
 
     useEffect(() => {
         console.log("GameLobby 입장");
@@ -17,11 +17,12 @@ const Lobby = (props: any) : JSX.Element => {
     function normal_game_clicked() {
       console.log("normal game button clicked");
       // data : QueueDto
-      game_socket.emit("join_queue");
+      client_socket.emit("join_queue", GameMode.NORMAL);
     };
 
-    function choas_game_clicked() {
+    function special_game_clicked() {
       console.log("chaos game button clicked");
+      client_socket.emit("join_queue", GameMode.SPECIAL);
     }
 
     return (
@@ -29,7 +30,7 @@ const Lobby = (props: any) : JSX.Element => {
           <div className="box">
             <div className='body'>
               <BigButton className="big" img_url={normalButton} onClick={normal_game_clicked}/>
-              <BigButton className="big" img_url={chaosButton} onClick={choas_game_clicked}/>
+              <BigButton className="big" img_url={chaosButton} onClick={special_game_clicked}/>
             </div>
           </div>
         </LobbyContainer>
