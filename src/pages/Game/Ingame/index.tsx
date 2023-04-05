@@ -106,11 +106,11 @@ const Ingame = (props: any) : JSX.Element => {
           width={CANV_WIDTH}
           height={CANV_HEIGHT}
         />
-        <button onClick={() => {game_socket?.emit("ready", clientId, roomId);}} >READY</button>
         <p className="PlayerName Player2">
           {GameInfo.p2Name}
         </p>
       </CanvasContainer>
+      <button onClick={() => {game_socket?.emit("ready", clientId, roomId);}} >READY</button>
   </PlayContainer>
   );
 };
