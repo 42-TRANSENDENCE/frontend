@@ -9,7 +9,7 @@ import Ingame from './Ingame';
 import { GameContainer } from './styles';
 
 const Game = (): JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
+  const [gamestate, setGamestate] = useState(GameState.InGame);
   const [room, setRoom] = useState(null);
   const clientSocket = useContext(SocketContext);
 

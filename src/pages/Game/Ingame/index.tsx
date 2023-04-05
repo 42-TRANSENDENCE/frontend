@@ -51,6 +51,12 @@ const Ingame = (props: any) : JSX.Element => {
     }
   };
 
+  const sendReady = () : void => {
+    game_socket?.emit("ready", clientId, roomId);
+    console.log(`ready event보냄. : game_socket id : ${game_socket?.id}
+    client_id : ${clientId} 
+    room id : ${roomId}`);
+  }
 
   const gameStart = (p1_id: string, p1_name: string, p2_name: string): void => {
     console.log("시작");
@@ -77,7 +83,7 @@ const Ingame = (props: any) : JSX.Element => {
     window.addEventListener("keydown", default_keyoff);
     game_socket?.on("game_start", gameStart);
     game_socket?.on("game_over", gameOver);
-    game_socket?.emit("ready", clientId, roomId);
+    sendReady();
     return () => {
       window.removeEventListener("keydown", default_keyoff);
       document.removeEventListener("keydown", keyPressed);
@@ -110,7 +116,7 @@ const Ingame = (props: any) : JSX.Element => {
           {GameInfo.p2Name}
         </p>
       </CanvasContainer>
-      <button onClick={() => {game_socket?.emit("ready", clientId, roomId);}} >READY</button>
+      <button onClick={sendReady} >READY</button>
   </PlayContainer>
   );
 };
