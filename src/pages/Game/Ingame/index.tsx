@@ -77,7 +77,9 @@ const Ingame = (props: any) : JSX.Element => {
     window.addEventListener("keydown", default_keyoff);
     game_socket?.on("game_start", gameStart);
     game_socket?.on("game_over", gameOver);
-    game_socket?.emit("ready", user_socket.id, room_id);
+    const clientId = user_socket.id;
+    const roomId = room_id;
+    game_socket?.emit("ready", clientId, roomId);
     return () => {
       window.removeEventListener("keydown", default_keyoff);
       document.removeEventListener("keydown", keyPressed);
