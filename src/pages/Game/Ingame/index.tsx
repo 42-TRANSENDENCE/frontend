@@ -18,9 +18,9 @@ type Info =
 };
 
 const Ingame = (props: any) : JSX.Element => {
-  const user_socket = props.socket;
+  const clientId = props.socketid;
   const [game_socket, disconnect_game_socket] = useSocket('game');
-  const room_id: string = props.roomId;
+  const roomId: string = props.roomId;
   const setState = props.setGamestate;
   const [GameInfo, setGameInfo] = useState<Info>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
 
@@ -32,22 +32,22 @@ const Ingame = (props: any) : JSX.Element => {
     if (up_pressed === false && e.code === "ArrowUp") {
       up_pressed = true;
       // data : GamePlayDto
-      game_socket?.emit("keypress", room_id, e.code);
+      game_socket?.emit("keypress", roomId, e.code);
     }
     if (down_pressed === false && e.code === "ArrowDown") {
       down_pressed = true;
-      game_socket?.emit("keypress", room_id, e.code);
+      game_socket?.emit("keypress", roomId, e.code);
     }
   };
 
   const keyReleased = (e: KeyboardEvent) => {
     if (up_pressed === true && e.code === "ArrowUp") {
       up_pressed = false;
-      game_socket?.emit("keyrelease", room_id, e.code);
+      game_socket?.emit("keyrelease", roomId, e.code);
     }
     if (down_pressed === true && e.code === "ArrowDown") {
       down_pressed = false;
-      game_socket?.emit("keyrelease", room_id, e.code);
+      game_socket?.emit("keyrelease", roomId, e.code);
     }
   };
 
@@ -77,8 +77,6 @@ const Ingame = (props: any) : JSX.Element => {
     window.addEventListener("keydown", default_keyoff);
     game_socket?.on("game_start", gameStart);
     game_socket?.on("game_over", gameOver);
-    const clientId = user_socket.id;
-    const roomId = room_id;
     game_socket?.emit("ready", clientId, roomId);
     return () => {
       window.removeEventListener("keydown", default_keyoff);
