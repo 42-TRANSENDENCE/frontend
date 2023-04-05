@@ -21,12 +21,7 @@ export const Container = styled.div`
     width: var(--body-width);
     height: var(--body-height);
     display: flex;
-<<<<<<< HEAD
     justify-content: flex-start;
-=======
-    justify-content: center;
-    /* align-items: flex-start; */
->>>>>>> 966e9d3844ba25f695e96b7c8753c23a44d99090
     overflow-y: scroll;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
@@ -113,16 +108,20 @@ export const Container = styled.div`
         z-index: 1;
       }
 
-      .Notification {
-        --w: calc(var(--section-width) * 0.95);
-        --h: calc(var(--w) * 0.2);
-        width: var(--w);
-        height: var(--h);
-        background: white;
-        border-radius: calc(var(--h) / 3);
-        border: var(--border-width) solid black;
-        text-align: center;
-        margin-top: 2rem;
+      // .Notification {
+      //   --w: calc(var(--section-width) * 0.95);
+      //   --h: calc(var(--w) * 0.2);
+      //   width: var(--w);
+      //   height: var(--h);
+      //   background: white;
+      //   border-radius: calc(var(--h) / 3);
+      //   border: var(--border-width) solid black;
+      //   text-align: center;
+      //   margin-top: 2rem;
+      // }
+
+      .Notification > :first-child {
+        position: relative;
       }
     }
   }
