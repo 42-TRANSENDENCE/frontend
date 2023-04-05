@@ -69,9 +69,6 @@ const Ingame = (props: any) : JSX.Element => {
   const gameOver = (winner: string): void => {
     document.removeEventListener("keydown", keyPressed);
     document.removeEventListener("keyup", keyReleased);
-    // setIsGameOver(game_socket?.id === winner);
-    // isWinner = game_socket?.id === winner;
-    // console.log("game_over.", isgameover ? "you win" : "you lose");
     timeout = setTimeout(() => {
       setState(GameState.Lobby);
     }, 5000);
@@ -115,7 +112,6 @@ const Ingame = (props: any) : JSX.Element => {
           {GameInfo.p2Name}
         </p>
       </CanvasContainer>
-      <button onClick={sendReady} >READY</button>
   </PlayContainer>
   );
 };
