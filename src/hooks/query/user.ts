@@ -101,49 +101,53 @@ export const useUserSearch = (): UseUserSearchReturnType => {
 };
 
 
-
-// export const useUser2FA = () => {
-//   const fetcher = useFetcher();
-//   const data = useQuery({
-//     queryKey: ['2faGenerate'],
-//     queryFn: async () => {
-//       const response = await fetcher(`/2fa/turn-on`, {
-//         method: 'GET',
-//         credentials: 'include',
-//       })
-//       if (response.status === 200 && response.headers.get('Content-Type') === 'image/png') {
-//         return response.blob();
-//       } else {
-//         throw new Error('Invalid QR code image response');
-//       }
-//     },
-//     retry: 0,
-//   });
-//   return data;
+// interface Props {
+//   userSearch: string;
+//   userInfoData: any;
+//   setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+//   setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 // }
 
-// export function useRefreshToken() {
+// export function useUserSearch(variables: Props): () => void {
+//   const queryKey = 'userSearch';
 //   const fetcher = useFetcher();
-//   const navigate = useNavigate();
-//   console.log('refresh');
-//   useQuery({
-//     queryKey: ['auth/refresh'],
-//     queryFn: async () => {
-//       await fetcher('/auth/refresh', {
+
+//   if (variables) {
+//     const { data } = useQuery(queryKey, async () => {
+//       const response = await fetcher('/users/search/' + variables.userSearch, {
 //         method: 'GET',
-//         credentials: 'include',
-//       })
-//     },
-//     onError: (err) => {
-//       if (err instanceof Response) {
-//         if (err.status === 401) {
-//           navigate('/');
+//         credentials: 'include'
+//       });
+//       if (response.ok) {
+//         const data = await response.json();
+//         if (data.id === variables.userInfoData.id) {
+//           variables.setPopProfile(false);
+//           return null;
 //         }
+//         const bufferObj: { type: "Buffer", data: [] } = { type: data.avatar.type, data: data.avatar.data };
+//         const uint8Array = new Uint8Array(bufferObj.data);
+//         const blob = new Blob([uint8Array], { type: "application/octet-stream" });
+//         const userProfile: ProfileProps = {
+//           id: data.id,
+//           imageSrc: URL.createObjectURL(blob),
+//           nickname: data.nickname,
+//           win: data.win,
+//           lose: data.lose,
+//           who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS
+//         };
+//         variables.setUser(userProfile);
+//         variables.setPopProfile(true);
+//         return data;
+//       } else {
+//         throw new Error('User not found (' + variables.userSearch + ')');
 //       }
-//     },
-//     retry: 0,
-//     refetchOnMount: false,
-//     refetchOnWindowFocus: false,
-//     refetchInterval: 3500 * 1000,
-//   });
-// }
+//     });
+//     return data;
+//   }
+//   return () => {};
+// };
+
+
+
+
+

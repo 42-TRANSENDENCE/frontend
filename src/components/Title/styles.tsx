@@ -24,7 +24,7 @@ export const TitleContainer = styled.div`
       width: 100%;
       aspect-ratio: 1;
       border-radius: 50%;
-      background-color: var(--color-yellow);
+      // background-color: var(--color-yellow);
     }
   }
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
 import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
@@ -16,27 +16,20 @@ import logoutButton from '../../assets/middleButton/logoutButton.svg';
 import SettingModal from './Modal/HomeModal';
 
 const Home = () => {
-  const [twoFactor, setTwoFactor] = useState(false);
-
   const navigate = useNavigate();
   const onClickLogOut = useLogout();
+  const [twoFactor, setTwoFactor] = useState(false);
   const [showSettingModal, setShowSettingModal] = useState(false);
   const [userSearch, setUserSearch] = useState<string | null>(null);
   const [popProfile, setPopProfile] = useState(false);
   const [user, setUser] = useState<ProfileProps | null>(null);
-
   const userInfoData = useUserInfo().data;
   const userAvatar = useUserAvatar().data;
   const userSearchTest = useUserSearch();
 
   useEffect(() => {
     if (userSearch) {
-      userSearchTest.refetch({
-        userSearch,
-        userInfoData,
-        setPopProfile,
-        setUser
-      });
+      userSearchTest.refetch({ userSearch, userInfoData, setPopProfile, setUser });
     }
     setUserSearch(null);
   }, [userSearch]);
@@ -62,7 +55,7 @@ const Home = () => {
     <>
       <Container>
         <div className='Title'>
-          <Title title='PONG HOME' home={true} search={true} setSearchUser={setUserSearch} />
+          <Title title='PONG HOME' search={true} setSearchUser={setUserSearch} />
         </div>
 
         <div className='BodyOuter'>
@@ -89,8 +82,8 @@ const Home = () => {
                     id: userInfoData?.id ? userInfoData.id : 0,
                     imageSrc: URL.createObjectURL(userAvatar ? userAvatar : new Blob()),
                     nickname: userInfoData?.nickname,
-                    win: 15,
-                    lose: 5,
+                    win: userInfoData?.win ? userInfoData?.win : 0,
+                    lose: userInfoData?.lose ? userInfoData?.lose : 0,
                     who: ProfileEnum.ME,
                   }}
                   setPopProfile={setPopProfile}

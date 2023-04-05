@@ -8,24 +8,20 @@ export const UserStatus = styled.span<{ status: string }>`
   margin-right: 0.5rem;
   margin-left: 1rem;
   background-color: ${({ status }) =>
-    status === "online"
+    status === "OnLine"
       ? "green"
-      : status === "chat"
-      ? "yellow"
-      : status === "game"
+      : status === "InGame"
       ? "purple"
       : "gray"};
   position: relative;
   &:hover {
     &::after {
       content: ${({ status }) =>
-        status === "online"
+        status === "OnLine"
           ? "'Online'"
-          : status === "chat"
-          ? "'chat'"
-          : status === "game"
-          ? "'game'"
-          : "'Offline'"};
+          : status === "InGame"
+          ? "'InGame'"
+          : "'OffLine'"};
       position: absolute;
       z-index: 1;
       top: 1.5rem;
