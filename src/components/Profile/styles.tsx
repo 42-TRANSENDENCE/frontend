@@ -33,8 +33,8 @@ export const ProfileContainer = styled.div<any>`
       top: 1rem;
     }
   }
+
   .InfoBox {
-    justify-content: space-evenly;
     background: #D9D9D9;
 
     .Text{
@@ -48,7 +48,7 @@ export const ProfileContainer = styled.div<any>`
     
     h1, h3 {
       width: 100%;
-      padding-left: 5%;
+      padding-left: 8%;
       text-align: left;
     }
 
@@ -56,9 +56,12 @@ export const ProfileContainer = styled.div<any>`
       line-height: 3vw;
       font-size : 3vw;
     }
+
     h3{
       line-height: 2vw;
-      font-size : 1vw;
+      font-size: 2vw;
+      font-weight: 600;
+      margin: 2%;
     }
 
     .Buttons {

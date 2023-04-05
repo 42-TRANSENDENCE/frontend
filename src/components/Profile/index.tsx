@@ -60,10 +60,10 @@ return (
 
       <div className="Text">
         <h1 style={{ margin: '10px 0' }}>{profile.nickname}</h1>
-        <h3>
+        <h3 style={{color: '#335EFF'}}>
           Win: {profile.win}
         </h3>
-        <h3>
+        <h3 style={{color: '#FF3393'}}>
           Lose: {profile.lose}
         </h3>
       </div>
