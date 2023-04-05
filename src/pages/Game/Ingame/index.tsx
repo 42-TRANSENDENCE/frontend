@@ -18,9 +18,9 @@ type Info =
 };
 
 const Ingame = (props: any) : JSX.Element => {
-  const clientId = props.socketid;
+  const userId : string = props.socketid;
   const [game_socket, disconnect_game_socket] = useSocket('game');
-  const roomId: string = props.roomId;
+  const roomId : string = props.roomId;
   const setState = props.setGamestate;
   const [GameInfo, setGameInfo] = useState<Info>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
 
@@ -31,30 +31,29 @@ const Ingame = (props: any) : JSX.Element => {
   const keyPressed = (e: KeyboardEvent) => {
     if (up_pressed === false && e.code === "ArrowUp") {
       up_pressed = true;
-      // data : GamePlayDto
-      game_socket?.emit("keypress", roomId, e.code);
+      game_socket?.emit("keypress", {roomId : roomId, keyCode : e.code});
     }
     if (down_pressed === false && e.code === "ArrowDown") {
       down_pressed = true;
-      game_socket?.emit("keypress", roomId, e.code);
+      game_socket?.emit("keypress", {roomId : roomId, keyCode : e.code});
     }
   };
 
   const keyReleased = (e: KeyboardEvent) => {
     if (up_pressed === true && e.code === "ArrowUp") {
       up_pressed = false;
-      game_socket?.emit("keyrelease", roomId, e.code);
+      game_socket?.emit("keyrelease", {roomId : roomId, keyCode : e.code});
     }
     if (down_pressed === true && e.code === "ArrowDown") {
       down_pressed = false;
-      game_socket?.emit("keyrelease", roomId, e.code);
+      game_socket?.emit("keyrelease", {roomId : roomId, keyCode : e.code});
     }
   };
 
   const sendReady = () : void => {
-    game_socket?.emit("ready", clientId, roomId);
+    game_socket?.emit("ready", {userId, roomId});
     console.log(`ready event보냄. : game_socket id : ${game_socket?.id}
-    client_id : ${clientId} 
+    client_id : ${userId} 
     room id : ${roomId}`);
   }
 
