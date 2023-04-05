@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const PrivateRoute = ({ component: Component }: { component: React.ComponentType<any> }) => {
-  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}`;
+  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${import.meta.env.VITE_AWS_PORT}`;
   const [authenticated, setAuthenticated] = useState(true);
 
   useEffect(() => {
