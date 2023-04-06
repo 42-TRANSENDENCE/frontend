@@ -29,7 +29,7 @@ const TwoFactor = () => {
       body: JSON.stringify({ token: password }),
     });
     if (response.status === 200) {
-      navigate('/home');
+      navigate('/socket');
     } else if (response.status === 401) {
       toast.error('Wrong password. Try again');
       setTwoFactorError(true);

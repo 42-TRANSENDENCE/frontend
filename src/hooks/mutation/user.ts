@@ -43,7 +43,7 @@ export function useSignup(): UseMutationResult<void, Error, string, MutationFunc
     })
     .then(response => {
       if (response.ok) {
-        navigate('/home');
+        navigate('/socket');
         toast.success('Signed up successfully.');
       } else {
         response.json().then(data => {
