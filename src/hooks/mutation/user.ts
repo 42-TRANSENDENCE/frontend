@@ -23,7 +23,7 @@ export function useUploadAvatar(): UseMutationResult<void, Error, ImageFile, Mut
   return useMutation({
     mutationFn: uploadAvatar,
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['userAvatar']})
+      queryClient.invalidateQueries({queryKey: ['userInfo']})
     }
   });
 }
