@@ -1,19 +1,36 @@
+import { useCallback } from 'react';
 import { Scrollbars } from "react-custom-scrollbars";
 import { UserStatus } from "./styles";
 import { useGetFriendList } from "../../hooks/query/friend";
+import IconButton from '@mui/material/IconButton';
+import ChatIcon from '@mui/icons-material/Chat';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
 interface User {
   id: number;
   nickname: string;
-  status: "ONLINE" | "OFFLINE";
-  isTwoFactorAuthenticationEnabled: boolean;
+  status: 'OnLine' | 'OffLine' | 'InGame';
 }
 
 const onlineList = function () {
   const response = useGetFriendList().data;
   const friendList: User[] = response;
+  if (friendList) {
+    friendList.forEach((element) => {
+      element.status = 'OnLine';
+    });
+  }
 
-  // const onlineList = function () {
+  const onClickSendDm = useCallback(() => {
+
+    }, []
+  );
+
+  const onClickInviteGame = useCallback(() => {
+    
+  }, []
+);
+
   return (
     <div
       style={{
@@ -35,14 +52,20 @@ const onlineList = function () {
           overflow: "auto",
         }}
       >
-        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>online</div>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>ONLINE</div>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: any) => {
-            if (userinfo?.status === "OFFLINE") return;
+            if (userinfo?.status === "OffLine") return;
             return (
               <div>
                 <UserStatus status={userinfo.status} />
-                {userinfo.nickname + "     " + userinfo.status}
+                {userinfo.nickname}
+                <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
+                  <ChatIcon />
+                </IconButton>
+                <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>
+                  <SportsEsportsIcon />
+                </IconButton>
               </div>
             );
           })}
@@ -58,14 +81,14 @@ const onlineList = function () {
           overflow: "auto",
         }}
       >
-        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>offline</div>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>OFFLINE</div>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: any) => {
-            if (userinfo?.status !== "OFFLINE") return;
+            if (userinfo?.status !== "OffLine") return;
             return (
               <div>
                 <UserStatus status={userinfo.status} />
-                {userinfo.nickname + "    " + userinfo.status}
+                {userinfo.nickname}
               </div>
             );
           })}
