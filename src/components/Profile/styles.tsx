@@ -37,13 +37,20 @@ export const ProfileContainer = styled.div<any>`
   .InfoBox {
     background: #D9D9D9;
 
-    .Text{
+    .Text {
       width: 100%;
       height: 60%;
       display: flex;
       flex-direction: column;
       justify-content: top;
       align-items: center;
+    }
+
+    .Achievement {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      // align-items: start;
     }
     
     h1, h3 {
@@ -57,11 +64,15 @@ export const ProfileContainer = styled.div<any>`
       font-size : 3vw;
     }
 
-    h3{
+    h3 {
       line-height: 2vw;
       font-size: 2vw;
       font-weight: 600;
-      margin: 2%;
+      margin: 1%;
+    }
+
+    img {
+      width: calc(var(--w) * 0.18);
     }
 
     .Buttons {

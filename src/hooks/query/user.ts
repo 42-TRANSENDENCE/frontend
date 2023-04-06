@@ -9,12 +9,12 @@ export interface UserInfo {
   status: string,
   isTwoFactorAuthenticationEnabled: boolean,
   win: number,
-  lose: number
+  lose: number,
 }
 
 export const useUserInfo = () => {
   const fetcher = useFetcher();
-  const data = useQuery<UserInfo>({
+  const data = useQuery({
     queryKey: ['userInfo'],
     queryFn: async () => {
       const response = await fetcher('/users', {
@@ -28,25 +28,6 @@ export const useUserInfo = () => {
   });
   return data;
 }
-
-export const useUserAvatar = () => {
-  const fetcher = useFetcher();
-  const data = useQuery({
-    queryKey: ['userAvatar'],
-    queryFn: async () => {
-      const response = await fetcher('/users/avatar', {
-        method: 'GET',
-        credentials: 'include',
-      })
-      if (response.ok) return response.blob();
-      throw response;
-    },
-    retry: 0,
-  });
-  return data;
-}
-
-
 
 interface Props {
   userSearch: string;
@@ -83,7 +64,8 @@ export const useUserSearch = (): UseUserSearchReturnType => {
           nickname: data.nickname,
           win: data.win,
           lose: data.lose,
-          who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS
+          who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS,
+          achievements: data.achievements
         };
         setUser(userProfile);
         setPopProfile(true);
@@ -146,8 +128,3 @@ export const useUserSearch = (): UseUserSearchReturnType => {
 //   }
 //   return () => {};
 // };
-
-
-
-
-
