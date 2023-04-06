@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
-import { useUserInfo, useUserAvatar, useUserSearch } from '../../hooks/query/user';
+import { useUserInfo, useUserSearch } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
 import { BigButton, MiddleButton } from '../../components/Button';
@@ -23,9 +23,11 @@ const Home = () => {
   const [userSearch, setUserSearch] = useState<string | null>(null);
   const [popProfile, setPopProfile] = useState(false);
   const [user, setUser] = useState<ProfileProps | null>(null);
-  const userInfoData = useUserInfo().data;
-  const userAvatar = useUserAvatar().data;
   const userSearchTest = useUserSearch();
+  const userInfoData = useUserInfo().data;
+  const bufferObj: { type: "Buffer", data: [] } = { type: userInfoData?.avatar.type, data: userInfoData?.avatar.data };
+  const uint8Array = new Uint8Array(bufferObj.data);
+  const userAvatar  = new Blob([uint8Array], { type: "application/octet-stream" });
 
   useEffect(() => {
     if (userSearch) {
@@ -80,11 +82,12 @@ const Home = () => {
                 <Profile
                   profile={{
                     id: userInfoData?.id ? userInfoData.id : 0,
-                    imageSrc: URL.createObjectURL(userAvatar ? userAvatar : new Blob()),
+                    imageSrc: URL.createObjectURL(userAvatar),
                     nickname: userInfoData?.nickname,
                     win: userInfoData?.win ? userInfoData?.win : 0,
                     lose: userInfoData?.lose ? userInfoData?.lose : 0,
                     who: ProfileEnum.ME,
+                    achievements: userInfoData?.achievements
                   }}
                   setPopProfile={setPopProfile}
                 />
