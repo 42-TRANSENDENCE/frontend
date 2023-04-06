@@ -3,7 +3,6 @@ import useSocket from '../../../hooks/useSocket';
 import { GameState } from "../enum";
 import { PlayContainer, CanvasContainer } from "./styles";
 
-
 import Canvas__background from "./Canvas__background";
 import Canvas__foreground from "./Canvas__foreground";
 
@@ -16,6 +15,12 @@ type Info =
   "p1Name" : string,
   "p2Name" : string
 };
+
+interface GameStartType{
+  p1Id : string;
+  p1Name : string;
+  p2Name : string
+}
 
 const Ingame = (props: any) : JSX.Element => {
   const userId : string = props.socketid;
@@ -57,7 +62,10 @@ const Ingame = (props: any) : JSX.Element => {
     room id : ${roomId}`);
   }
 
-  const gameStart = (p1_id: string, p1_name: string, p2_name: string): void => {
+  const gameStart = (start_data : GameStartType): void => {
+    const p1_id : string = start_data.p1Id;
+    const p1_name : string = start_data.p1Name;
+    const p2_name : string = start_data.p2Name;
     console.log("시작");
     const color = (p1_id === game_socket?.id) ? ("red") : ("green");
     setGameInfo({"color": color, "p1Name": p1_name, "p2Name": p2_name});
