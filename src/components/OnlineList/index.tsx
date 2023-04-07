@@ -18,39 +18,39 @@ interface Status {
   status: ClientStatus;
 }
 
-interface User {
+export interface User {
   id: number;
   nickname: string;
   status: ClientStatus;
 }
 
-interface FriendList {
-  id: number;
-  nickname: string;
-}
+// interface FriendList {
+//   id: number;
+//   nickname: string;
+// }
 
 const onlineList = function () {
   const clientSocket = useContext(SocketContext);
-  const response = useGetFriendList().data;
-  const getFriendList: FriendList[] = response;
+  // const response = useGetFriendList().data;
+  // const getFriendList: FriendList[] = response;
   const [friendList, setFriendList] = useState<User[]>([]);
 
-  useEffect(() => {
-    if (getFriendList) {
-      const updatedFriendList = getFriendList.map((friend) => {
-        return {
-          id: friend.id,
-          nickname: friend.nickname,
-          status: ClientStatus.OFFLINE,
-        };
-      });
-      setFriendList(updatedFriendList);
-    }
-  }, [getFriendList]);
+  // useEffect(() => {
+  //   if (getFriendList) {
+  //     const updatedFriendList = getFriendList.map((friend) => {
+  //       return {
+  //         id: friend.id,
+  //         nickname: friend.nickname,
+  //         status: ClientStatus.OFFLINE,
+  //       };
+  //     });
+  //     setFriendList(updatedFriendList);
+  //   }
+  // }, [getFriendList]);
 
   useEffect(() => {
     clientSocket.on('friends_status', (data: User[]) => {
-      console.log(data);
+      setFriendList(data);
     });
     clientSocket.emit('friends_status');
 
@@ -62,7 +62,6 @@ const onlineList = function () {
 
   useEffect(() => {
     clientSocket.on('change_status', (data: Status) => {
-      console.log(data);
       setFriendList((prevFriendList) => {
         const newFriendList = prevFriendList.map((friend) => {
           if (friend.id === data.userId) {
