@@ -84,8 +84,8 @@ const Home = () => {
                     id: userInfoData?.id ? userInfoData.id : 0,
                     imageSrc: URL.createObjectURL(userAvatar),
                     nickname: userInfoData?.nickname,
-                    win: userInfoData?.win ? userInfoData?.win : 0,
-                    lose: userInfoData?.lose ? userInfoData?.lose : 0,
+                    win: userInfoData?.wins ? userInfoData?.wins : 0,
+                    lose: userInfoData?.loses ? userInfoData?.loses : 0,
                     who: ProfileEnum.ME,
                     achievements: userInfoData?.achievements
                   }}
