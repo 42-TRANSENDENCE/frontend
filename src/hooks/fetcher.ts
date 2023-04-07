@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-const awsUrl = `http://${import.meta.env.VITE_AWS_URL}`;
+const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${import.meta.env.VITE_AWS_PORT}`;
 
 export function useFetcher() {
   const navigate = useNavigate();

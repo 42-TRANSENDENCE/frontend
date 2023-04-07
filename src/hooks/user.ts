@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 export function useLogout() {
   const fetcher = useFetcher();
-  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}`;
+  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${import.meta.env.VITE_AWS_PORT}`;
 
   const logout = async () => {
     await fetcher('/auth/logout', {

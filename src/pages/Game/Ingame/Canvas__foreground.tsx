@@ -1,28 +1,28 @@
 import React, { useEffect, useRef} from 'react'
 import {SingleCanvas} from './styles'
 interface GameDataType {
-  ball_pos    : { x : number, y : number };
-  paddle_pos  : { p1: number, p2: number };
-  paddle_size : { p1: number, p2: number }; 
+  ballPos    : { x : number, y : number };
+  paddlePos  : { p1: number, p2: number };
+  paddleSize : { p1: number, p2: number }; 
 }
 
 const Canvas__foreground = (props : any) : JSX.Element => {
   const socket = props.socket;
   const CANV_RATIO = props.width / 1200;
   
-  const CANV_W = props.width;
-  const CANV_H = CANV_W * 2 / 3;
-  const BALL_RAD = 30 * CANV_RATIO;
-  const PADDLE_H = CANV_H / 5;
-  const PADDLE_W = PADDLE_H / 20 * 3;
-  const PADDLE_L = PADDLE_W * 5 / 3;
+  const CANV_W   = CANV_RATIO * 1200;
+  const CANV_H   = CANV_RATIO * 800;
+  const BALL_RAD = CANV_RATIO * 30;
+  const PADDLE_H = CANV_RATIO * 200;
+  const PADDLE_W = CANV_RATIO * 24;
+  const PADDLE_L = CANV_RATIO * 40;
   const PADDLE_R = CANV_W - PADDLE_L;
 
   const canvasRef = useRef(null);
   let game_data = {
-    ball_pos   : { x : 0, y : 0 },
-    paddle_pos : { p1: 0, p2: 0 },
-    paddle_size: { p1: PADDLE_H, p2: PADDLE_H }
+    ballPos   : { x : 0, y : 0 },
+    paddlePos : { p1: 0, p2: 0 },
+    paddleSize: { p1: PADDLE_H, p2: PADDLE_H }
   }
 
   
@@ -52,23 +52,23 @@ const Canvas__foreground = (props : any) : JSX.Element => {
     new_data : GameDataType,
   ) : void {
     
-    redraw_ball( context, old_data.ball_pos, new_data.ball_pos, 'orange' );
+    redraw_ball( context, old_data.ballPos, new_data.ballPos, 'orange' );
     
     redraw_paddle (
       context,
-      [PADDLE_L, old_data.paddle_pos.p1],
-      old_data.paddle_size.p1,
-      [PADDLE_L, new_data.paddle_pos.p1],
-      new_data.paddle_size.p1,
+      [PADDLE_L, old_data.paddlePos.p1],
+      old_data.paddleSize.p1,
+      [PADDLE_L, new_data.paddlePos.p1],
+      new_data.paddleSize.p1,
       'red'
     )
     
     redraw_paddle (
       context,
-      [PADDLE_R, old_data.paddle_pos.p2],
-      old_data.paddle_size.p2,
-      [PADDLE_R, new_data.paddle_pos.p2],
-      new_data.paddle_size.p2,
+      [PADDLE_R, old_data.paddlePos.p2],
+      old_data.paddleSize.p2,
+      [PADDLE_R, new_data.paddlePos.p2],
+      new_data.paddleSize.p2,
       'green'
     )
   }
@@ -104,22 +104,24 @@ const Canvas__foreground = (props : any) : JSX.Element => {
     color : string
   ) : void {
     // erase old paddle
+    const old_h = old_size * CANV_RATIO;
     const old_x = old_center[0];
     const old_y = old_center[1];
-    const old_ltx = old_x - PADDLE_W / 2 - 1;
-    const old_lty = (old_y * CANV_RATIO + CANV_H / 2 ) - old_size / 2 - 1;
-    ctx.clearRect(old_ltx, old_lty, PADDLE_W + 2, old_size + 2);
+    const old_left = old_x - PADDLE_W / 2 - 1;
+    const old_top = (old_y * CANV_RATIO + CANV_H / 2 ) - old_h / 2 - 1;
+    ctx.clearRect(old_left, old_top, PADDLE_W + 2, old_h + 2);
 
     // draw new paddle
+    const new_h = new_size * CANV_RATIO;
     const new_x = new_center[0];
     const new_y = new_center[1];
     const rad   = PADDLE_W / 2;
     const new_left = new_x - rad;
-    const new_top = (new_y * CANV_RATIO + CANV_H / 2 ) - new_size / 2 + rad;
-    const new_bot = (new_y * CANV_RATIO + CANV_H / 2 ) + new_size / 2 - rad;
+    const new_top = (new_y * CANV_RATIO + CANV_H / 2 ) - new_h / 2 + rad;
+    const new_bot = (new_y * CANV_RATIO + CANV_H / 2 ) + new_h / 2 - rad;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.fillRect(new_left, new_top, PADDLE_W, new_size - PADDLE_W);
+    ctx.fillRect(new_left, new_top, PADDLE_W, new_h - PADDLE_W);
     ctx.ellipse(new_x, new_top, rad, rad, 0, 0, 2*Math.PI);
     ctx.ellipse(new_x, new_bot, rad, rad, 0, 0, 2*Math.PI);
     ctx.fill();

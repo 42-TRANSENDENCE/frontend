@@ -17,12 +17,12 @@ const Lobby = (props: any) : JSX.Element => {
     function normal_game_clicked() {
       console.log("normal game button clicked");
       // data : QueueDto
-      client_socket.emit("join_queue", GameMode.NORMAL);
+      client_socket.emit("join_queue", {mode: GameMode.NORMAL});
     };
 
     function special_game_clicked() {
       console.log("chaos game button clicked");
-      client_socket.emit("join_queue", GameMode.SPECIAL);
+      client_socket.emit("join_queue", {mode:GameMode.SPECIAL});
     }
 
     return (
