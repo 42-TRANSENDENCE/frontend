@@ -81,9 +81,9 @@ function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProf
         </div>
 
         <div className="Achievement">
-          {profile.achievements?.map((achievement: string) => {
+          {profile.who === ProfileEnum.ME && profile.achievements?.map((achievement: string) => {
             if (achievementImages[achievement])
-              return <img src={achievementImages[achievement]} />;
+              return <img className='Achievements' src={achievementImages[achievement]} />;
           })}
         </div>
 

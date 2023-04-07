@@ -71,7 +71,7 @@ export const ProfileContainer = styled.div<any>`
       margin: 1%;
     }
 
-    img {
+    .Achievements {
       width: calc(var(--w) * 0.18);
     }
 
@@ -95,4 +95,5 @@ export const Avatar = styled.img`
   border: var(--border-width) solid black;
   width: calc(var(--w) * 0.55);
   aspect-ratio: 1;
+  object-fit: cover;
 `
