@@ -1,5 +1,27 @@
 import styled from "styled-components";
 
+export const FriendListContainer = styled.div`
+  border-radius: 2rem;
+  border: 0.3rem solid black;
+  height: 100%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+`
+
+export const OnOffLineList = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  font-size: 2rem;
+  overflow: auto;
+`
+
+export const Header = styled.div`
+  font-size: 3rem;
+  padding-left: 1rem;
+`
+
 export const UserStatus = styled.span<{ status: string }>`
   display: inline-block;
   width: 1.5rem;
@@ -8,18 +30,18 @@ export const UserStatus = styled.span<{ status: string }>`
   margin-right: 0.5rem;
   margin-left: 1rem;
   background-color: ${({ status }) =>
-    status === "OnLine"
+    status === "ONLINE"
       ? "green"
-      : status === "InGame"
+      : status === "INGAME"
       ? "purple"
       : "gray"};
   position: relative;
   &:hover {
     &::after {
       content: ${({ status }) =>
-        status === "OnLine"
+        status === "ONLINE"
           ? "'Online'"
-          : status === "InGame"
+          : status === "INGAME"
           ? "'InGame'"
           : "'OffLine'"};
       position: absolute;
