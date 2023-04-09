@@ -56,7 +56,6 @@ const onlineList = function () {
 
     return () => {
       clientSocket.off('friends_status');
-      clientSocket.disconnect();
     }
   }, []);
 
@@ -77,7 +76,6 @@ const onlineList = function () {
     });
 
     return () => {
-      clientSocket.disconnect();
     };
   }, []);
 
