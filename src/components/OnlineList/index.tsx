@@ -1,100 +1,133 @@
-import { useCallback } from 'react';
-import { Scrollbars } from "react-custom-scrollbars";
-import { UserStatus } from "./styles";
-import { useGetFriendList } from "../../hooks/query/friend";
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { FriendListContainer, OnOffLineList, Header, UserStatus } from './styles';
+import { useGetFriendList } from '../../hooks/query/friend';
+import { SocketContext } from '../../contexts/ClientSocket';
 import IconButton from '@mui/material/IconButton';
 import ChatIcon from '@mui/icons-material/Chat';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 
-interface User {
-  id: number;
-  nickname: string;
-  status: 'OnLine' | 'OffLine' | 'InGame';
+export enum ClientStatus {
+  ONLINE = 'ONLINE',
+  INGAME = 'INGAME',
+  OFFLINE = 'OFFLINE',
 }
 
+interface Status {
+  userId: number;
+  status: ClientStatus;
+}
+
+export interface User {
+  id: number;
+  nickname: string;
+  status: ClientStatus;
+}
+
+// interface FriendList {
+//   id: number;
+//   nickname: string;
+// }
+
 const onlineList = function () {
-  const response = useGetFriendList().data;
-  const friendList: User[] = response;
-  if (friendList) {
-    friendList.forEach((element) => {
-      element.status = 'OnLine';
+  const clientSocket = useContext(SocketContext);
+  // const response = useGetFriendList().data;
+  // const getFriendList: FriendList[] = response;
+  const [friendList, setFriendList] = useState<User[]>([]);
+
+  // useEffect(() => {
+  //   if (getFriendList) {
+  //     const updatedFriendList = getFriendList.map((friend) => {
+  //       return {
+  //         id: friend.id,
+  //         nickname: friend.nickname,
+  //         status: ClientStatus.OFFLINE,
+  //       };
+  //     });
+  //     setFriendList(updatedFriendList);
+  //   }
+  // }, [getFriendList]);
+
+  useEffect(() => {
+    clientSocket.on('friends_status', (data: User[]) => {
+      setFriendList(data);
     });
-  }
+    clientSocket.emit('friends_status');
+
+    return () => {
+      clientSocket.off('friends_status');
+      clientSocket.disconnect();
+    }
+  }, []);
+
+  useEffect(() => {
+    clientSocket.on('change_status', (data: Status) => {
+      setFriendList((prevFriendList) => {
+        const newFriendList = prevFriendList.map((friend) => {
+          if (friend.id === data.userId) {
+            return {
+              ...friend,
+              status: data.status,
+            };
+          }
+          return friend;
+        });
+        return newFriendList;
+      });
+    });
+
+    return () => {
+      clientSocket.disconnect();
+    };
+  }, []);
 
   const onClickSendDm = useCallback(() => {
 
-    }, []
+  }, []
   );
 
   const onClickInviteGame = useCallback(() => {
-    
+
   }, []
-);
+  );
 
   return (
-    <div
-      style={{
-        borderRadius: "2rem",
-        border: "0.3rem solid black",
-        height: "100%",
-        width: "90%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      {/* onlineList */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          fontSize: "2rem",
-          overflow: "auto",
-        }}
-      >
-        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>ONLINE</div>
+    <FriendListContainer>
+      <OnOffLineList>
+        <Header>ONLINE</Header>
         <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
-          {friendList?.map((userinfo: any) => {
-            if (userinfo?.status === "OffLine") return;
-            return (
-              <div>
-                <UserStatus status={userinfo.status} />
-                {userinfo.nickname}
-                <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
-                  <ChatIcon />
-                </IconButton>
-                <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>
-                  <SportsEsportsIcon />
-                </IconButton>
-              </div>
-            );
+          {friendList?.map((userinfo: User) => {
+            if (userinfo?.status === "ONLINE" || userinfo?.status === 'INGAME')
+              return (
+                <>
+                  <UserStatus status={userinfo.status} />
+                  {userinfo.nickname}
+                  <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
+                    <ChatIcon />
+                  </IconButton>
+                  <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>
+                    <SportsEsportsIcon />
+                  </IconButton>
+                </>
+              );
           })}
         </Scrollbars>
-      </div>
-      {/* offlineList */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          fontSize: "2rem",
-          overflow: "auto",
-        }}
-      >
-        <div style={{ fontSize: "3rem", paddingLeft: "1rem" }}>OFFLINE</div>
+      </OnOffLineList>
+      <OnOffLineList>
+        <Header>OFFLINE</Header>
         <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
-          {friendList?.map((userinfo: any) => {
-            if (userinfo?.status !== "OffLine") return;
-            return (
-              <div>
-                <UserStatus status={userinfo.status} />
-                {userinfo.nickname}
-              </div>
-            );
+          {friendList?.map((userinfo: User) => {
+            if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
+              return (
+                <>
+                  <UserStatus status={userinfo.status} />
+                  {userinfo.nickname}
+                </>
+              );
           })}
         </Scrollbars>
-      </div>
-    </div>
+      </OnOffLineList>
+    </FriendListContainer>
   );
 };
 

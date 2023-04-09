@@ -58,6 +58,11 @@ export const Container = styled.div`
     }
 
     .LeftSide {
+      --section-width: calc(var(--body-width) * 0.34);
+      --section-height: calc(var(--body-height) * 1);
+      width: var(--section-width);
+      height: var(--section-height);
+      gap: var(--html-padding-vertical);
     }
 
     .MiddleSide {
@@ -107,18 +112,6 @@ export const Container = styled.div`
         left: 0;
         z-index: 1;
       }
-
-      // .Notification {
-      //   --w: calc(var(--section-width) * 0.95);
-      //   --h: calc(var(--w) * 0.2);
-      //   width: var(--w);
-      //   height: var(--h);
-      //   background: white;
-      //   border-radius: calc(var(--h) / 3);
-      //   border: var(--border-width) solid black;
-      //   text-align: center;
-      //   margin-top: 2rem;
-      // }
 
       .Notification > :first-child {
         position: relative;
