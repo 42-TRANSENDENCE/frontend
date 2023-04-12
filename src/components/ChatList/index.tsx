@@ -22,6 +22,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { isError, useMutation, useQuery, useQueryClient } from 'react-query';
 import dayjs from 'dayjs';
 import { MiddleButton } from '../Button';
+import { useUserInfo } from '../../hooks/query/user';
 
 export const ChatElement = styled.section`
   position: relative;
@@ -38,7 +39,7 @@ async function postChat(
 ): Promise<string> {
   const token = localStorage.getItem('jwt_token');
   let res = await fetch(
-    `http://${server_public_ip}:${server_port}/room/${roomId}/chat`,
+    `http://${server_public_ip}:${server_port}/channels/${roomId}/chat`,
     {
       method: 'POST',
       headers: {
@@ -70,7 +71,7 @@ function ChatsMenu({
 
   const kickMutation = useMutation(async () => {
     const response = await fetch(
-      `http://${server_public_ip}:${server_port}/room/${roomId}/kick/${username}`,
+      `http://${server_public_ip}:${server_port}/channels/${roomId}/kick/${username}`,
       {
         method: 'POST',
         headers: {
@@ -89,7 +90,7 @@ function ChatsMenu({
   };
   const onBanOther = async () => {
     let res = await fetch(
-      `http://${server_public_ip}:${server_port}/room/${roomId}/ban/${username}`,
+      `http://${server_public_ip}:${server_port}/channels/${roomId}/ban/${username}`,
       {
         method: 'POST',
         headers: {
@@ -104,7 +105,7 @@ function ChatsMenu({
 
   const onAdminOther = async () => {
     let res = await fetch(
-      `http://${server_public_ip}:${server_port}/room/${roomId}/admin/${username}`,
+      `http://${server_public_ip}:${server_port}/channels/${roomId}/admin/${username}`,
       {
         method: 'POST',
         headers: {
@@ -119,7 +120,7 @@ function ChatsMenu({
 
   const onMuteOther = async () => {
     let res = await fetch(
-      `http://${server_public_ip}:${server_port}/room/${roomId}/mute/${username}`,
+      `http://${server_public_ip}:${server_port}/channels/${roomId}/mute/${username}`,
       {
         method: 'POST',
         headers: {
@@ -331,7 +332,7 @@ const ChatList = ({ socket }: { socket: any }) => {
     isLoadingError: isLoadingErrorChats,
   } = useQuery<any>(['chat', roomId], async () => {
     const response = await fetch(
-      `http://${server_public_ip}:${server_port}/room/${roomId}/chat`,
+      `http://${server_public_ip}:${server_port}/channels/${roomId}/chat`,
       options
     );
     const res = await response.json();
@@ -347,19 +348,20 @@ const ChatList = ({ socket }: { socket: any }) => {
     return res;
   });
 
-  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
-    ['user'],
-    () =>
-      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
-        (res) => res.json()
-      )
-  );
+  // const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
+  //   ['user'],
+  //   () =>
+  //     fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
+  //       (res) => res.json()
+  //     )
+  // );
+  const { data: userData, isLoading: isLoadingUser } = useUserInfo();
 
   const { data: roomDatas, isLoading: isLoadingRoom } = useQuery<any>(
     ['room', roomId],
     async () => {
       const response = await fetch(
-        `http://${server_public_ip}:${server_port}/room/${roomId}`,
+        `http://${server_public_ip}:${server_port}/channels/${roomId}`,
         options
       );
       const res = await response.json();
@@ -381,7 +383,7 @@ const ChatList = ({ socket }: { socket: any }) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { mutate: mutateChat } = useMutation<unknown, unknown, any, unknown>(
-    ({ chat, userData }) => postChat(roomId!, chat, userData.username),
+    ({ chat, userData }) => postChat(roomId!, chat, userData.id),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['chat', roomId]);
@@ -395,8 +397,8 @@ const ChatList = ({ socket }: { socket: any }) => {
       queryClient.setQueryData(['chat', roomId], (chatData: any) => {
         return [...chatData, data];
       });
-      // console.log(data, userData.username);
-      if (data.user === userData.username) {
+      // console.log(data, userData.id);
+      if (data.user === userData?.id) {
         setTimeout(() => {
           scrollbarRef.current?.scrollToBottom();
         }, 10);
@@ -431,8 +433,8 @@ const ChatList = ({ socket }: { socket: any }) => {
     // console.log('LeaveData: ', data);
   }, []);
   const onKick = function (data: any) {
-    if (data === userData.username) {
-      // console.log('KickData: ', data, userData.username);
+    if (data === userData?.id) {
+      // console.log('KickData: ', data, userData.id);
       // console.log('강퇴당하셨습니다');
       setTimeout(() => {
         queryClient.invalidateQueries(['chat', roomId]);
@@ -457,17 +459,16 @@ const ChatList = ({ socket }: { socket: any }) => {
     if (userData) {
       // console.log('소켓 기능이 on 되었습니다! (join, exit, message)');
       socket?.on('message', onMessage);
-      socket?.on('join', onJoin);
-      socket?.on('exit', onExit);
-      // socket?.emit('join', roomId);
+      socket?.on('joinRoom', onJoin);
+      // socket?.on('exit', onExit);
       socket?.on('kick', onKick);
       socket?.on('role', onRole);
     }
     return () => {
       // console.log('소켓 기능이 off 되었습니다! (join, exit, message)');
       socket?.off('message', onMessage);
-      socket?.off('join', onJoin);
-      socket?.off('exit', onExit);
+      socket?.off('joinRoom', onJoin);
+      // socket?.off('exit', onExit);
       socket?.off('kick', onKick);
       socket?.off('role', onRole);
       // socket?.emit('leave', roomId);
@@ -549,7 +550,7 @@ const ChatList = ({ socket }: { socket: any }) => {
           <button
             className="leaveRoom"
             onClick={() => {
-              socket?.emit('leave', { roomId, userId: userData.username });
+              socket?.emit('leaveRoom', { roomId, userId: userData?.id });
             }}
           >
             방 나가기
