@@ -26,7 +26,7 @@ export type ProfileProps = {
   achievements: [];
 };
 
-function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProfile: any }) {
+function Profile({ profile, setPopProfile }: { profile: ProfileProps, setPopProfile: React.Dispatch<React.SetStateAction<boolean>> }) {
   const achievementImages: { [key: string]: string } = {
     FIRST_LOGIN,
     FIRST_FRIENDSHIP,
