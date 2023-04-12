@@ -97,7 +97,7 @@ const onlineList = function () {
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status === "ONLINE" || userinfo?.status === 'INGAME')
               return (
-                <>
+                <div>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
                   <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
@@ -106,7 +106,7 @@ const onlineList = function () {
                   <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>
                     <SportsEsportsIcon />
                   </IconButton>
-                </>
+                </div>
               );
           })}
         </Scrollbars>
@@ -117,10 +117,10 @@ const onlineList = function () {
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
-                <>
+                <div>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
-                </>
+                </div>
               );
           })}
         </Scrollbars>
