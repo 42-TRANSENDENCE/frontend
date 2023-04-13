@@ -38,15 +38,8 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
       })
     })
       .then(response => {
-        if (response.status === 201) {
+        if (response.status === 201)
           toast.success('New channel created');
-          // socket?.on('newChannel', (data: any) => {
-          //   socket?.emit('joinChannel', {'channelId': data.id});
-          // });
-          // return () => {
-          //   socket?.off('newChannel');
-          // }
-        }
         else if (response.status === 400)
           toast.error('Channel name alreay exists')
       })
@@ -107,7 +100,7 @@ export function usePostChat(): UseMutationResult<void, Error, PostChatData, Muta
 				'Content-Type': 'application/json',
 			},
 			credentials: 'include',
-			body: JSON.stringify({ chat: chat }),
+			body: JSON.stringify({ content: chat }),
 		})
       .then((response) => {
 			if (response.status === 201)

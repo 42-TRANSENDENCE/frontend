@@ -32,3 +32,19 @@ export const useMyChannels = () => {
   });
   return data;
 }
+
+export const useGetChats = (id: string) => {
+  const fetcher = useFetcher();
+  const data = useQuery({
+    queryKey: ['getChats'],
+    queryFn: async () => {
+      const response = await fetcher('/chat/' + id, {
+        method: 'GET',
+        credentials: 'include',
+      })
+      if (response.ok) return response.json();
+      throw response;
+    }
+  });
+  return data;
+}
