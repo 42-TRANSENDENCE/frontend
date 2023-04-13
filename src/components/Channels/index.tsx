@@ -68,15 +68,19 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
   }, [allChannels]);
 
   const onNewChannel = useCallback(async (data: any) => {
-    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     if (data.owner === userInfo.id) {
       socket?.emit('joinChannel', {'channelId': data.id});
     }
+    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    // queryClient.setQueryData(['allChannels'], () => {
+    //   return [...allChannels, data];
+    // });
   }, [queryClient]);
 
   const onRemoveChannel = useCallback(async (data: any) => {
-
-  }, []);
+    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+  }, [queryClient]);
 
   const onClickJoinChannel = useCallback(async (e: any) => {
     e.preventDefault();
@@ -247,5 +251,4 @@ export const MyChannels = ({ socket, popChatting, setPopChatting }: { socket: So
       )}
     </>
   );
-  
 }

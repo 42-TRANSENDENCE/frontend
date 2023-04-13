@@ -46,11 +46,11 @@ export const ChatsBar = styled.div`
   max-width: 100%;
 `;
 
-export const SendChatBar = styled.div`
+export const SendChatBar = styled.form`
   --w: var(--width);
   --h: var(--send-height);
 
-  --send-button-height: calc(var(--h) * 0.6);
+  --send-button-height: calc(var(--h));
   --send-button-width: calc(var(--send-button-height) * 1.5);
   width: var(--w);
   height: var(--send-height);
@@ -63,7 +63,7 @@ export const SendChatBar = styled.div`
   & > textarea {
     box-sizing: border-box;
     width: calc(var(--w) - var(--send-button-width) - var(--gap));
-    height: calc(var(--send-height) * 0.8);
+    height: calc(var(--send-height) * 1.2);
     display: flex;
     border-radius: calc(var(--h) * 0.3);
     border: calc(var(--border-width) / 2) solid black;
