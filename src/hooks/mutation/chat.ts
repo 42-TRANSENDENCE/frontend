@@ -1,17 +1,11 @@
 import { useFetcher } from "../fetcher";
-import { Socket } from "socket.io-client";
-import {
-	useMutation,
-	UseMutationResult,
-	MutationFunction,
-	useQueryClient,
+import { useMutation, UseMutationResult, MutationFunction, useQueryClient,
 } from "react-query";
 import { toast } from 'react-toastify';
 
-interface JoinChannelData {
-	dataset_roomId: string;
-	password: string | null;
-  socket: Socket;
+export interface JoinChannelData {
+	id: string;
+	password: string;
 }
 
 export interface CreateChannelData {
@@ -52,26 +46,34 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
 }
 
 
-export function useJoinChatRoom(): UseMutationResult<void, Error, JoinChannelData, MutationFunction<void, JoinChannelData>> {
+export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData, MutationFunction<void, JoinChannelData>> {
 	const queryClient = useQueryClient();
 	const fetcher = useFetcher();
 
-	async function joinRoomId(data: JoinChannelData): Promise<void> {
-		const { dataset_roomId, password, socket } = data;
-		await fetcher("/channels/" + dataset_roomId, {
+	async function joinChannel(data: JoinChannelData): Promise<void> {
+		const { id, password } = data;
+		await fetcher("/channels/" + id, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			credentials: "include",
 			body: JSON.stringify({ password: password }),
-		}).then((response) => {
-			if (response.ok) {
-        console.log(`-dataset_roomId-${dataset_roomId}`);
-				// socket.emit('join-channel', {"channelId":String(dataset_roomId)});
-			}
+		})
+      .then((response) => {
+			if (response.status === 200)
+        toast.success('Successfully joined channel ' + id);
+      else if (response.status === 400)
+        toast.error('You are already in the channel');
+      else if (response.status === 403)
+        toast.error('Wrong password')
 		});
 	}
 
-	return useMutation(joinRoomId);
+	return useMutation({
+    mutationFn: joinChannel,
+    onSuccess: () => {
+      // queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    }
+  });
 }
