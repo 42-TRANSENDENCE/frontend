@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Socket } from 'socket.io-client';
+import { useQueryClient } from 'react-query';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useAllChannels, useMyChannels } from '../../hooks/query/chat';
+import { useUserInfo } from '../../hooks/query/user';
+import Chatting from '../Chatting';
 import { CreateChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
 import { ChannelContainer, ChannelList, Input, SearchChannel, Header } from './styles';
 import { SmallButton } from '../../components/Button';
@@ -25,6 +28,8 @@ export interface ChannelInfo {
 }
 
 export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  const queryClient = useQueryClient();
+  const userInfo = useUserInfo().data;
   const createChannel = useCreatChannel();
   const joinChannel = useJoinChannel();
   const allChannels: ChannelInfo[] = useAllChannels().data;
@@ -63,8 +68,11 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
   }, [allChannels]);
 
   const onNewChannel = useCallback(async (data: any) => {
-
-  }, []);
+    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    if (data.owner === userInfo.id) {
+      socket?.emit('joinChannel', {'channelId': data.id});
+    }
+  }, [queryClient]);
 
   const onRemoveChannel = useCallback(async (data: any) => {
 
@@ -197,39 +205,47 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
 }
 
 
-export const MyChannels = ({ socket, setPopChatting }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
+export const MyChannels = ({ socket, popChatting, setPopChatting }: { socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  const [channelId, setChannelId] = useState('');
   const myChannels: ChannelInfo[] = useMyChannels().data;
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
+    const channelData = e.target.closest('[data-id]');
+    setChannelId(channelData.getAttribute('data-id'));
     setPopChatting(true);
   }, []);
 
   return (
-    <ChannelContainer>
-      <Header>Chats</Header>
-      <ChannelList>
-        <Scrollbars autoHide>
-          {myChannels?.map((channelInfo: ChannelInfo) => {
-            return (
-              <div
-                className='eachChannel'
-                data-id={channelInfo.id}
-                data-status={channelInfo.status}
-                key={channelInfo.id}
-                onClick={onClickOpenChat}
-              >
-                <div/>
-                <div>
-                  {channelInfo.title.length > 20
-                    ? channelInfo.title.slice(0, 20) + '...'
-                    : channelInfo.title}
-                </div>
-                <div>{channelInfo.owner}</div>
-              </div>
-            )
-          })}
-        </Scrollbars>
-      </ChannelList>
-    </ChannelContainer>
-  )
+    <>
+      {popChatting ? (
+        <Chatting socket={socket} channelId={channelId} setPopChatting={setPopChatting} />
+      ) : (
+        <ChannelContainer>
+          <Header>Chats</Header>
+          <ChannelList>
+            <Scrollbars autoHide>
+              {myChannels?.map((channelInfo: ChannelInfo) => {
+                return (
+                  <div
+                    className='eachChannel'
+                    data-id={channelInfo.id}
+                    onClick={onClickOpenChat}
+                  >
+                    <div />
+                    <div>
+                      {channelInfo.title.length > 20
+                        ? channelInfo.title.slice(0, 20) + '...'
+                        : channelInfo.title}
+                    </div>
+                    <div>{channelInfo.owner}</div>
+                  </div>
+                )
+              })}
+            </Scrollbars>
+          </ChannelList>
+        </ChannelContainer>
+      )}
+    </>
+  );
+  
 }
