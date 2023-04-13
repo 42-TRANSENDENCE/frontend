@@ -66,6 +66,11 @@ export const ChannelList = styled.div`
     padding: calc(var(--h) * (0.01)) calc(var(--w) * (0.1));
     position: relative;
 
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.98);
+    };
+
     & > div:first-child {
       position: absolute;
       right: calc(var(--w) * (0.1));

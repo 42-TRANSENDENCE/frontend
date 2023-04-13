@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Socket } from "socket.io-client";
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useAllChannels } from '../../hooks/query/chat';
-import { useCreatChannel, CreateChannelData } from '../../hooks/mutation/chat';
+import { CreateChannelData, JoinChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
 import { ChannelContainer, ChannelList, Input, SearchChannel, Header } from './styles';
 import { SmallButton } from '../../components/Button';
 import Modal from '../Modal';
@@ -26,6 +26,7 @@ export interface ChannelInfo {
 
 export const Channels = ({ socket }: { socket: Socket | undefined }) => {
   const createChannel = useCreatChannel();
+  const joinChannel = useJoinChannel();
   const allChannels: ChannelInfo[] = useAllChannels().data;
   const [title, setTitle] = useState('');
   const [password, setPassword]= useState('');
@@ -61,10 +62,6 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
     setFilteredChannels(newFilteredChannels);
   }, [allChannels]);
 
-  const onEnterEvent = useCallback((e: any) => {
-    e.preventDefault();
-  }, []);
-
   const onNewChannel = useCallback(async (data: any) => {
 
   }, []);
@@ -72,6 +69,22 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
   const onRemoveChannel = useCallback(async (data: any) => {
 
   }, []);
+
+  const onClickJoinChannel = useCallback((e: any) => {
+    e.preventDefault();
+    const channelData = e.target.closest('[data-id]');
+    const channelId: string = channelData.getAttribute('data-id');
+    const channelStatus: any = channelData.getAttribute('data-status');
+    const data: JoinChannelData = {
+      id: channelId,
+      password: '',
+    }
+    console.log(channelId);
+    console.log(channelStatus);
+    // console.log(channelStatus);
+    // joinChannel.mutate(data);
+  }, []);
+
 
   const onClickCreatChennel = useCallback(() => {
     setShowCreateChannelModal(true);
@@ -127,9 +140,9 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
               <div
                 className='eachChannel'
                 data-id={channelInfo.id}
-                // data-password={channelInfo.status === ChannelStatus.PROTECTED ? 'true' : 'false'}
+                data-status={channelInfo.status}
                 key={channelInfo.id}
-                onClick={onEnterEvent}
+                onClick={onClickJoinChannel}
               >
                 <div>
                   {channelInfo.status === ChannelStatus.PROTECTED ? (
