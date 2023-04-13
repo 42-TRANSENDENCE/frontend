@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Socket } from "socket.io-client";
+import { Socket } from 'socket.io-client';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { useAllChannels } from '../../hooks/query/chat';
-import { CreateChannelData, JoinChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
+import { useAllChannels, useMyChannels } from '../../hooks/query/chat';
+import { CreateChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
 import { ChannelContainer, ChannelList, Input, SearchChannel, Header } from './styles';
 import { SmallButton } from '../../components/Button';
 import Modal from '../Modal';
@@ -24,12 +24,12 @@ export interface ChannelInfo {
   updatedAt: string;
 }
 
-export const Channels = ({ socket }: { socket: Socket | undefined }) => {
+export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const createChannel = useCreatChannel();
   const joinChannel = useJoinChannel();
   const allChannels: ChannelInfo[] = useAllChannels().data;
   const [title, setTitle] = useState('');
-  const [password, setPassword]= useState('');
+  const [password, setPassword] = useState('');
   const [findChannelName, setFindChannelName] = useState('');
   const [filteredChannels, setFilteredChannels] = useState(allChannels);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
@@ -70,31 +70,28 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
 
   }, []);
 
-  const onClickJoinChannel = useCallback((e: any) => {
+  const onClickJoinChannel = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest('[data-id]');
     const channelId: string = channelData.getAttribute('data-id');
-    const channelStatus: any = channelData.getAttribute('data-status');
-    const data: JoinChannelData = {
-      id: channelId,
-      password: '',
+    const channelStatus: ChannelStatus = channelData.getAttribute('data-status');
+    if (channelStatus === ChannelStatus.PROTECTED) {
+      const pwd = prompt('Enter password');
+      joinChannel.mutate({ id: channelId, password: String(pwd), socket: socket });
+    } else {
+      joinChannel.mutate({ id: channelId, password: '', socket: socket });
     }
-    console.log(channelId);
-    console.log(channelStatus);
-    // console.log(channelStatus);
-    // joinChannel.mutate(data);
-  }, []);
-
+  }, [joinChannel]);
 
   const onClickCreatChennel = useCallback(() => {
     setShowCreateChannelModal(true);
-  }, []);
+  }, [showCreateChannelModal]);
 
   const onCloseCreateChannelModal = useCallback(() => {
     setShowCreateChannelModal(false);
     setPassword('');
     setTitle('');
-  }, []);
+  }, [showCreateChannelModal]);
 
   const onChangeTitle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -111,13 +108,14 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
     const data: CreateChannelData = {
       title: title,
       password: password,
+      socket: socket
     }
     createChannel.mutate(data);
     onCloseCreateChannelModal();
   }, [createChannel]);
 
   useEffect(() => {
-    socket?.on('newRoom', onNewChannel);
+    socket?.on('newChannel', onNewChannel);
     socket?.on('removeChannel', onRemoveChannel);
     return () => {
       socket?.off('newChannel', onNewChannel);
@@ -147,9 +145,9 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
                 <div>
                   {channelInfo.status === ChannelStatus.PROTECTED ? (
                     <img
-                    src='./../../public/padlock_locked.png'
-                    alt='padlock_locked'
-                  />
+                      src='./../../public/padlock_locked.png'
+                      alt='padlock_locked'
+                    />
                   ) : (
                     <></>
                   )}
@@ -174,7 +172,7 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
       >
         <form onSubmit={onSubmitCreateChannel}>
           <div>
-            <Input 
+            <Input
               type='text'
               name='title'
               placeholder='Channel Name'
@@ -183,7 +181,7 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
             />
           </div>
           <div>
-            <Input 
+            <Input
               type='password'
               name='password'
               placeholder='Password'
@@ -199,15 +197,37 @@ export const Channels = ({ socket }: { socket: Socket | undefined }) => {
 }
 
 
-export const MyChannels = ({ socket }: { socket: Socket | undefined }) => {
-  // const myChannels: ChannelInfo[] = useMyChannels().data;
+export const MyChannels = ({ socket, setPopChatting }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  const myChannels: ChannelInfo[] = useMyChannels().data;
+  const onClickOpenChat = useCallback(async (e: any) => {
+    e.preventDefault();
+    setPopChatting(true);
+  }, []);
 
   return (
     <ChannelContainer>
       <Header>Chats</Header>
       <ChannelList>
         <Scrollbars autoHide>
-
+          {myChannels?.map((channelInfo: ChannelInfo) => {
+            return (
+              <div
+                className='eachChannel'
+                data-id={channelInfo.id}
+                data-status={channelInfo.status}
+                key={channelInfo.id}
+                onClick={onClickOpenChat}
+              >
+                <div/>
+                <div>
+                  {channelInfo.title.length > 20
+                    ? channelInfo.title.slice(0, 20) + '...'
+                    : channelInfo.title}
+                </div>
+                <div>{channelInfo.owner}</div>
+              </div>
+            )
+          })}
         </Scrollbars>
       </ChannelList>
     </ChannelContainer>

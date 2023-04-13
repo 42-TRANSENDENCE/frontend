@@ -65,6 +65,7 @@ export const ChannelList = styled.div`
     margin: calc(var(--h) * (0.01));
     padding: calc(var(--h) * (0.01)) calc(var(--w) * (0.1));
     position: relative;
+    cursor: pointer;
 
     &:hover {
       opacity: 0.9;
