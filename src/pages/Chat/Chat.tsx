@@ -15,18 +15,17 @@ import ChatRoom from '../../components/ChatRoom';
 import OnlineList from '../../components/OnlineList';
 import Title from '../../components/Title';
 import { Channels, MyChannels } from '../../components/Channels';
-import Chatting from '../../components/Chatting';
 import { Container } from '../../layouts/Home/styles';
 import { Link } from 'react-router-dom';
 
 const Chat = () => {
   const [chat_socket, disconnect_chat_socket] = useSocket('channelchat');
   const [popChatting, setPopChatting] = useState(false);
-  console.log('connecting chat_socket: ', chat_socket);
+  // console.log('connecting chat_socket: ', chat_socket);
 
   useEffect(() => {
     return () => {
-      console.log('disconnecting chat socket');
+      // console.log('disconnecting chat socket');
       disconnect_chat_socket();
     }
   }, []);
@@ -45,11 +44,7 @@ const Chat = () => {
             </div>
             
             <div className='MiddleSide Section'>
-              {popChatting ? (
-                <Chatting socket={chat_socket} setPopChatting={setPopChatting} />
-                ) : (
-                <MyChannels socket={chat_socket} setPopChatting={setPopChatting} />
-              )}
+              <MyChannels socket={chat_socket} popChatting={popChatting} setPopChatting={setPopChatting} />
             </div>
 
             <div className='RightSide Section'>
