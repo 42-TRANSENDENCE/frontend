@@ -190,26 +190,26 @@ export const ChatLists = styled.div`
   }
 `;
 
-export const ChatItem = styled.div<{ other?: boolean }>`
+export const ChatItem = styled.div<{ isMe?: boolean }>`
   /* margin: 0.5rem; */
   font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
   margin: calc(var(--w) * 0.02);
   display: flex;
   justify-content: "flex-start";
-  flex-direction: ${(props) => (props.other ? "row" : "row-reverse")};
+  flex-direction: ${(props) => (props.isMe ? "row-reverse" : "row")};
   position: relative;
   gap: calc(var(--w) * 0.02);
 `;
 
-export const ChatBubble = styled.div<{ other?: boolean }>`
+export const ChatBubbled = styled.div<{ isMe?: boolean }>`
   position: relative;
   padding: calc(var(--h) * 0.01) calc(var(--h) * 0.02);
   max-width: 97%;
-  border-radius: ${(props) => (props.other ? "0" : "1rem")}
-    ${(props) => (props.other ? "1rem" : "0")} 1rem 1rem;
+  border-radius: ${(props) => (props.isMe ? "1rem" : "0")}
+    ${(props) => (props.isMe ? "0" : "1rem")} 1rem 1rem;
   background-color: ${(props) =>
-    props.other ? "#FFF" : "var(--color-yellow)"};
-  color: ${(props) => (props.other ? "#000" : "#555")};
+    props.isMe ? "var(--color-yellow)" : "#FFF"};
+  color: ${(props) => (props.isMe ? "#555" : "#000")};
   border: calc(var(--border-width) / 2) solid black;
 `;
 
@@ -224,15 +224,13 @@ export const ChatProfile = styled.div`
   }
 `;
 
-export const ChatMain = styled.div<{ other?: boolean }>`
+export const ChatMain = styled.div<{ isMe?: boolean }>`
   display: flex;
   flex-direction: column;
   width: calc(var(--width) * 0.7);
   word-wrap: break-word;
   & > span {
-    text-align: ${(props) => (props.other ? "left" : "right")};
-  }
-  & > span:nth-child(2) {
+    text-align: ${(props) => (props.isMe ? 'right' : 'left')};
     font-size: min(calc(var(--h) * 0.02), calc(var(--w) * 0.07));
   }
 `;
