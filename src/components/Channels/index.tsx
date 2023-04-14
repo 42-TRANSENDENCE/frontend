@@ -4,7 +4,7 @@ import { useQueryClient } from 'react-query';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useAllChannels, useMyChannels } from '../../hooks/query/chat';
 import { useUserInfo } from '../../hooks/query/user';
-import Chatting from '../Chatting';
+import { Chatting } from '../Chatting';
 import { CreateChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
 import { ChannelContainer, ChannelList, Input, SearchChannel, Header } from './styles';
 import { SmallButton } from '../../components/Button';
@@ -69,7 +69,7 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
 
   const onNewChannel = useCallback(async (data: any) => {
     if (data.owner === userInfo.id) {
-      socket?.emit('joinChannel', {'channelId': data.id});
+      socket?.emit('joinChannel', {'channelId': String(data.id)});
     }
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     // queryClient.setQueryData(['allChannels'], () => {
