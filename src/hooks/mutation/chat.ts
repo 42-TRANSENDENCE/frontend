@@ -71,7 +71,7 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
       .then((response) => {
 			if (response.status === 200) {
         toast.success('Successfully joined channel ' + id);
-        socket?.emit('joinChannel', {'channelId': id});
+        socket?.emit('joinChannel', {'channelId': String(id)});
       }
       else if (response.status === 400)
         toast.error('You are already in the channel');
