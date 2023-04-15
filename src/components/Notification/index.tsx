@@ -61,11 +61,10 @@ function Notification() {
     clientSocket.emit("accept", inviteInfo);
   };
 
-  const onClickRefuseInvitation = useCallback(
-    () => {
-
-    }, []
-  );
+  const onClickRefuseInvitation = (inviteInfo : InvitationInfo) => {
+    console.log(inviteInfo)
+    clientSocket.emit("refuse", inviteInfo);
+  };
 
   useEffect(() => {
     clientSocket.on('updateInviteList', (data : InvitationInfo[] | null) => {
@@ -127,7 +126,7 @@ function Notification() {
                 <Button variant="contained" color="success" onClick={() => onClickAcceptInvitation(inviteInfo)}>
                   Approve
                 </Button>
-                <Button variant="contained" color="error" onClick={() => onClickRefuseInvitation()}>
+                <Button variant="contained" color="error" onClick={() => onClickRefuseInvitation(inviteInfo)}>
                   Refuse
                 </Button>
               </div>
