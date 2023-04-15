@@ -84,11 +84,6 @@ const onlineList = function () {
   }, []
   );
 
-  const onClickInviteGame = useCallback(() => {
-
-  }, []
-  );
-
   return (
     <FriendListContainer>
       <OnOffLineList>
