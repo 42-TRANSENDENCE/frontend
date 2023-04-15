@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import useSocket from '../../../hooks/useSocket';
-import { GameState } from "../enum";
 import { PlayContainer, CanvasContainer } from "./styles";
 
 import Canvas__background from "./Canvas__background";
 import Canvas__foreground from "./Canvas__foreground";
+import { useLocation, useNavigate } from "react-router-dom";
+import { SocketContext } from "../../../contexts/ClientSocket";
+import { Socket } from "socket.io-client";
 
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
@@ -22,11 +24,13 @@ interface GameStartType{
   p2Name : string
 }
 
-const Ingame = (props: any) : JSX.Element => {
-  const userId : string = props.socketid;
+const Ingame = () : JSX.Element => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const clientSocket : Socket = useContext(SocketContext);
+  const state = location.state as { room : string | null };
+  const roomId : string | null = state.room;
   const [game_socket, disconnect_game_socket] = useSocket('game');
-  const roomId : string = props.roomId;
-  const setState = props.setGamestate;
   const [GameInfo, setGameInfo] = useState<Info>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
 
   let up_pressed: boolean = false;
@@ -56,9 +60,9 @@ const Ingame = (props: any) : JSX.Element => {
   };
 
   const sendReady = () : void => {
-    game_socket?.emit("ready", {userId, roomId});
+    game_socket?.emit("ready", {userId : clientSocket.id,  roomId});
     console.log(`ready event보냄. : game_socket id : ${game_socket?.id}
-    client_id : ${userId} 
+    client_id : ${clientSocket.id} 
     room id : ${roomId}`);
   }
 
@@ -78,7 +82,7 @@ const Ingame = (props: any) : JSX.Element => {
     document.removeEventListener("keydown", keyPressed);
     document.removeEventListener("keyup", keyReleased);
     timeout = setTimeout(() => {
-      setState(GameState.Lobby);
+      navigate('/game');
     }, 5000);
   };
 

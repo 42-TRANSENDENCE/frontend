@@ -5,16 +5,16 @@ import { GameState } from './enum';
 import Title from '../../components/Title';
 import Lobby from './Lobby';
 import Waiting from './Waiting';
-import Ingame from './Ingame';
 import { GameContainer } from './styles';
+import { useNavigate } from 'react-router-dom';
 
 const Game = (): JSX.Element => {
-  const [gamestate, setGamestate] = useState(GameState.Lobby);
-  const [room, setRoom] = useState(null);
+  const [gamestate, setGamestate] = useState<GameState>(GameState.Lobby);
   const clientSocket = useContext(SocketContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(' [ RENDERING ] : game page : ');
+    console.log(` [ RENDERING ] : game page`);
     return () => {
       clientSocket.emit('leave_queue'); //quit_queue 에서 leave_qeuue로 바뀜
       console.log(' [ STOP ] : game page');
@@ -30,9 +30,8 @@ const Game = (): JSX.Element => {
       setGamestate(GameState.Lobby);
     });
     clientSocket.on('match_maked', (data : any) => {
-      setRoom(data.roomId);
-      console.log('room :', room, data.roomId);
-      setGamestate(GameState.InGame);
+      console.log('room :', data.roomId);
+      navigate('/game/play', {state: {room: data.roomId}});
     });
     return () => {
       clientSocket.off('joined_to_queue');
@@ -47,9 +46,7 @@ const Game = (): JSX.Element => {
         {{
           [GameState.Lobby]   : <Lobby socket={clientSocket} />,
           [GameState.Waiting] : <Waiting socket={clientSocket} />,
-          [GameState.InGame]  : <Ingame socketid={clientSocket.id}
-                                        roomId={room}
-                                        setGamestate={setGamestate} />
+          [GameState.InGame]  : null
         }[gamestate] }
       </div>
     ) ;
