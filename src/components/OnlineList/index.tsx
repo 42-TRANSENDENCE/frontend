@@ -1,11 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { FriendListContainer, OnOffLineList, Header, UserStatus } from './styles';
+import { FriendListContainer, OnOffLineList, Header, UserStatus, SingleUser } from './styles';
 import { useGetFriendList } from '../../hooks/query/friend';
 import { SocketContext } from '../../contexts/ClientSocket';
 import IconButton from '@mui/material/IconButton';
 import ChatIcon from '@mui/icons-material/Chat';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import InviteButton from './InviteButton'
 
 export enum ClientStatus {
   ONLINE = 'ONLINE',
