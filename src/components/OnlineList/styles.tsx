@@ -1,12 +1,26 @@
 import styled from "styled-components";
 
 export const FriendListContainer = styled.div`
-  border-radius: 2rem;
-  border: 0.3rem solid black;
-  height: 100%;
-  width: 90%;
+  --friendlist-width: calc(var(--section-width) * 0.9);
+  --friendlist-height: min(calc(var(--body-height) * 0.9), calc(var(--body-width) * 0.9));
+  --friendlist-padding: calc(var(--friendlist-height) * 0.02);
+  border-radius: calc(var(--friendlist-height) * 0.05);
+  border: var(--border-width) solid black;
+  height: var(--friendlist-height);
+  width: var(--friendlist-width);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  
+  .Online {
+    background: white;
+    overflow-y: auto;
+  }
+
+  .Offline{
+    background: var(--color-gray);
+    overflow-y: auto;
+  }
 `
 
 export const OnOffLineList = styled.div`
@@ -18,6 +32,11 @@ export const OnOffLineList = styled.div`
 `
 
 export const Header = styled.div`
+  font-size: calc(var(--friendlist-height) * 0.05);
+  font-weight: 600;
+  padding-left: var(--friendlist-padding);
+`
+
 export const SingleUser = styled.div`
   --singlefriend-height : calc(var(--friendlist-height)*0.05);
   width: var(--friendlist-width);
@@ -42,26 +61,18 @@ export const SingleUser = styled.div`
 
 export const UserStatus = styled.span<{ status: string }>`
   display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: calc(var(--singlefriend-height) * 0.5);
+  aspect-ratio: 1;
   border-radius: 50%;
-  margin-right: 0.5rem;
-  margin-left: 1rem;
+  margin-left: calc(var(--friendlist-width) * 0.03);
+  margin-right: calc(var(--friendlist-width) * 0.03);
   background-color: ${({ status }) =>
-    status === "ONLINE"
-      ? "green"
-      : status === "INGAME"
-      ? "purple"
-      : "gray"};
-  position: relative;
+    (status === "ONLINE") ? ("green") : ((status === "INGAME") ? "purple" : "gray")};
+
   &:hover {
     &::after {
       content: ${({ status }) =>
-        status === "ONLINE"
-          ? "'Online'"
-          : status === "INGAME"
-          ? "'InGame'"
-          : "'OffLine'"};
+        (status === "ONLINE") ? ("Online") : ((status === "INGAME") ? "InGame" : "OffLine")};
       position: absolute;
       z-index: 1;
       top: 1.5rem;

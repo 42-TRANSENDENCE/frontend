@@ -87,7 +87,7 @@ const onlineList = function () {
 
   return (
     <FriendListContainer>
-      <OnOffLineList>
+      <OnOffLineList className='Online'>
         <Header>ONLINE</Header>
         <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: User) => {
@@ -105,7 +105,7 @@ const onlineList = function () {
           })}
         </Scrollbars>
       </OnOffLineList>
-      <OnOffLineList>
+      <OnOffLineList className='Offline'>
         <Header>OFFLINE</Header>
         <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: User) => {
