@@ -52,17 +52,17 @@ const LobbyContainer = styled.div`
     flex-direction: column;  
     justify-content: space-evenly;
     align-items: center;
-
-    --w : min(var(--body-width), 600px);
+    
+    --w : min(var(--body-width), 400px);
     --h : calc(var(--body-height) * 0.8);
     --size : min(var(--w), var(--h));
     width: var(--size);
     aspect-ratio: 1;
     
-    background: var(--color-blue);
+    background: pink;
     
     border-radius: calc(var(--size) / 8);
-    border: calc(var(--border-width) * 2) solid black;
+    border: min(calc(var(--border-width) * 1.5), 5px) solid black;
     
     box-sizing: border-box;
     /* width: fit-content; */
@@ -70,7 +70,6 @@ const LobbyContainer = styled.div`
   }
   .top {
     width: 100%;
-    /* background: yellow; */
     display: flex;
     align-items: top;
     justify-content: right;
@@ -81,7 +80,6 @@ const LobbyContainer = styled.div`
     }
   }
   .body{
-    /* background-color: green; */
     width: 100%;
     height: 90%;
     display: flex;
