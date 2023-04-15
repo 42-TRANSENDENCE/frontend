@@ -103,10 +103,7 @@ const onlineList = function () {
                   <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
                     <ChatIcon />
                   </IconButton>
-                  <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>
-                    <SportsEsportsIcon />
-                  </IconButton>
-                </div>
+                  <InviteButton socket={clientSocket} userinfo={userinfo}/>
               );
           })}
         </Scrollbars>
