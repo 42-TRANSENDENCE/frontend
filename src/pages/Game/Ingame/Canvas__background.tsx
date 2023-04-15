@@ -37,8 +37,8 @@ const Canvas__background = (props : any) : JSX.Element => {
     });
     draw_table(canv);
     draw_score(canv, {p1:0, p2:0});
-    props.socket.on("game_over", (winner : string) => {
-      const isWin = props.socket.id === winner;
+    props.socket.on("game_over", (winnerId : string) => {
+      const isWin = props.socket.id === winnerId;
       setTimeout( () => {
         draw_message(canv, (isWin)?("You Win :)"):("You Lose :("));
       }, 300)
