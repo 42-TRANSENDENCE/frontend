@@ -97,7 +97,7 @@ const onlineList = function () {
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status === "ONLINE" || userinfo?.status === 'INGAME')
               return (
-                <div>
+                <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
                   <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
@@ -117,7 +117,7 @@ const onlineList = function () {
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
-                <div>
+                <div key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
                 </div>
