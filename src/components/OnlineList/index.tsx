@@ -104,6 +104,7 @@ const onlineList = function () {
                     <ChatIcon />
                   </IconButton>
                   <InviteButton socket={clientSocket} userinfo={userinfo}/>
+                </SingleUser>
               );
           })}
         </Scrollbars>

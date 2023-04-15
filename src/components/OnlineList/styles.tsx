@@ -18,8 +18,26 @@ export const OnOffLineList = styled.div`
 `
 
 export const Header = styled.div`
-  font-size: 3rem;
-  padding-left: 1rem;
+export const SingleUser = styled.div`
+  --singlefriend-height : calc(var(--friendlist-height)*0.05);
+  width: var(--friendlist-width);
+  height: var(--singlefriend-height);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap : calc(var(--friendlist-width) * 0.02);
+  margin-left: calc(var(--friendlist-width) * 0.02);
+
+  line-height: var(--singlefriend-height);
+  font-size : calc(var(--singlefriend-height) * 0.75);
+  font-weight: 500;
+
+  & > .icon {
+    height: calc(var(--singlefriend-height) * 0.75);
+    aspect-ratio: 1;
+  }
 `
 
 export const UserStatus = styled.span<{ status: string }>`
