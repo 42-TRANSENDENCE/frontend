@@ -68,22 +68,26 @@ const Ingame = () : JSX.Element => {
   }
 
   const gameStart = (start_data : GameStartType): void => {
-    const p1_id : string = start_data.p1Id;
-    const p1_name : string = start_data.p1Name;
-    const p2_name : string = start_data.p2Name;
-    console.log("시작");
-    const color = (p1_id === game_socket?.id) ? ("red") : ("green");
-    setGameInfo({"color": color, "p1Name": p1_name, "p2Name": p2_name});
+    const {p1Id, p1Name, p2Name} : GameStartType = start_data;
+    console.log("게임 시작");
+    let color = "wheat";
+    if (isPlayer === true)
+    {
+      color = (p1Id === game_socket?.id) ? ("red") : ("green");
     document.addEventListener("keydown", keyPressed);
     document.addEventListener("keyup", keyReleased);
-    game_socket?.off("game_start");
+    }
+    setGameInfo({"color": color, "p1Name": p1Name, "p2Name": p2Name});
   };
 
   const gameOver = (winner: string): void => {
+    if (isPlayer === true)
+    {
     document.removeEventListener("keydown", keyPressed);
     document.removeEventListener("keyup", keyReleased);
+    }
     timeout = setTimeout(() => {
-      navigate('/game');
+      navigate('/home');
     }, 5000);
   };
 
