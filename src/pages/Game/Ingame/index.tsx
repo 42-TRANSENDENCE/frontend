@@ -103,27 +103,31 @@ const Ingame = () : JSX.Element => {
     };
   }, []);
 
+  const GameCanvas = () : JSX.Element => {
   return (
-    <PlayContainer>
-      <CanvasContainer className="CanvasContainer">
-        <p className="PlayerName Player1">
-          {GameInfo.p1Name}
-        </p>
+      <>
         <Canvas__background
           socket={game_socket}
           width={CANV_WIDTH}
           height={CANV_HEIGHT}
-          color={GameInfo.color}
-          // isWinner={isWinner}
+          gameInfo={GameInfo}
+          isPlayer={isPlayer}
         />
         <Canvas__foreground
           socket={game_socket}
           width={CANV_WIDTH}
           height={CANV_HEIGHT}
         />
-        <p className="PlayerName Player2">
-          {GameInfo.p2Name}
-        </p>
+      </>
+    )
+  }
+
+  return (
+    <PlayContainer>
+      <CanvasContainer className="CanvasContainer">
+        <p className="PlayerName Player1"> {GameInfo.p1Name} </p>
+        <GameCanvas />
+        <p className="PlayerName Player2"> {GameInfo.p2Name} </p>
       </CanvasContainer>
   </PlayContainer>
   );
