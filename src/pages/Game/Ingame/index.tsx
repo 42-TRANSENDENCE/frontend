@@ -32,7 +32,7 @@ const Ingame = () : JSX.Element => {
   const roomId : string | null = state?.room;
   const isPlayer : boolean | undefined = state?.isPlayer;
   const [game_socket, disconnect_game_socket] = useSocket('game');
-  const [GameInfo, setGameInfo] = useState<Info>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
+  const [GameInfo, setGameInfo] = useState<GameInfo>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
 
   let up_pressed: boolean = false;
   let down_pressed: boolean = false;
