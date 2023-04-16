@@ -12,7 +12,11 @@ import chaosButton from "../../../assets/bigButton/chaosButton.svg";
 import cancelButton from "../../../assets/bigButton/cancelButton.svg";
 import { GameMode, GameState } from "../../../pages/Game/enum";
 import { UserInfo } from "../../../hooks/query/user";
-import { useNavigate } from "react-router-dom";
+interface spectateDto
+{
+  roomId : string | null,
+  msg : string | null
+}
 
 const InviteButton = ( props : any ) => {
   const [open, setOpen] = useState<boolean>(false);
