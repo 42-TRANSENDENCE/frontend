@@ -107,13 +107,30 @@ const GameInviteWindow = (props : any) : JSX.Element => {
 }
 
 const GameSpectateWindow = (props : any) : JSX.Element => {
-  const socket = props.socket;
-  const playerInfo = props.userInfo;
+  const navigate = useNavigate();
+  const socket : Socket = props.socket;
+  const playerInfo : User = props.userInfo;
+
+  function requestSpectate(userId : number) {
+    console.log(`관전 try to ${userId}`);
+    socket.emit("spectate", {playerId : userId});
+  }
+
+  useEffect(() => {
+    socket.on("spectate", (data : spectateDto) => {
+      const {roomId, msg} = data;
+      if (roomId === null) {
+        console.log(`[관전 실패] : ${msg}`);
+      } else {
+        navigate('/game/play', {state: {room: roomId, isPlayer: false}});
+      }
+    });
+  }, []);
   
   return (
     <div className="gameSpectateWindow ModalChild">
       <h6>게임 관전하기</h6>
-      <BigButton className="big" img_url={normalButton} onClick={()=>{}}/>
+      <BigButton className="big" img_url={normalButton} onClick={() => {requestSpectate(playerInfo.id);}}/>
     </div>
   );
 }
