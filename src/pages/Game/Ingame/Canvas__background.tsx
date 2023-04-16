@@ -19,7 +19,8 @@ const Canvas__background = (props : any) : JSX.Element => {
   const W : number = props.width;
   const H : number = props.height;
   const P : number = H / 10;
-  const color : string = props.color;
+  const gameInfo = props.gameInfo;
+  const isPlayer = props.isPlayer;
 
   useEffect( () => {
     console.log("background draw")
@@ -30,7 +31,7 @@ const Canvas__background = (props : any) : JSX.Element => {
       width  : W,
       height : H,
       padding: P,
-      color : color
+      color : gameInfo.color
     }
     props.socket.on("update_score", (score : ScoreProps) => {
       draw_score(canv, score);
@@ -38,16 +39,23 @@ const Canvas__background = (props : any) : JSX.Element => {
     draw_table(canv);
     draw_score(canv, {p1:0, p2:0});
     props.socket.on("game_over", (winnerId : string) => {
-      const isWin = props.socket.id === winnerId;
-      setTimeout( () => {
-        draw_message(canv, (isWin)?("You Win :)"):("You Lose :("));
-      }, 300)
+      if (isPlayer) {
+        const isWin = props.socket.id === winnerId;
+        setTimeout( () => {
+          draw_message(canv, (isWin)?("You Win :)"):("You Lose :("));
+        }, 300)
+      }
+      else {
+        setTimeout( () => {
+          draw_message(canv, "Game Over~");
+        }, 300)
+      }
     })
 
     return () => {
       props.socket.off("update_score")
     }
-  }, [color]);
+  }, []);
 
   return ( 
     <SingleCanvas ref={canvasRef} width={W} height={H}/>
