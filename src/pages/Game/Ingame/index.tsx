@@ -94,6 +94,7 @@ const Ingame = () : JSX.Element => {
   useEffect(() => {
     console.log("게임으로 들어옴");
     if (state && state?.isPlayer && state?.room) {
+      history.replaceState(null, '', '/game');
       window.addEventListener("keydown", default_keyoff);
       game_socket?.once("game_start", gameStart);
       game_socket?.on("game_over", gameOver);
