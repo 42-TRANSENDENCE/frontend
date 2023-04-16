@@ -11,7 +11,7 @@ import { Socket } from "socket.io-client";
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
 
-type Info =
+type GameInfo =
 {
   "color" : string,
   "p1Name" : string,
