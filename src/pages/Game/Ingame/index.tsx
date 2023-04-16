@@ -90,22 +90,27 @@ const Ingame = () : JSX.Element => {
       navigate('/home');
     }, 5000);
   };
-
+  
   useEffect(() => {
     console.log("게임으로 들어옴");
-    if (!state || !state?.isPlayer || state?.room)
+    if (state && state?.isPlayer && state?.room) {
+      window.addEventListener("keydown", default_keyoff);
+      game_socket?.once("game_start", gameStart);
+      game_socket?.on("game_over", gameOver);
+      sendReady();
+    } else {
       navigate("/game");
-    window.addEventListener("keydown", default_keyoff);
-    game_socket?.once("game_start", gameStart);
-    game_socket?.on("game_over", gameOver);
-    sendReady();
+    }
     return () => {
-      window.removeEventListener("keydown", default_keyoff);
-      document.removeEventListener("keydown", keyPressed);
-      document.removeEventListener("keyup", keyReleased);
-      if (timeout !== undefined) clearTimeout(timeout);
-        console.log("게암 페이지 나감");
+      if (state && state?.isPlayer && state?.room) {
+        window.removeEventListener("keydown", default_keyoff);
+        document.removeEventListener("keydown", keyPressed);
+        document.removeEventListener("keyup", keyReleased);
+        if (timeout !== undefined) clearTimeout(timeout);
+      }
       disconnect_game_socket();
+
+      console.log("게암 페이지 나감");
     };
   }, []);
 
