@@ -74,8 +74,8 @@ const Ingame = () : JSX.Element => {
     if (isPlayer === true)
     {
       color = (p1Id === game_socket?.id) ? ("red") : ("green");
-    document.addEventListener("keydown", keyPressed);
-    document.addEventListener("keyup", keyReleased);
+      document.addEventListener("keydown", keyPressed);
+      document.addEventListener("keyup", keyReleased);
     }
     setGameInfo({"color": color, "p1Name": p1Name, "p2Name": p2Name});
   };
@@ -83,8 +83,8 @@ const Ingame = () : JSX.Element => {
   const gameOver = (winner: string): void => {
     if (isPlayer === true)
     {
-    document.removeEventListener("keydown", keyPressed);
-    document.removeEventListener("keyup", keyReleased);
+      document.removeEventListener("keydown", keyPressed);
+      document.removeEventListener("keyup", keyReleased);
     }
     timeout = setTimeout(() => {
       navigate('/home');
@@ -93,8 +93,10 @@ const Ingame = () : JSX.Element => {
 
   useEffect(() => {
     console.log("게임으로 들어옴");
+    if (!state || !state?.isPlayer || state?.room)
+      navigate("/game");
     window.addEventListener("keydown", default_keyoff);
-    game_socket?.on("game_start", gameStart);
+    game_socket?.once("game_start", gameStart);
     game_socket?.on("game_over", gameOver);
     sendReady();
     return () => {
@@ -108,7 +110,7 @@ const Ingame = () : JSX.Element => {
   }, []);
 
   const GameCanvas = () : JSX.Element => {
-  return (
+    return (
       <>
         <Canvas__background
           socket={game_socket}
