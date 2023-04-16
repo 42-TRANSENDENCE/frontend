@@ -12,6 +12,8 @@ import chaosButton from "../../../assets/bigButton/chaosButton.svg";
 import cancelButton from "../../../assets/bigButton/cancelButton.svg";
 import { GameMode, GameState } from "../../../pages/Game/enum";
 import { UserInfo } from "../../../hooks/query/user";
+import { Navigate, useNavigate } from "react-router-dom";
+
 interface spectateDto
 {
   roomId : string | null,
@@ -81,7 +83,7 @@ const GameInviteWindow = (props : any) : JSX.Element => {
       });
       socket.on('accepted', (data : any) => {
         console.log('accepted :', data.roomId);
-        navigate('/game/play', {state: {room: data.roomId}});
+        navigate('/game/play', {state: {room: data.roomId, isPlayer: true}});
       });
       return () => {
         socket.off("invitationCanceled");
@@ -130,7 +132,7 @@ const GameSpectateWindow = (props : any) : JSX.Element => {
       }
     });
   }, []);
-  
+
   return (
     <div className="gameSpectateWindow ModalChild">
       <h6>게임 관전하기</h6>

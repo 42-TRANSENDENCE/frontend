@@ -28,8 +28,9 @@ const Ingame = () : JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   const clientSocket : Socket = useContext(SocketContext);
-  const state = location.state as { room : string | null };
-  const roomId : string | null = state.room;
+  const state = location.state as { room : string | null, isPlayer : boolean | undefined};
+  const roomId : string | null = state?.room;
+  const isPlayer : boolean | undefined = state?.isPlayer;
   const [game_socket, disconnect_game_socket] = useSocket('game');
   const [GameInfo, setGameInfo] = useState<Info>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
 

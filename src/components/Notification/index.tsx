@@ -73,7 +73,7 @@ function Notification() {
 
     clientSocket.on('match_maked', (data : any) => {
       console.log('match_maked :', data.roomId);
-      navigate('/game/play', {state: {room: data.roomId}});
+      navigate('/game/play', {state: {room: data.roomId, isPlayer: true}});
     });
 
     clientSocket.emit("getinvitaionlist");

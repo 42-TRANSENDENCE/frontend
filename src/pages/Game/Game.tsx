@@ -31,7 +31,7 @@ const Game = (): JSX.Element => {
     });
     clientSocket.on('match_maked', (data : any) => {
       console.log('room :', data.roomId);
-      navigate('/game/play', {state: {room: data.roomId}});
+      navigate('/game/play', {state: {room: data.roomId, isPlayer: true}});
     });
     return () => {
       clientSocket.off('joined_to_queue');
