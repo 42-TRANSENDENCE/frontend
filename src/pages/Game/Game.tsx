@@ -1,12 +1,12 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from "react";
 import { SocketContext } from "../../contexts/ClientSocket";
 
-import { GameState } from './enum';
-import Title from '../../components/Title';
-import Lobby from './Lobby';
-import Waiting from './Waiting';
-import { GameContainer } from './styles';
-import { useNavigate } from 'react-router-dom';
+import { GameState } from "./enum";
+import Title from "../../components/Title";
+import Lobby from "./Lobby";
+import Waiting from "./Waiting";
+import { GameContainer } from "./styles";
+import { useNavigate } from "react-router-dom";
 
 const Game = (): JSX.Element => {
   const [gamestate, setGamestate] = useState<GameState>(GameState.Lobby);
@@ -16,40 +16,42 @@ const Game = (): JSX.Element => {
   useEffect(() => {
     console.log(` [ RENDERING ] : game page`);
     return () => {
-      clientSocket.emit('leave_queue'); //quit_queue 에서 leave_qeuue로 바뀜
-      console.log(' [ STOP ] : game page');
+      clientSocket.emit("leave_queue"); //quit_queue 에서 leave_qeuue로 바뀜
+      console.log(" [ STOP ] : game page");
     };
   }, []);
 
   useEffect(() => {
-    clientSocket.on('joined_to_queue', () => {
-      console.log('qeueue');
+    clientSocket.on("joined_to_queue", () => {
+      console.log("qeueue");
       setGamestate(GameState.Waiting);
     });
-    clientSocket.on('out_of_queue', () => {
+    clientSocket.on("out_of_queue", () => {
       setGamestate(GameState.Lobby);
     });
-    clientSocket.on('match_maked', (data : any) => {
-      console.log('room :', data.roomId);
-      navigate('/game/play', {state: {room: data.roomId, isPlayer: true}});
+    clientSocket.on("match_maked", (data: any) => {
+      console.log("room :", data.roomId);
+      navigate("/game/play", { state: { room: data.roomId, isPlayer: true } });
     });
     return () => {
-      clientSocket.off('joined_to_queue');
-      clientSocket.off('out_of_queue');
-      clientSocket.off('match_maked');
+      clientSocket.off("joined_to_queue");
+      clientSocket.off("out_of_queue");
+      clientSocket.off("match_maked");
     };
   }, []);
 
   const GameByState = (): JSX.Element => {
-    return  (
+    return (
       <div className="Body">
-        {{
-          [GameState.Lobby]   : <Lobby socket={clientSocket} />,
-          [GameState.Waiting] : <Waiting socket={clientSocket} />,
-          [GameState.InGame]  : null
-        }[gamestate] }
+        {
+          {
+            [GameState.Lobby]: <Lobby socket={clientSocket} />,
+            [GameState.Waiting]: <Waiting socket={clientSocket} />,
+            [GameState.InGame]: null,
+          }[gamestate]
+        }
       </div>
-    ) ;
+    );
   };
 
   return (

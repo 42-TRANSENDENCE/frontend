@@ -1,17 +1,23 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { FriendListContainer, OnOffLineList, Header, UserStatus, SingleUser } from './styles';
-import { useGetFriendList } from '../../hooks/query/friend';
-import { SocketContext } from '../../contexts/ClientSocket';
-import IconButton from '@mui/material/IconButton';
-import ChatIcon from '@mui/icons-material/Chat';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import InviteButton from './InviteButton'
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars";
+import {
+  FriendListContainer,
+  OnOffLineList,
+  Header,
+  UserStatus,
+  SingleUser,
+} from "./styles";
+import { useGetFriendList } from "../../hooks/query/friend";
+import { SocketContext } from "../../contexts/ClientSocket";
+import IconButton from "@mui/material/IconButton";
+import ChatIcon from "@mui/icons-material/Chat";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
+import InviteButton from "./InviteButton";
 
 export enum ClientStatus {
-  ONLINE = 'ONLINE',
-  INGAME = 'INGAME',
-  OFFLINE = 'OFFLINE',
+  ONLINE = "ONLINE",
+  INGAME = "INGAME",
+  OFFLINE = "OFFLINE",
 }
 
 interface Status {
@@ -50,18 +56,18 @@ const onlineList = function () {
   // }, [getFriendList]);
 
   useEffect(() => {
-    clientSocket.on('friends_status', (data: User[]) => {
+    clientSocket.on("friends_status", (data: User[]) => {
       setFriendList(data);
     });
-    clientSocket.emit('friends_status');
+    clientSocket.emit("friends_status");
 
     return () => {
-      clientSocket.off('friends_status');
-    }
+      clientSocket.off("friends_status");
+    };
   }, []);
 
   useEffect(() => {
-    clientSocket.on('change_status', (data: Status) => {
+    clientSocket.on("change_status", (data: Status) => {
       setFriendList((prevFriendList) => {
         const newFriendList = prevFriendList.map((friend) => {
           if (friend.id === data.userId) {
@@ -76,38 +82,39 @@ const onlineList = function () {
       });
     });
 
-    return () => {
-    };
+    return () => {};
   }, []);
 
-  const onClickSendDm = useCallback(() => {
-
-  }, []
-  );
+  const onClickSendDm = useCallback(() => {}, []);
 
   return (
     <FriendListContainer>
-      <OnOffLineList className='Online'>
+      <OnOffLineList className="Online">
         <Header>ONLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
           {friendList?.map((userinfo: User) => {
-            if (userinfo?.status === "ONLINE" || userinfo?.status === 'INGAME')
+            if (userinfo?.status === "ONLINE" || userinfo?.status === "INGAME")
               return (
                 <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
-                  <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
+                  <IconButton
+                    color="success"
+                    size="large"
+                    edge="end"
+                    onClick={onClickSendDm}
+                  >
                     <ChatIcon />
                   </IconButton>
-                  <InviteButton socket={clientSocket} userinfo={userinfo}/>
+                  <InviteButton socket={clientSocket} userinfo={userinfo} />
                 </SingleUser>
               );
           })}
         </Scrollbars>
       </OnOffLineList>
-      <OnOffLineList className='Offline'>
+      <OnOffLineList className="Offline">
         <Header>OFFLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (

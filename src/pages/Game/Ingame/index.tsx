@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import useSocket from '../../../hooks/useSocket';
+import useSocket from "../../../hooks/useSocket";
 import { PlayContainer, CanvasContainer } from "./styles";
 
 import Canvas__background from "./Canvas__background";
@@ -11,28 +11,34 @@ import { Socket } from "socket.io-client";
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
 
-type GameInfo =
-{
-  "color" : string,
-  "p1Name" : string,
-  "p2Name" : string
+type GameInfo = {
+  color: string;
+  p1Name: string;
+  p2Name: string;
 };
 
-interface GameStartType{
-  p1Id : string;
-  p1Name : string;
-  p2Name : string
+interface GameStartType {
+  p1Id: string;
+  p1Name: string;
+  p2Name: string;
 }
 
-const Ingame = () : JSX.Element => {
+const Ingame = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
-  const clientSocket : Socket = useContext(SocketContext);
-  const state = location.state as { room : string | null, isPlayer : boolean | undefined};
-  const roomId : string | null = state?.room;
-  const isPlayer : boolean | undefined = state?.isPlayer;
-  const [game_socket, disconnect_game_socket] = useSocket('game');
-  const [GameInfo, setGameInfo] = useState<GameInfo>({"color": "wheat", "p1Name": "P1_empty", "p2Name": "P2_empty"});
+  const clientSocket: Socket = useContext(SocketContext);
+  const state = location.state as {
+    room: string | null;
+    isPlayer: boolean | undefined;
+  };
+  const roomId: string | null = state?.room;
+  const isPlayer: boolean | undefined = state?.isPlayer;
+  const [game_socket, disconnect_game_socket] = useSocket("game");
+  const [GameInfo, setGameInfo] = useState<GameInfo>({
+    color: "wheat",
+    p1Name: "P1_empty",
+    p2Name: "P2_empty",
+  });
 
   let up_pressed: boolean = false;
   let down_pressed: boolean = false;
@@ -41,66 +47,64 @@ const Ingame = () : JSX.Element => {
   const keyPressed = (e: KeyboardEvent) => {
     if (up_pressed === false && e.code === "ArrowUp") {
       up_pressed = true;
-      game_socket?.emit("keypress", {roomId : roomId, keyCode : e.code});
+      game_socket?.emit("keypress", { roomId: roomId, keyCode: e.code });
     }
     if (down_pressed === false && e.code === "ArrowDown") {
       down_pressed = true;
-      game_socket?.emit("keypress", {roomId : roomId, keyCode : e.code});
+      game_socket?.emit("keypress", { roomId: roomId, keyCode: e.code });
     }
   };
 
   const keyReleased = (e: KeyboardEvent) => {
     if (up_pressed === true && e.code === "ArrowUp") {
       up_pressed = false;
-      game_socket?.emit("keyrelease", {roomId : roomId, keyCode : e.code});
+      game_socket?.emit("keyrelease", { roomId: roomId, keyCode: e.code });
     }
     if (down_pressed === true && e.code === "ArrowDown") {
       down_pressed = false;
-      game_socket?.emit("keyrelease", {roomId : roomId, keyCode : e.code});
+      game_socket?.emit("keyrelease", { roomId: roomId, keyCode: e.code });
     }
   };
 
-  const sendReady = () : void => {
-    game_socket?.emit("ready", {userId : clientSocket.id,  roomId});
+  const sendReady = (): void => {
+    game_socket?.emit("ready", { userId: clientSocket.id, roomId });
     console.log(`ready event보냄. : game_socket id : ${game_socket?.id}
     client_id : ${clientSocket.id} 
     room id : ${roomId}`);
-  }
+  };
 
-  const gameStart = (start_data : GameStartType): void => {
-    const {p1Id, p1Name, p2Name} : GameStartType = start_data;
+  const gameStart = (start_data: GameStartType): void => {
+    const { p1Id, p1Name, p2Name }: GameStartType = start_data;
     console.log("게임 시작");
     let color = "wheat";
-    if (isPlayer === true)
-    {
-      color = (p1Id === game_socket?.id) ? ("red") : ("green");
+    if (isPlayer === true) {
+      color = p1Id === game_socket?.id ? "red" : "green";
       document.addEventListener("keydown", keyPressed);
       document.addEventListener("keyup", keyReleased);
     }
-    setGameInfo({"color": color, "p1Name": p1Name, "p2Name": p2Name});
+    setGameInfo({ color: color, p1Name: p1Name, p2Name: p2Name });
   };
 
   const gameOver = (winner: string): void => {
-    if (isPlayer === true)
-    {
+    if (isPlayer === true) {
       document.removeEventListener("keydown", keyPressed);
       document.removeEventListener("keyup", keyReleased);
     }
     timeout = setTimeout(() => {
-      navigate('/home');
+      navigate("/home");
     }, 5000);
   };
-  
+
   useEffect(() => {
     console.log("게임으로 들어옴");
     if (state && state?.isPlayer !== undefined && state?.room !== null) {
-      history.replaceState(null, '', '/game');
+      history.replaceState(null, "", "/game");
       window.addEventListener("keydown", default_keyoff);
       game_socket?.once("game_start", gameStart);
       game_socket?.on("game_over", gameOver);
       sendReady();
     } else {
-      console.log(state, state?.isPlayer, state?.room)
+      console.log(state, state?.isPlayer, state?.room);
       navigate("/game");
     }
     return () => {
@@ -116,7 +120,7 @@ const Ingame = () : JSX.Element => {
     };
   }, []);
 
-  const GameCanvas = () : JSX.Element => {
+  const GameCanvas = (): JSX.Element => {
     return (
       <>
         <Canvas__background
@@ -132,8 +136,8 @@ const Ingame = () : JSX.Element => {
           height={CANV_HEIGHT}
         />
       </>
-    )
-  }
+    );
+  };
 
   return (
     <PlayContainer>
@@ -142,7 +146,7 @@ const Ingame = () : JSX.Element => {
         <GameCanvas />
         <p className="PlayerName Player2"> {GameInfo.p2Name} </p>
       </CanvasContainer>
-  </PlayContainer>
+    </PlayContainer>
   );
 };
 
