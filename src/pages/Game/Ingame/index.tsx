@@ -7,6 +7,8 @@ import Canvas__foreground from "./Canvas__foreground";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SocketContext } from "../../../contexts/ClientSocket";
 import { Socket } from "socket.io-client";
+import Title from "../../../components/Title";
+import { GameContainer } from "../styles";
 
 const CANV_WIDTH = "1800";
 const CANV_HEIGHT = "1200";
@@ -140,13 +142,25 @@ const Ingame = (): JSX.Element => {
   };
 
   return (
-    <PlayContainer>
-      <CanvasContainer className="CanvasContainer">
-        <p className="PlayerName Player1"> {GameInfo.p1Name} </p>
-        <GameCanvas />
-        <p className="PlayerName Player2"> {GameInfo.p2Name} </p>
-      </CanvasContainer>
-    </PlayContainer>
+    <GameContainer>
+      <Title title="PONG GAME" home={true} search={false} />
+      <PlayContainer>
+        <CanvasContainer className="CanvasContainer">
+          <p className="Text Player1"> {GameInfo.p1Name} </p>
+          <p className="Text Player2"> {GameInfo.p2Name} </p>
+          <GameCanvas />
+          {isPlayer ? (
+            <p className="Text GameControlIntroduce">
+              Press ↑ or ↓ to move your{" "}
+              <span style={{ color: GameInfo.color }}>{GameInfo.color}</span>{" "}
+              paddle
+            </p>
+          ) : (
+            <p className="Text GameControlIntroduce">You are spectating...</p>
+          )}
+        </CanvasContainer>
+      </PlayContainer>
+    </GameContainer>
   );
 };
 
