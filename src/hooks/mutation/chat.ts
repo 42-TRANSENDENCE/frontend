@@ -153,7 +153,7 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
 
   async function kick(data: AKBMData): Promise<void> {
     const { id, user } = data;
-    await fetcher('/channels/' + id + '/admin/' + user, {
+    await fetcher('/channels/' + id + '/kick/' + user, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
 
   async function ban(data: AKBMData): Promise<void> {
     const { id, user } = data;
-    await fetcher('/channels/' + id + '/admin/' + user, {
+    await fetcher('/channels/' + id + '/ban/' + user, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
     })
     .then((response) => {
       if (response.status === 201)
-        toast.success(id + 'is banned in this channel');
+        toast.success(id + ' is banned in this channel');
     })
   }
   return useMutation({
@@ -199,7 +199,7 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
 
   async function mute(data: AKBMData): Promise<void> {
     const { id, user } = data;
-    await fetcher('/channels/' + id + '/admin/' + user, {
+    await fetcher('/channels/' + id + '/mute/' + user, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -208,7 +208,7 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
     })
     .then((response) => {
       if (response.status === 201)
-        toast.success(id + 'has been muted in this channel');
+        toast.success(id + ' has been muted in this channel');
     })
   }
   return useMutation({
