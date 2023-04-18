@@ -243,4 +243,8 @@ export const ChatsMenuContainer = styled.div`
   font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
   z-index: 1;
   top: calc(var(--w) * 0.3 * 0.4);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+  color: white;
+  font-weight: bold;
+  text-align: center;
 `;
