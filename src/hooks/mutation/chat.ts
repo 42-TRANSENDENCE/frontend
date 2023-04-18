@@ -20,6 +20,11 @@ interface PostChatData {
   chat: string;
 }
 
+interface AKBMData {
+  id: string;
+  user: string;
+}
+
 export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelData, MutationFunction<void, CreateChannelData>> {
 	const queryClient = useQueryClient();
 	const fetcher = useFetcher();
@@ -70,7 +75,7 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
 		})
       .then((response) => {
 			if (response.status === 200) {
-        toast.success('Successfully joined channel ' + id);
+        toast.success('Successfully joined channel');
         socket?.emit('joinChannel', {'channelId': String(id)});
       }
       else if (response.status === 400)
@@ -89,7 +94,7 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
 }
 
 export function usePostChat(): UseMutationResult<void, Error, PostChatData, MutationFunction<void, PostChatData>> {
-	const queryClient = useQueryClient();
+	// const queryClient = useQueryClient();
 	const fetcher = useFetcher();
 
 	async function postChat(data: PostChatData): Promise<void> {
@@ -102,20 +107,112 @@ export function usePostChat(): UseMutationResult<void, Error, PostChatData, Muta
 			credentials: 'include',
 			body: JSON.stringify({ content: chat }),
 		})
-      .then((response) => {
-			if (response.status === 201)
-        toast.success('Successfully posted chat ' + id);
+      // .then((response) => {
+			// if (response.status === 201)
+      //   toast.success('Successfully posted chat ' + id);
       // else if (response.status === 400)
       //   toast.error('You are already in the channel');
       // else if (response.status === 403)
       //   toast.error('Wrong password')
-		});
+		// });
 	}
 
 	return useMutation({
     mutationFn: postChat,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [''] });
+      // queryClient.invalidateQueries({ queryKey: [''] });
     }
+  });
+}
+
+export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
+  const fetcher = useFetcher();
+
+  async function admin(data: AKBMData): Promise<void> {
+    const { id, user } = data;
+    await fetcher('/channels/' + id + '/admin/' + user, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+    .then((response) => {
+      if (response.status === 201)
+        toast.success('Admin privileges have been successfully granted')
+    })
+  }
+  return useMutation({
+    mutationFn: admin,
+    onSuccess: () => {}
+  });
+}
+
+export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
+  const fetcher = useFetcher();
+
+  async function kick(data: AKBMData): Promise<void> {
+    const { id, user } = data;
+    await fetcher('/channels/' + id + '/admin/' + user, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+    .then((response) => {
+      if (response.status === 201)
+        toast.success(id + 'is kicked out');
+    })
+  }
+  return useMutation({
+    mutationFn: kick,
+    onSuccess: () => {}
+  });
+}
+
+export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
+  const fetcher = useFetcher();
+
+  async function ban(data: AKBMData): Promise<void> {
+    const { id, user } = data;
+    await fetcher('/channels/' + id + '/admin/' + user, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+    .then((response) => {
+      if (response.status === 201)
+        toast.success(id + 'is banned in this channel');
+    })
+  }
+  return useMutation({
+    mutationFn: ban,
+    onSuccess: () => {}
+  });
+}
+
+export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
+  const fetcher = useFetcher();
+
+  async function mute(data: AKBMData): Promise<void> {
+    const { id, user } = data;
+    await fetcher('/channels/' + id + '/admin/' + user, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+    .then((response) => {
+      if (response.status === 201)
+        toast.success(id + 'has been muted in this channel');
+    })
+  }
+  return useMutation({
+    mutationFn: mute,
+    onSuccess: () => {}
   });
 }
