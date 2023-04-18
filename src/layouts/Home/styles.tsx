@@ -58,8 +58,8 @@ export const Container = styled.div`
     }
 
     .LeftSide {
-      --section-width: calc(var(--body-width) * 0.34);
-      --section-height: calc(var(--body-height) * 1);
+      --section-width: calc(var(--body-width) * 0.33);
+      // --section-height: calc(var(--body-height) * 1);
       width: var(--section-width);
       height: var(--section-height);
       gap: var(--html-padding-vertical);

@@ -6,6 +6,10 @@ import createRoomButtonUrl from '../../assets/smallButton/newChatRoomButton.svg'
 import CreateRoomModal from '../Modal';
 import searchButtonUrl from '../../assets/Search.svg';
 import { ChatRoomContainer, CreateRoom, RoomList, SearchRoom } from './styles';
+import { useUserInfo } from '../../hooks/query/user';
+import { Socket } from "socket.io-client";
+import {useFetcher} from '../../hooks/fetcher';
+import { useJoinChatRoom } from '../../hooks/mutation/chat';
 
 // const chat_backurl = 'http://127.0.0.1:3095';
 const server_public_ip = import.meta.env.VITE_AWS_URL;
@@ -16,8 +20,9 @@ async function postCreateRoom(
   password: string,
   owner: string
 ): Promise<string> {
-  return await fetch(`http://${server_public_ip}:${server_port}/rooms`, {
+  return await fetch(`http://${server_public_ip}:${server_port}/channels`, {
     method: 'POST',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -26,7 +31,7 @@ async function postCreateRoom(
       password,
       owner,
     }),
-  }).then((res) => res.json());
+  }).then();
 }
 const ChatRoom = ({ socket }: { socket: any }) => {
   const navigate = useNavigate();
@@ -36,6 +41,8 @@ const ChatRoom = ({ socket }: { socket: any }) => {
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false);
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');
+  const joinChatRoom = useJoinChatRoom();
+  // const fetcher = useFetcher();
 
   const queryClient = useQueryClient();
 
@@ -58,17 +65,14 @@ const ChatRoom = ({ socket }: { socket: any }) => {
   const { data: roomDatas, isLoading: isLoadingRooms } = useQuery<any>(
     ['roomlist'],
     () =>
-      fetch(`http://${server_public_ip}:${server_port}/rooms/`).then((res) =>
+      fetch(`http://${server_public_ip}:${server_port}/channels/`, {
+        method: 'GET',
+        credentials: 'include',
+      }).then((res) =>
         res.json()
       )
   );
-  const { data: userData, isLoading: isLoadingUser } = useQuery<any>(
-    ['user'],
-    () =>
-      fetch(`http://${server_public_ip}:${server_port}/user`, options).then(
-        (res) => res.json()
-      )
-  );
+  const { data: userData, isLoading: isLoadingUser } = useUserInfo();
 
   useEffect(() => {
     if (roomDatas && findRoomName === '') {
@@ -84,54 +88,12 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     setTitle('');
   }, []);
 
-  /**
-       * new_data = {
-          id: room_id++,
-          title,
-          owner,
-          password,
-          status: password ? 1 : 0,
-          muteList: [],
-          kickList: [],
-          memberList: [],
-          adminList: [],
-          createdAt: new Date(),
-        };
-       * 
-       */
-  function enterByOwnerAtInitial(data: any) {
-    console.log();
-    fetch(`http://${server_public_ip}:${server_port}/room/${data.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(
-        data.status === 1 ? { password: data.password } : {}
-      ),
-    }).then((res) => {
-      if (res.status === 200) {
-        console.log('방장이 최초입장');
-        socket?.emit('join', String(data.id));
-        res.json();
-        setTimeout(() => {
-          navigate(`v3_rooms/${data.id}/chat`);
-        }, 50);
-        return;
-      } else {
-        setErrorMessage('비밀번호가 틀렸습니다.');
-      }
-    });
-  }
-
   const onNewRoom = useCallback(
     async (data: any) => {
-      // console.log('newRoom 데이터: ', data);
       queryClient.setQueryData(['roomlist'], () => {
         return [...roomDatas, data];
       });
-      if (data.owner === userData.username) {
+      if (data.owner === userData?.id) {
         enterByOwnerAtInitial(data);
       }
     },
@@ -152,12 +114,12 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
   useEffect(() => {
     console.log('v2_rooms에 진입하셨습니다.');
-    socket?.on('newRoom', onNewRoom);
-    socket?.on('removeRoom', onRemoveRoom);
+    socket.on('newRoom', onNewRoom);
+    socket.on('removeRoom', onRemoveRoom);
     return () => {
       console.log('v2_rooms에서 나가셨습니다.');
-      socket?.off('newRoom', onNewRoom);
-      socket?.off('removeRoom', onRemoveRoom);
+      socket.off('newRoom', onNewRoom);
+      socket.off('removeRoom', onRemoveRoom);
     };
   }, [onNewRoom, onRemoveRoom]);
 
@@ -172,7 +134,7 @@ const ChatRoom = ({ socket }: { socket: any }) => {
 
   const onCreateRoom = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    mutateRoom({ title, password, owner: userData.username });
+    mutateRoom({ title, password, owner: userData?.id });
     onCloseCreateRoomModal();
   };
 
@@ -205,97 +167,153 @@ const ChatRoom = ({ socket }: { socket: any }) => {
     [roomDatas]
   );
 
+
+  function enterByOwnerAtInitial(data: any) {
+    socket.emit('join-channel', {"channelId":String(data.id)});
+    // console.log("[enterByOwner] data : ", data);
+    // fetch(`http://${server_public_ip}:${server_port}/channels/${data.id}`, {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify(
+    //       data.status === "PROTECTED" ? { password: data.password } : {}
+    //   ), 
+    // }).then((res) => {
+    //   console.log('[enterByOwner] res : ', res, res.status);
+    //   if (res.status === 200) {
+    //     console.log('[enterByOwner 200 !]');
+    //       console.log(`socket's id is ${socket.id}!`);
+    //     // socket.emit('join-channel', {"channelId":String(data.id)});
+    //     res.json();
+    //     setTimeout(() => {
+    //       // navigate(`v3_rooms/${data.id}/chat`);
+    //     }, 50);
+    //     return;
+    //   } else {
+    //     setErrorMessage('비밀번호가 틀렸습니다.');
+    //   }
+    // });
+  }
+
+  /*
+    입장api: {"memberId":[86924],"status":"PUBLIC"}
+  */
   const onEnterEvent = useCallback(
     (e: any) => {
+      
       e.preventDefault();
       const roominfoEl = e.target.closest('[data-id]');
-      const dataset_roomId = roominfoEl.getAttribute('data-id');
+      let dataset_roomId: string = roominfoEl.getAttribute('data-id');
+      dataset_roomId = dataset_roomId.trim();
+      // socket.emit('leave-channel', dataset_roomId);
       const dataset_hasPassword =
         roominfoEl.getAttribute('data-password') === 'true';
       console.log(dataset_roomId + '번 방에 입장합니다.');
-      fetch(
-        `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
-        options
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          console.log('memberList: ' + data.memberList);
-          console.log(
-            'kickedList + ' + data.kickList.map((v: any) => v.username)
-          );
+      
 
-          /* 기존 참여자 */
-          const is_kicked = data.kickList.find(
-            (kickData: any) => kickData.username === userData.username
-          );
-          if (is_kicked) {
-            console.log('강퇴당한 유저입니다.');
-            navigate(`v3_rooms/${dataset_roomId}/chat`);
-            return;
-          }
-          const is_member = data.memberList.find(
-            (memberName: any) => memberName === userData.username
-          );
+      // const fetcher = useFetcher();
 
-          if (is_member) {
-            console.log('기존 참여자 입장');
-            navigate(`v3_rooms/${dataset_roomId}/chat`);
-            return;
-          }
+      (async() => {
+        const res = await fetch(
+          `http://${server_public_ip}:${server_port}/channels/${dataset_roomId}`,
+          {method: 'GET',credentials: 'include'}
+        )
+        let data = await res.json();
+        console.log('[enterRoom]: ' + JSON.stringify(data));
+        // console.log(
+        //   'kickedList + ' + data.kickList.map((v: any) => v.username)
+        // );
 
-          /* 최초 입장 */
-          // TODO : api 문서에 따라 returnFail 수정
-          if (data.status === 0) {
-            const token = localStorage.getItem('jwt_token');
-            fetch(
-              `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({}),
-              }
-            ).then((res) => {
-              // console.log(res);
-              if (res.status === 200) {
-                console.log('공개방 최초입장');
-                socket?.emit('join', dataset_roomId);
-                res.json();
-                navigate(`v3_rooms/${dataset_roomId}/chat`);
-              } else {
-                setErrorMessage('방에 입장할 수 없습니다.');
-              }
-            });
-            return;
+        // /* 기존 참여자 */
+        // const is_kicked = data.kickList.find(
+        //   (kickData: any) => kickData.username === userData?.id
+        // );
+        // if (is_kicked) {
+        //   console.log('강퇴당한 유저입니다.');
+        //   navigate(`v3_rooms/${dataset_roomId}/chat`);
+        //   return;
+        // }
+
+        // {"memberId":[86924],"status":"PUBLIC"}
+        const is_member = data.memberId.find(
+          (theId: any) => {
+            return theId === userData?.id}
+        );
+
+        if (is_member) {
+          console.log('기존 참여자 입장');
+          // navigate(`v3_rooms/${dataset_roomId}/chat`);
+          return;
+        }
+
+        /* 최초 입장 */
+        // TODO : api 문서에 따라 returnFail 수정
+        
+        /**
+         * {"channelMembers":[{ "userId":86924},],"status":"PUBLIC"}
+         * 
+         */
+        console.log('data.status ------->', data.status );
+        if (data.status === "PUBLIC") {
+          // const token = localStorage.getItem('jwt_token');
+          let res2:any = fetch(
+            `http://${server_public_ip}:${server_port}/channels/${dataset_roomId}`,
+            {
+              method: 'POST',
+              credentials: 'include',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({}),
+            }
+          );
+          console.log('dataset_roomId: [', dataset_roomId, ']');
+          console.log('res.status : ', res2.status);
+          if (res2.status === 200) {
+            console.log('공개방 최초입장');
+            // socket.emit('join-channel', {channelId: dataset_roomId} );
+            const res_json = res2.json();
+            console.log("입장post : ", res_json);
+            // navigate(`v3_rooms/${dataset_roomId}/chat`);
           } else {
+            setErrorMessage('방에 입장할 수 없습니다.');
+          }
+            return; 
+          }
+          else {
             /* 비공개방 */
             const password = prompt('비밀번호를 입력하세요');
-            fetch(
-              `http://${server_public_ip}:${server_port}/room/${dataset_roomId}`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ password }),
-              }
-            ).then((res) => {
-              if (res.status === 200) {
-                console.log('비공개방 최초입장');
-                socket?.emit('join', dataset_roomId);
-                res.json();
-                navigate(`v3_rooms/${dataset_roomId}/chat`);
-                return;
-              } else {
-                setErrorMessage('비밀번호가 틀렸습니다.');
-              }
-            });
+            // const res3: any = fetcher(
+            //   `http://${server_public_ip}:${server_port}/channels/${dataset_roomId}`,
+            //   {
+            //     method: 'POST',
+            //     credentials: 'include',
+            //     headers: {
+            //       'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({ password }),
+            //   }
+            // );
+            // console.log('dataset_roomId: [', dataset_roomId, ']');
+            // console.log('res.status : ', res3.status);
+            console.log('비공개방 최초입장');
+            joinChatRoom.mutate({ dataset_roomId, password, socket });
+            // if (res3.status === 200) {
+            //   // socket.emit('join-channel', {channelId:dataset_roomId});
+            //   socket.emit('join-channel', '12345' );
+            //   const res_json = res3.json();
+            //   console.log("입장post : ", res_json);
+            //   // navigate(`v3_rooms/${dataset_roomId}/chat`);
+            //   return;
+            // } else {
+            //   setErrorMessage('비밀번호가 틀렸습니다.');
+            // }
             return;
           }
-        });
+      })();
+      
     },
     [userData]
   );
@@ -321,16 +339,13 @@ const ChatRoom = ({ socket }: { socket: any }) => {
               <div
                 className="eachRoom"
                 data-id={roomInfo.id}
-                data-password={roomInfo.status !== 0 ? 'true' : 'false'}
+                data-password={roomInfo.status === "PUBLIC" ? 'true' : 'false'}
                 key={roomInfo.id}
                 onClick={onEnterEvent}
               >
                 <div>
-                  {roomInfo.status === 0 ? (
-                    <img
-                      src="../../../public/padlock_opened.png"
-                      alt="padlock_opened"
-                    />
+                  {roomInfo.status === "PUBLIC" ? (
+                    <></>
                   ) : (
                     <img
                       src="../../../public/padlock_locked.png"
