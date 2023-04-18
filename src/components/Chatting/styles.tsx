@@ -217,6 +217,7 @@ export const ChatProfile = styled.div`
   display: flex;
 
   & > img {
+    cursor: pointer;
     height: calc(var(--w) * 0.3 * 0.4);
     aspect-ratio: 1;
     border-radius: 50%;
@@ -247,4 +248,12 @@ export const ChatsMenuContainer = styled.div`
   color: white;
   font-weight: bold;
   text-align: center;
+
+  div {
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.98);
+      cursor: pointer;
+    };
+  }
 `;
