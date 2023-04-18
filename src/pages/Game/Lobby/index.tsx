@@ -52,7 +52,7 @@ const Lobby = (props: any): JSX.Element => {
         <div className="gameManual">
           <p className="modeName normal">NormalMode</p>
           <p className="manual">공과 패들이 충돌할 때 속도가 빨라집니다.</p>
-          <p className="manual normal">3점을 먼저 획득하면 승리합니다.</p>
+          <p className="manual">3점을 먼저 획득하면 승리합니다.</p>
           <p className="modeName special">SpecialMode</p>
           <p className="manual">NormalMode에서 다음이 추가됩니다.</p>
           <p className="manual">위아래 벽 방향으로 중력을 받습니다.</p>
