@@ -57,7 +57,7 @@ const Home = () => {
     <>
       <Container>
         <div className='Title'>
-          <Title title='PONG HOME' search={true} setSearchUser={setUserSearch} />
+          <Title title='PONG HOME' search setSearchUser={setUserSearch} />
         </div>
 
         <div className='BodyOuter'>

@@ -6,8 +6,9 @@ import { ProfileEnum, ProfileProps } from '../../components/Profile';
 export interface UserInfo {
   id: number,
   nickname: string,
-  status: string,
+  avatar: {},
   isTwoFactorAuthenticationEnabled: boolean,
+  achievements: [],
   win: number,
   lose: number,
 }
@@ -18,6 +19,23 @@ export const useUserInfo = () => {
     queryKey: ['userInfo'],
     queryFn: async () => {
       const response = await fetcher('/users', {
+        method: 'GET',
+        credentials: 'include',
+      })
+      if (response.ok) return response.json();
+      throw response;
+    },
+    retry: 0,
+  });
+  return data;
+}
+
+export const useChatUserInfo = (nickname: string) => {
+  const fetcher = useFetcher();
+  const data = useQuery({
+    queryKey: ['chatUserInfo'],
+    queryFn: async () => {
+      const response = await fetcher('/users/search/' + 'nickname', {
         method: 'GET',
         credentials: 'include',
       })
