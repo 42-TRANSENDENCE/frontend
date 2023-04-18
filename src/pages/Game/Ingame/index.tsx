@@ -93,13 +93,14 @@ const Ingame = () : JSX.Element => {
   
   useEffect(() => {
     console.log("게임으로 들어옴");
-    if (state && state?.isPlayer && state?.room) {
+    if (state && state?.isPlayer !== undefined && state?.room !== null) {
       history.replaceState(null, '', '/game');
       window.addEventListener("keydown", default_keyoff);
       game_socket?.once("game_start", gameStart);
       game_socket?.on("game_over", gameOver);
       sendReady();
     } else {
+      console.log(state, state?.isPlayer, state?.room)
       navigate("/game");
     }
     return () => {
@@ -111,7 +112,7 @@ const Ingame = () : JSX.Element => {
       }
       disconnect_game_socket();
 
-      console.log("게암 페이지 나감");
+      console.log("게임 페이지 나감");
     };
   }, []);
 
