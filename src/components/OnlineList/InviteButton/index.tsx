@@ -12,7 +12,7 @@ import chaosButton from "../../../assets/bigButton/chaosButton.svg";
 import cancelButton from "../../../assets/bigButton/cancelButton.svg";
 import { GameMode, GameState } from "../../../pages/Game/enum";
 import { UserInfo } from "../../../hooks/query/user";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface spectateDto {
   roomId: string | null;
@@ -143,7 +143,6 @@ const GameInviteWindow = (props: any): JSX.Element => {
         {
           [GameState.Lobby]: <InvitationLobby />,
           [GameState.Waiting]: <InvitationWaitng />,
-          [GameState.InGame]: null,
         }[status]
       }
     </>

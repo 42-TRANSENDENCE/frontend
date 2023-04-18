@@ -47,7 +47,6 @@ const Game = (): JSX.Element => {
           {
             [GameState.Lobby]: <Lobby socket={clientSocket} />,
             [GameState.Waiting]: <Waiting socket={clientSocket} />,
-            [GameState.InGame]: null,
           }[gamestate]
         }
       </div>
