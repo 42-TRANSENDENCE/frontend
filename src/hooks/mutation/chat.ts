@@ -7,12 +7,13 @@ interface JoinChannelData {
   id: string;
   password: string;
   socket: Socket | undefined;
+  setChannelId: React.Dispatch<React.SetStateAction<string>>;
+  setPopChatting: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface CreateChannelData {
   title: string;
   password: string;
-  socket: Socket | undefined;
 }
 
 interface PostChatData {
@@ -31,7 +32,7 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
   const fetcher = useFetcher();
 
   async function createChannel(data: CreateChannelData): Promise<void> {
-    const { title, password, socket } = data;
+    const { title, password } = data;
     await fetcher('/channels', {
       method: 'POST',
       credentials: 'include',
@@ -59,13 +60,12 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
   })
 }
 
-
 export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData, MutationFunction<void, JoinChannelData>> {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
 
   async function joinChannel(data: JoinChannelData): Promise<void> {
-    const { id, password, socket } = data;
+    const { id, password, socket, setChannelId, setPopChatting } = data;
     await fetcher('/channels/' + id, {
       method: 'POST',
       headers: {
@@ -78,13 +78,15 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
         if (response.status === 200) {
           toast.success('Successfully joined channel');
           socket?.emit('joinChannel', { 'channelId': String(id) });
+          setChannelId(id);
+          setPopChatting(true);
         }
         else if (response.status === 400)
           toast.error('You are already in the channel');
-        else if (response.status === 401)
-          toast.warning('You are banned to this channel');
         else if (response.status === 403)
           toast.error('Wrong password')
+        else if (response.status === 406)
+          toast.warning('You are banned to this channel');
       });
   }
 
@@ -193,6 +195,8 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
       .then((response) => {
         if (response.status === 200)
           toast.success(id + ' has been muted in this channel');
+        else if (response.status === 406)
+          toast.warning('Your are muted for 5 minutes');
       })
   }
   return useMutation(mute);

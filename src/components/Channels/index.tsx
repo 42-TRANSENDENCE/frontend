@@ -82,22 +82,21 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
         setChannelId(getChannelId);
         setPopChatting(true);
         isJoined = true;
-        console.log('myChannel');
         return;
       }
     });
     if (isJoined) return;
     if (channelStatus === ChannelStatus.PROTECTED) {
       const pwd = prompt('Enter password');
-      joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket });
-      socket?.emit('joinChannel', { 'channelId': String(channelId) });
-      setChannelId(getChannelId);
-      setPopChatting(true);
+      joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket, setChannelId: setChannelId, setPopChatting: setPopChatting });
+      // socket?.emit('joinChannel', { 'channelId': String(channelId) });
+      // setChannelId(getChannelId);
+      // setPopChatting(true);
     } else {
-      joinChannel.mutate({ id: getChannelId, password: '', socket: socket });
-      socket?.emit('joinChannel', { 'channelId': String(channelId) });
-      setChannelId(getChannelId);
-      setPopChatting(true);
+      joinChannel.mutate({ id: getChannelId, password: '', socket: socket, setChannelId: setChannelId, setPopChatting: setPopChatting });
+      // socket?.emit('joinChannel', { 'channelId': String(channelId) });
+      // setChannelId(getChannelId);
+      // setPopChatting(true);
     }
   }, [joinChannel]);
 
@@ -125,8 +124,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     e.preventDefault();
     const data: CreateChannelData = {
       title: title,
-      password: password,
-      socket: socket
+      password: password
     }
     createChannel.mutate(data);
     onCloseCreateChannelModal();
