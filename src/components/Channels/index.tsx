@@ -78,10 +78,11 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     myChannels.forEach((channel) => {
       if (String(channel.id) === getChannelId) {
         setPopChatting(false);
-        socket?.emit('joinChannel', {'channelId': String(getChannelId)});
+        socket?.emit('joinChannel', { 'channelId': String(getChannelId) });
         setChannelId(getChannelId);
         setPopChatting(true);
         isJoined = true;
+        console.log('myChannel');
         return;
       }
     });
@@ -89,12 +90,12 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     if (channelStatus === ChannelStatus.PROTECTED) {
       const pwd = prompt('Enter password');
       joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket });
-      socket?.emit('closeChannel', {'channelId': String(channelId)});
+      socket?.emit('joinChannel', { 'channelId': String(channelId) });
       setChannelId(getChannelId);
       setPopChatting(true);
     } else {
       joinChannel.mutate({ id: getChannelId, password: '', socket: socket });
-      socket?.emit('closeChannel', {'channelId': String(channelId)});
+      socket?.emit('joinChannel', { 'channelId': String(channelId) });
       setChannelId(getChannelId);
       setPopChatting(true);
     }
@@ -133,7 +134,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
 
   const onNewChannel = useCallback(async (data: ChannelInfo) => {
     if (data.owner === userInfo.id) {
-      socket?.emit('joinChannel', {'channelId': String(data.id)});
+      socket?.emit('joinChannel', { 'channelId': String(data.id) });
       setChannelId(String(data.id));
       setPopChatting(true);
     }

@@ -14,12 +14,6 @@ import sendButton from '../../assets/smallButton/chatSendButton.svg';
 import leaveButton from '../../assets/smallButton/leaveChannelButton.svg';
 import { toast } from 'react-toastify';
 
-interface ChannelData {
-  channelId: number;
-  owner: string;
-  avatar: [];
-}
-
 enum MemberType {
   OWNER = 'OWNER',
   ADMIN = 'ADMIN',
@@ -61,27 +55,41 @@ interface ChatProps {
   chat: ChatData;
   isMe: boolean;
   idAvatarMap: Map<number, Blob>;
+  socket: Socket | undefined;
 }
 
-const ChatMenu = ({ userId, channelInfo, channelId }: { userId: string, channelInfo: ChannelInfo, channelId: string }) => {
+const ChatMenu = ({ userId, channelInfo, channelId, socket }: { userId: string, channelInfo: ChannelInfo, channelId: string, socket: Socket | undefined }) => {
+  const queryClient = useQueryClient();
   const admin = useAdmin();
   const kick = useKick();
   const ban = useBan();
   const mute = useMute();
 
+  const onOutMember = useCallback(async () => {
+    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannel'] });
+  }, [channelId]);
+
+  useEffect(() => {
+    socket?.on('outMember', onOutMember);
+    return () => {
+      socket?.off('outMember', onOutMember);
+    }
+  }, [socket, channelId]);
+
   const onAdminOther = () => {
-    admin.mutate({ id: channelId, user: userId });
+    admin.mutate({ id: channelId, user: userId, socket: socket });
   }
   const onKickOther = () => {
-    kick.mutate({ id: channelId, user: userId });
+    kick.mutate({ id: channelId, user: userId, socket: socket });
   }
   const onBanOther = () => {
-    ban.mutate({ id: channelId, user: userId });
+    ban.mutate({ id: channelId, user: userId, socket: socket });
   }
   const onMuteOther = () => {
-    mute.mutate({ id: channelId, user: userId });
+    mute.mutate({ id: channelId, user: userId, socket: socket });
   }
-  
+
   return (
     <ChatsMenuContainer>
       {channelInfo.myType === MemberType.OWNER ? (
@@ -126,27 +134,7 @@ const ChatMenu = ({ userId, channelInfo, channelId }: { userId: string, channelI
   );
 }
 
-// roomDatas.adminList?.includes(myUser.userId) ? (
-//   myUser.userId === userId ? (
-//     <div>Channel Administrator</div>
-//   ) : userId === roomDatas.owner ? (
-//     <div>Channel Owner</div>
-//   ) : (
-//     <>
-//       <div onClick={onKickOther}>Kick</div>
-//       <div onClick={onBanOther}>Ban</div>
-//       <div>Mute for 5 mintues</div>
-//     </>
-//   )
-// ) : myUser.userId === userId ? (
-//   <div>Member</div>
-// ) : (
-//   <>
-//     <div>친구로써 차단하기</div>
-//   </>
-// )}
-
-const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap }: ChatProps) => {
+const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps) => {
   const [popMenu, setPopMenu] = useState(false);
   const avatar = idAvatarMap.get(chat.senderUserId);
 
@@ -169,7 +157,7 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap }: ChatProps) => {
         </ChatProfile>
       )}
       {popMenu && (
-        <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} />
+        <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} socket={socket} />
       )}
       <ChatMain isMe={isMe} >
         {!isMe && (<span>{eachChat.user}</span>)}
@@ -182,22 +170,24 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap }: ChatProps) => {
   )
 };
 
-const ChatBox = ({ channelInfo, chats, userId, idAvatarMap }: { channelInfo: ChannelInfo, chats: ChatData[], userId: number, idAvatarMap: Map<number, Blob> }) => {
-  
+const ChatBox = ({ channelInfo, chats, userId, idAvatarMap, socket }: { channelInfo: ChannelInfo, chats: ChatData[], userId: number, idAvatarMap: Map<number, Blob>, socket: Socket | undefined }) => {
+
   return (
     <ChatLists>
       {chats?.map((chat, index) => {
         return (
           <div key={index}>
-            <ChatBubble 
+            <ChatBubble
               key={`chat-${index}`}
               channelInfo={channelInfo}
               chat={chat}
               isMe={chat.senderUserId === userId}
               idAvatarMap={idAvatarMap}
+              socket={socket}
             />
           </div>
-      )})}
+        )
+      })}
     </ChatLists>
   );
 };
@@ -211,24 +201,24 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   const queryClient = useQueryClient();
   const scrollbarRef = useRef<Scrollbars>(null);
   const idAvatarMap: Map<number, Blob> = new Map();
-  
+
 
   if (channelInfo) {
     channelInfo.channelMembers?.map((member) => {
       const bufferObj: { type: 'Buffer', data: [] } = { type: member.avatar.type, data: member.avatar.data };
       const uint8Array = new Uint8Array(bufferObj.data);
-      const userAvatar  = new Blob([uint8Array], { type: 'application/octet-stream' });
+      const userAvatar = new Blob([uint8Array], { type: 'application/octet-stream' });
       idAvatarMap.set(member.userId, userAvatar);
     })
   }
 
   const onClickClose = () => {
-    socket?.emit('closeChannel', {'channelId': String(channelId)});
+    socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   }
 
   const onClickLeave = async () => {
-    socket?.emit('leaveChannel', {'channelId': String(channelId), 'userId': String(userInfo.id)});
+    socket?.emit('leaveChannel', { 'channelId': String(channelId), 'userId': String(userInfo.id) });
     await queryClient.invalidateQueries({ queryKey: ['myChannels'] });
     await queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     toast.success('Successfully leaved channel');
@@ -294,7 +284,7 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   }, [chats]);
 
   useEffect(() => {
-    socket?.emit('joinChannel', {'channelId': String(channelId)});
+    socket?.emit('joinChannel', { 'channelId': String(channelId) });
     socket?.on('message', onMessage);
     return () => {
       socket?.off('message', onMessage);
@@ -309,7 +299,7 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
       </div>
       <ChatsBar>
         <Scrollbars autoHide ref={scrollbarRef}>
-          <ChatBox channelInfo={channelInfo} chats={chats} userId={userInfo.id} idAvatarMap={idAvatarMap} />
+          <ChatBox channelInfo={channelInfo} chats={chats} userId={userInfo.id} idAvatarMap={idAvatarMap} socket={socket} />
         </Scrollbars>
       </ChatsBar>
       <SendChatBar onSubmit={onSubmitChat} >

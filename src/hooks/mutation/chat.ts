@@ -4,8 +4,8 @@ import { Socket } from 'socket.io-client';
 import { toast } from 'react-toastify';
 
 interface JoinChannelData {
-	id: string;
-	password: string;
+  id: string;
+  password: string;
   socket: Socket | undefined;
 }
 
@@ -23,11 +23,12 @@ interface PostChatData {
 interface AKBMData {
   id: string;
   user: string;
+  socket: Socket | undefined;
 }
 
 export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelData, MutationFunction<void, CreateChannelData>> {
-	const queryClient = useQueryClient();
-	const fetcher = useFetcher();
+  const queryClient = useQueryClient();
+  const fetcher = useFetcher();
 
   async function createChannel(data: CreateChannelData): Promise<void> {
     const { title, password, socket } = data;
@@ -60,32 +61,34 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
 
 
 export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData, MutationFunction<void, JoinChannelData>> {
-	const queryClient = useQueryClient();
-	const fetcher = useFetcher();
+  const queryClient = useQueryClient();
+  const fetcher = useFetcher();
 
-	async function joinChannel(data: JoinChannelData): Promise<void> {
-		const { id, password, socket } = data;
-		await fetcher('/channels/' + id, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			credentials: 'include',
-			body: JSON.stringify({ password: password }),
-		})
+  async function joinChannel(data: JoinChannelData): Promise<void> {
+    const { id, password, socket } = data;
+    await fetcher('/channels/' + id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ password: password }),
+    })
       .then((response) => {
-			if (response.status === 200) {
-        toast.success('Successfully joined channel');
-        socket?.emit('joinChannel', {'channelId': String(id)});
-      }
-      else if (response.status === 400)
-        toast.error('You are already in the channel');
-      else if (response.status === 403)
-        toast.error('Wrong password')
-		});
-	}
+        if (response.status === 200) {
+          toast.success('Successfully joined channel');
+          socket?.emit('joinChannel', { 'channelId': String(id) });
+        }
+        else if (response.status === 400)
+          toast.error('You are already in the channel');
+        else if (response.status === 401)
+          toast.warning('You are banned to this channel');
+        else if (response.status === 403)
+          toast.error('Wrong password')
+      });
+  }
 
-	return useMutation({
+  return useMutation({
     mutationFn: joinChannel,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myChannels'] });
@@ -94,35 +97,21 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
 }
 
 export function usePostChat(): UseMutationResult<void, Error, PostChatData, MutationFunction<void, PostChatData>> {
-	// const queryClient = useQueryClient();
-	const fetcher = useFetcher();
+  const fetcher = useFetcher();
 
-	async function postChat(data: PostChatData): Promise<void> {
-		const { id, chat } = data;
-		await fetcher('/chat/' + id, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			credentials: 'include',
-			body: JSON.stringify({ content: chat }),
-		})
-      // .then((response) => {
-			// if (response.status === 201)
-      //   toast.success('Successfully posted chat ' + id);
-      // else if (response.status === 400)
-      //   toast.error('You are already in the channel');
-      // else if (response.status === 403)
-      //   toast.error('Wrong password')
-		// });
-	}
+  async function postChat(data: PostChatData): Promise<void> {
+    const { id, chat } = data;
+    await fetcher('/chat/' + id, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ content: chat }),
+    })
+  }
 
-	return useMutation({
-    mutationFn: postChat,
-    onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: [''] });
-    }
-  });
+  return useMutation(postChat);
 }
 
 export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
@@ -137,22 +126,19 @@ export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFun
       },
       credentials: 'include',
     })
-    .then((response) => {
-      if (response.status === 201)
-        toast.success('Admin privileges have been successfully granted')
-    })
+      .then((response) => {
+        if (response.status === 200)
+          toast.success('Admin privileges have been successfully granted');
+      })
   }
-  return useMutation({
-    mutationFn: admin,
-    onSuccess: () => {}
-  });
+  return useMutation(admin);
 }
 
 export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
 
   async function kick(data: AKBMData): Promise<void> {
-    const { id, user } = data;
+    const { id, user, socket } = data;
     await fetcher('/channels/' + id + '/kick/' + user, {
       method: 'POST',
       headers: {
@@ -160,22 +146,21 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
       },
       credentials: 'include',
     })
-    .then((response) => {
-      if (response.status === 201)
-        toast.success(id + 'is kicked out');
-    })
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success(id + 'is kicked out');
+          socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
+        }
+      })
   }
-  return useMutation({
-    mutationFn: kick,
-    onSuccess: () => {}
-  });
+  return useMutation(kick);
 }
 
 export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
 
   async function ban(data: AKBMData): Promise<void> {
-    const { id, user } = data;
+    const { id, user, socket } = data;
     await fetcher('/channels/' + id + '/ban/' + user, {
       method: 'POST',
       headers: {
@@ -183,15 +168,14 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
       },
       credentials: 'include',
     })
-    .then((response) => {
-      if (response.status === 201)
-        toast.success(id + ' is banned in this channel');
-    })
+      .then((response) => {
+        if (response.status === 200) {
+          toast.success(id + ' is banned in this channel');
+          socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
+        }
+      })
   }
-  return useMutation({
-    mutationFn: ban,
-    onSuccess: () => {}
-  });
+  return useMutation(ban);
 }
 
 export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
@@ -206,13 +190,10 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
       },
       credentials: 'include',
     })
-    .then((response) => {
-      if (response.status === 201)
-        toast.success(id + ' has been muted in this channel');
-    })
+      .then((response) => {
+        if (response.status === 200)
+          toast.success(id + ' has been muted in this channel');
+      })
   }
-  return useMutation({
-    mutationFn: mute,
-    onSuccess: () => {}
-  });
+  return useMutation(mute);
 }
