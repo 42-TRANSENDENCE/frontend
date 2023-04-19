@@ -19,6 +19,7 @@ import { Container } from '../../layouts/Home/styles';
 import { Link } from 'react-router-dom';
 
 const Chat = () => {
+  const [channelId, setChannelId] = useState('');
   const [chat_socket, disconnect_chat_socket] = useSocket('channelchat');
   const [popChatting, setPopChatting] = useState(false);
   // console.log('connecting chat_socket: ', chat_socket);
@@ -44,11 +45,11 @@ const Chat = () => {
             </div>
             
             <div className='MiddleSide Section'>
-              <MyChannels socket={chat_socket} popChatting={popChatting} setPopChatting={setPopChatting} />
+              <MyChannels socket={chat_socket} popChatting={popChatting} setPopChatting={setPopChatting} channelId={channelId} setChannelId={setChannelId} />
             </div>
 
             <div className='RightSide Section'>
-              <Channels socket={chat_socket} setPopChatting={setPopChatting} />
+              <Channels socket={chat_socket} setPopChatting={setPopChatting} channelId={channelId} setChannelId={setChannelId} />
               {/* <ChatRoom socket={chat_socket} /> */}
             </div>
           </div>

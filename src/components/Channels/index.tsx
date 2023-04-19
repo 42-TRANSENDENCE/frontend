@@ -22,17 +22,19 @@ export interface ChannelInfo {
   id: number;
   title: string;
   owner: number;
+  nickname: string;
   status: ChannelStatus;
   createdAt: string;
   updatedAt: string;
 }
 
-export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
+export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
   const queryClient = useQueryClient();
   const userInfo = useUserInfo().data;
   const createChannel = useCreatChannel();
   const joinChannel = useJoinChannel();
   const allChannels: ChannelInfo[] = useAllChannels().data;
+  const myChannels: ChannelInfo[] = useMyChannels().data;
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');
   const [findChannelName, setFindChannelName] = useState('');
@@ -67,31 +69,34 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
     setFilteredChannels(newFilteredChannels);
   }, [allChannels]);
 
-  const onNewChannel = useCallback(async (data: any) => {
-    if (data.owner === userInfo.id) {
-      socket?.emit('joinChannel', {'channelId': String(data.id)});
-    }
-    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
-    // queryClient.setQueryData(['allChannels'], () => {
-    //   return [...allChannels, data];
-    // });
-  }, [queryClient]);
-
-  const onRemoveChannel = useCallback(async (data: any) => {
-    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
-    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
-  }, [queryClient]);
-
   const onClickJoinChannel = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest('[data-id]');
-    const channelId: string = channelData.getAttribute('data-id');
+    const getChannelId: string = channelData.getAttribute('data-id');
     const channelStatus: ChannelStatus = channelData.getAttribute('data-status');
+    let isJoined: boolean = false;
+    myChannels.forEach((channel) => {
+      if (String(channel.id) === getChannelId) {
+        setPopChatting(false);
+        socket?.emit('joinChannel', {'channelId': String(getChannelId)});
+        setChannelId(getChannelId);
+        setPopChatting(true);
+        isJoined = true;
+        return;
+      }
+    });
+    if (isJoined) return;
     if (channelStatus === ChannelStatus.PROTECTED) {
       const pwd = prompt('Enter password');
-      joinChannel.mutate({ id: channelId, password: String(pwd), socket: socket });
+      joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket });
+      socket?.emit('closeChannel', {'channelId': String(channelId)});
+      setChannelId(getChannelId);
+      setPopChatting(true);
     } else {
-      joinChannel.mutate({ id: channelId, password: '', socket: socket });
+      joinChannel.mutate({ id: getChannelId, password: '', socket: socket });
+      socket?.emit('closeChannel', {'channelId': String(channelId)});
+      setChannelId(getChannelId);
+      setPopChatting(true);
     }
   }, [joinChannel]);
 
@@ -126,6 +131,24 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
     onCloseCreateChannelModal();
   }, [createChannel]);
 
+  const onNewChannel = useCallback(async (data: ChannelInfo) => {
+    if (data.owner === userInfo.id) {
+      socket?.emit('joinChannel', {'channelId': String(data.id)});
+      setChannelId(String(data.id));
+      setPopChatting(true);
+    }
+    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+  }, [queryClient, createChannel]);
+
+  const onRemoveChannel = useCallback(async (data: ChannelInfo) => {
+    queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    if (Number(channelId) === data.id)
+      setPopChatting(false);
+    // if (channelId === '')
+    //   setPopChatting(false);
+  }, [queryClient]);
+
   useEffect(() => {
     socket?.on('newChannel', onNewChannel);
     socket?.on('removeChannel', onRemoveChannel);
@@ -133,7 +156,7 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
       socket?.off('newChannel', onNewChannel);
       socket?.off('removeChannel', onRemoveChannel);
     };
-  }, [onNewChannel, onRemoveChannel]);
+  }, [socket]);
 
   return (
     <ChannelContainer>
@@ -169,7 +192,7 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
                     ? channelInfo.title.slice(0, 20) + '...'
                     : channelInfo.title}
                 </div>
-                <div>{channelInfo.owner}</div>
+                <div>{channelInfo.nickname}</div>
               </div>
             )
           })}
@@ -209,8 +232,7 @@ export const Channels = ({ socket, setPopChatting }: { socket: Socket | undefine
 }
 
 
-export const MyChannels = ({ socket, popChatting, setPopChatting }: { socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  const [channelId, setChannelId] = useState('');
+export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, setChannelId }: { socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
   const myChannels: ChannelInfo[] = useMyChannels().data;
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
@@ -241,7 +263,7 @@ export const MyChannels = ({ socket, popChatting, setPopChatting }: { socket: So
                         ? channelInfo.title.slice(0, 20) + '...'
                         : channelInfo.title}
                     </div>
-                    <div>{channelInfo.owner}</div>
+                    <div>{channelInfo.nickname}</div>
                   </div>
                 )
               })}
