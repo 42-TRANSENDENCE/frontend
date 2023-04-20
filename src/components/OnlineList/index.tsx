@@ -1,7 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FriendListContainer, OnOffLineList, Header, UserStatus } from './styles';
-import { useGetFriendList } from '../../hooks/query/friend';
+// import { useGetFriendList } from '../../hooks/query/friend';
+import { useSendDm } from '../../hooks/mutation/chat';
 import { SocketContext } from '../../contexts/ClientSocket';
 import IconButton from '@mui/material/IconButton';
 import ChatIcon from '@mui/icons-material/Chat';
@@ -31,6 +32,7 @@ export interface User {
 
 const onlineList = function () {
   const clientSocket = useContext(SocketContext);
+  const sendDM = useSendDm();
   // const response = useGetFriendList().data;
   // const getFriendList: FriendList[] = response;
   const [friendList, setFriendList] = useState<User[]>([]);
@@ -79,8 +81,8 @@ const onlineList = function () {
     };
   }, []);
 
-  const onClickSendDm = useCallback(() => {
-
+  const onClickSendDm = useCallback((userinfo: User) => {
+    sendDM.mutate({ id: userinfo.id, nickname: userinfo.nickname })
   }, []
   );
 
@@ -100,7 +102,7 @@ const onlineList = function () {
                 <div>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
-                  <IconButton color="success" size="large" edge="end" onClick={onClickSendDm}>
+                  <IconButton color="success" size="large" edge="end" onClick={() => onClickSendDm(userinfo)}>
                     <ChatIcon />
                   </IconButton>
                   <IconButton color="secondary" size="large" edge="end" onClick={onClickInviteGame}>

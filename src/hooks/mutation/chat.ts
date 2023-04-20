@@ -16,9 +16,19 @@ export interface CreateChannelData {
   password: string;
 }
 
+interface SetChannelPassword {
+  id: string;
+  password: string;
+}
+
 interface PostChatData {
   id: string;
   chat: string;
+}
+
+interface SendDMData {
+  id: number;
+  nickname: string;
 }
 
 interface AKBMData {
@@ -27,7 +37,7 @@ interface AKBMData {
   socket: Socket | undefined;
 }
 
-export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelData, MutationFunction<void, CreateChannelData>> {
+export function useCreateChannel(): UseMutationResult<void, Error, CreateChannelData, MutationFunction<void, CreateChannelData>> {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
 
@@ -39,10 +49,7 @@ export function useCreatChannel(): UseMutationResult<void, Error, CreateChannelD
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        title,
-        password,
-      })
+      body: JSON.stringify({ title, password })
     })
       .then(response => {
         if (response.status === 201)
@@ -98,6 +105,34 @@ export function useJoinChannel(): UseMutationResult<void, Error, JoinChannelData
   });
 }
 
+export function useSetChannelPassword(): UseMutationResult<void, Error, SetChannelPassword, MutationFunction<void, SetChannelPassword>> {
+  const queryClient = useQueryClient();
+  const fetcher = useFetcher();
+
+  async function setChannelPassword(data: SetChannelPassword): Promise<void> {
+    const { id, password } = data;
+    await fetcher('/channels/' + id, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ password: password })
+    })
+      .then(response => {
+        if (response.status === 200)
+          toast.success('Password set successfully');
+      })
+  }
+  return useMutation({
+    mutationFn: setChannelPassword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+      queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    }
+  })
+}
+
 export function usePostChat(): UseMutationResult<void, Error, PostChatData, MutationFunction<void, PostChatData>> {
   const fetcher = useFetcher();
 
@@ -111,9 +146,36 @@ export function usePostChat(): UseMutationResult<void, Error, PostChatData, Muta
       credentials: 'include',
       body: JSON.stringify({ content: chat }),
     })
+      .then((response) => {
+        if (response.status === 406)
+          toast.warning('Your are muted for 5 minutes');
+      })
   }
 
   return useMutation(postChat);
+}
+
+export function useSendDm(): UseMutationResult<void, Error, SendDMData, MutationFunction<void, SendDMData>> {
+  const queryClient = useQueryClient();
+  const fetcher = useFetcher();
+
+  async function sendDM(data: SendDMData): Promise<void> {
+    const { id, nickname } = data;
+    await fetcher('/channels/dm', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ id: id, nickname: nickname }),
+    })
+  }
+  return useMutation({
+    mutationFn: sendDM,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    }
+  });
 }
 
 export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
@@ -131,6 +193,8 @@ export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFun
       .then((response) => {
         if (response.status === 200)
           toast.success('Admin privileges have been successfully granted');
+        if (response.status === 405)
+          toast.warning('User is alreay Administrator');
       })
   }
   return useMutation(admin);
@@ -150,8 +214,8 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
     })
       .then((response) => {
         if (response.status === 200) {
-          toast.success(id + 'is kicked out');
-          socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
+          toast.success(user + ' is kicked out');
+          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }
@@ -172,8 +236,8 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
     })
       .then((response) => {
         if (response.status === 200) {
-          toast.success(id + ' is banned in this channel');
-          socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
+          toast.success(user + ' is banned in this channel');
+          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }
@@ -194,9 +258,7 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
     })
       .then((response) => {
         if (response.status === 200)
-          toast.success(id + ' has been muted in this channel');
-        else if (response.status === 406)
-          toast.warning('Your are muted for 5 minutes');
+          toast.success(user + ' has been muted in this channel');
       })
   }
   return useMutation(mute);

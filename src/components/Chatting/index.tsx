@@ -1,9 +1,9 @@
 import { ChatsContainer, ChatsBar, SendChatBar, ChatItem, ChatProfile, ChatBubbled, ChatMain, ChatLists, ChatsMenuContainer } from './styles';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { useUserInfo } from '../../hooks/query/user';
+import { UserInfo, useUserInfo } from '../../hooks/query/user';
 import { useGetChats, useChannelInfo } from '../../hooks/query/chat';
-import { usePostChat, useAdmin, useBan, useKick, useMute } from '../../hooks/mutation/chat';
+import { usePostChat, useSetChannelPassword, useAdmin, useBan, useKick, useMute } from '../../hooks/mutation/chat';
 import { ChannelStatus } from '../Channels';
 import { Socket } from 'socket.io-client';
 import { Scrollbars } from 'react-custom-scrollbars';
@@ -12,6 +12,7 @@ import { SmallButton, MiddleButton } from '../Button';
 import closeButton from '../../assets/smallButton/modalCloseButton.svg';
 import sendButton from '../../assets/smallButton/chatSendButton.svg';
 import leaveButton from '../../assets/smallButton/leaveChannelButton.svg';
+import lockButton from '../../assets/smallButton/channelLockButton.svg';
 import { toast } from 'react-toastify';
 
 enum MemberType {
@@ -58,36 +59,31 @@ interface ChatProps {
   socket: Socket | undefined;
 }
 
-const ChatMenu = ({ userId, channelInfo, channelId, socket }: { userId: string, channelInfo: ChannelInfo, channelId: string, socket: Socket | undefined }) => {
-  const queryClient = useQueryClient();
+interface Member {
+  id: number;
+}
+
+const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { userId: string, channelInfo: ChannelInfo, channelId: string, socket: Socket | undefined, setPopMenu: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const admin = useAdmin();
   const kick = useKick();
   const ban = useBan();
   const mute = useMute();
 
-  const onOutMember = useCallback(async () => {
-    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
-    queryClient.invalidateQueries({ queryKey: ['myChannel'] });
-  }, [channelId]);
-
-  useEffect(() => {
-    socket?.on('outMember', onOutMember);
-    return () => {
-      socket?.off('outMember', onOutMember);
-    }
-  }, [socket, channelId]);
-
   const onAdminOther = () => {
     admin.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
   }
   const onKickOther = () => {
     kick.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
   }
   const onBanOther = () => {
     ban.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
   }
   const onMuteOther = () => {
     mute.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
   }
 
   return (
@@ -157,7 +153,7 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps)
         </ChatProfile>
       )}
       {popMenu && (
-        <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} socket={socket} />
+        <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} socket={socket} setPopMenu={setPopMenu} />
       )}
       <ChatMain isMe={isMe} >
         {!isMe && (<span>{eachChat.user}</span>)}
@@ -193,11 +189,12 @@ const ChatBox = ({ channelInfo, chats, userId, idAvatarMap, socket }: { channelI
 };
 
 export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket | undefined, channelId: string, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  const userInfo = useUserInfo().data;
-  const postChat = usePostChat();
-  const [chat, setChat] = useState('');
+  const userInfo: UserInfo = useUserInfo().data;
   const chats: ChatData[] = useGetChats(channelId).data;
   const channelInfo: ChannelInfo = useChannelInfo(channelId).data;
+  const postChat = usePostChat();
+  const setChannelPassword = useSetChannelPassword();
+  const [chat, setChat] = useState('');
   const queryClient = useQueryClient();
   const scrollbarRef = useRef<Scrollbars>(null);
   const idAvatarMap: Map<number, Blob> = new Map();
@@ -273,21 +270,50 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     setChat('');
   }, [chat, postChat]);
 
+  const onClickSetPassword = useCallback(() => {
+    const pwd = prompt('Enter password (leave it empty if you want to make this channel public)');
+    if (pwd !== null)
+      setChannelPassword.mutate({ id: channelId, password: String(pwd) });
+  }, [setChannelPassword]);
+
+  useEffect(() => {
+    scrollbarRef.current?.scrollToBottom();
+  }, [chats]);
+
   const onMessage = useCallback(async (data: ChatData) => {
     queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
       return prevChats ? [...prevChats, data] : [data];
     })
   }, [channelId]);
 
-  useEffect(() => {
-    scrollbarRef.current?.scrollToBottom();
-  }, [chats]);
+  const onOutMember = useCallback(async (data: any) => {
+    if (Number(data.id) === userInfo.id)
+      setPopChatting(false);
+    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannel'] });
+  }, [channelId]);
+
+  const onMuteMember = useCallback(async (data: any) => {
+    if (Number(data.id) === userInfo.id)
+      toast.warning('You are muted for 5 minutes');
+  }, [channelId]);
+
+  const onRemoveChannel = useCallback(async (data: Member) => {
+    if (Number(channelId) === data.id)
+      setPopChatting(false);
+  }, [channelId]);
 
   useEffect(() => {
     socket?.emit('joinChannel', { 'channelId': String(channelId) });
     socket?.on('message', onMessage);
+    socket?.on('outMember', onOutMember);
+    socket?.on('muteMember', onMuteMember);
+    socket?.on('removeChannel', onRemoveChannel);
     return () => {
       socket?.off('message', onMessage);
+      socket?.off('outMember', onOutMember);
+      socket?.off('muteMember', onMuteMember);
+      socket?.off('removeChannel', onRemoveChannel);
     }
   }, [socket, channelId]);
 
@@ -296,6 +322,9 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
       <div className='Button'>
         <SmallButton img_url={closeButton} onClick={onClickClose} />
         <SmallButton img_url={leaveButton} onClick={onClickLeave} />
+        {channelInfo?.myType === MemberType.OWNER && (
+          <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
+        )}
       </div>
       <ChatsBar>
         <Scrollbars autoHide ref={scrollbarRef}>
