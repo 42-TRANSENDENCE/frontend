@@ -55,7 +55,7 @@ export const CloseModalButton = styled.button`
     width: 100%;
     aspect-ratio: 1;
     border-radius: 50%;
-    border: calc(var(--border-width) / 2) solid black;
+    border: calc(var(--border-width)) solid black;
   }
 `;
 

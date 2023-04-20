@@ -1,5 +1,5 @@
-import {BigButton} from "../../../components/Button"
-import cancelButton from "../../../assets/bigButton/cancelButton.svg"
+import { BigButton } from "../../../components/Button";
+import cancelButton from "../../../assets/bigButton/cancelButton.svg";
 import { useEffect } from "react";
 
 const Waiting = (props: any) => {
@@ -22,7 +22,7 @@ const Waiting = (props: any) => {
     <>
       <LobbyContainer>
         <div className="box">
-            <BigButton img_url={cancelButton} onClick={quit_queue}/>
+          <BigButton img_url={cancelButton} onClick={quit_queue} />
         </div>
       </LobbyContainer>
     </>
@@ -32,7 +32,7 @@ const Waiting = (props: any) => {
 export default Waiting;
 
 /* =================================================== */
-import styled from 'styled-components';
+import styled from "styled-components";
 const LobbyContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -40,29 +40,28 @@ const LobbyContainer = styled.div`
   align-items: center;
   .box {
     display: flex;
-    flex-direction: column;  
+    flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
 
-    --w : min(var(--body-width), 600px);
-    --h : calc(var(--body-height) * 0.8);
-    --size : min(var(--w), var(--h));
+    --w: min(var(--body-width), 600px);
+    --h: calc(var(--body-height) * 0.8);
+    --size: min(var(--w), var(--h));
     width: var(--size);
     aspect-ratio: 1;
-    
+
     background: var(--color-blue);
-    
+
     border-radius: calc(var(--size) / 8);
     border: calc(var(--border-width) * 2) solid black;
-    
+
     box-sizing: border-box;
     padding: 25px;
 
     Button {
-      width: calc(var(--size) - 4*var(--html-padding-horizontal));
+      width: calc(var(--size) - 4 * var(--html-padding-horizontal));
       border: var(--border-width) solid black;
       border-radius: calc(50 / 800 * min(60vw, 800px));
     }
   }
-
-`
+`;
