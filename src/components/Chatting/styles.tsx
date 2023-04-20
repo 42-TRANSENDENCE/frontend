@@ -28,6 +28,7 @@ export const ChatsContainer = styled.div`
   border: var(--border-width) solid black;
   padding: var(--padding-vertical) var(--padding-horizontal);
   background: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
 
   .Button {
     width: 10%;
@@ -217,6 +218,7 @@ export const ChatProfile = styled.div`
   display: flex;
 
   & > img {
+    cursor: pointer;
     height: calc(var(--w) * 0.3 * 0.4);
     aspect-ratio: 1;
     border-radius: 50%;
@@ -243,4 +245,16 @@ export const ChatsMenuContainer = styled.div`
   font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
   z-index: 1;
   top: calc(var(--w) * 0.3 * 0.4);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+  color: white;
+  font-weight: bold;
+  text-align: center;
+
+  div {
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.98);
+      cursor: pointer;
+    };
+  }
 `;

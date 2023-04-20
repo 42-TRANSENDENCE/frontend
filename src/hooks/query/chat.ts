@@ -10,7 +10,7 @@ export const useAllChannels = () => {
         method: 'GET',
         credentials: 'include',
       })
-      if (response.ok) return response.json();
+      if (response.ok) return await response.json();
       throw response;
     }
   });
@@ -26,7 +26,7 @@ export const useMyChannels = () => {
         method: 'GET',
         credentials: 'include',
       })
-      if (response.ok) return response.json();
+      if (response.ok) return await response.json();
       throw response;
     }
   });
@@ -36,13 +36,29 @@ export const useMyChannels = () => {
 export const useGetChats = (id: string) => {
   const fetcher = useFetcher();
   const data = useQuery({
-    queryKey: ['getChats'],
+    queryKey: ['getChats', id],
     queryFn: async () => {
       const response = await fetcher('/chat/' + id, {
         method: 'GET',
         credentials: 'include',
       })
-      if (response.ok) return response.json();
+      if (response.ok) return await response.json();
+      throw response;
+    }
+  });
+  return data;
+}
+
+export const useChannelInfo = (id: string) => {
+  const fetcher = useFetcher();
+  const data = useQuery({
+    queryKey: ['channelInfo', id],
+    queryFn: async () => {
+      const response = await fetcher('/channels/' + id, {
+        method: 'GET',
+        credentials: 'include',
+      })
+      if (response.ok) return await response.json();
       throw response;
     }
   });

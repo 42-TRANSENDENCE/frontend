@@ -1,24 +1,45 @@
-import { ChatsContainer, ChatsBar, SendChatBar, GoBackBar, ChatItem, ChatProfile, ChatBubbled, ChatMain, ChatLists } from './styles';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ChatsContainer, ChatsBar, SendChatBar, ChatItem, ChatProfile, ChatBubbled, ChatMain, ChatLists, ChatsMenuContainer } from './styles';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { useUserInfo, useChatUserInfo } from '../../hooks/query/user';
-import { useGetChats } from '../../hooks/query/chat';
-import { usePostChat } from '../../hooks/mutation/chat';
+import { UserInfo, useUserInfo } from '../../hooks/query/user';
+import { useGetChats, useChannelInfo } from '../../hooks/query/chat';
+import { usePostChat, useSetChannelPassword, useAdmin, useBan, useKick, useMute } from '../../hooks/mutation/chat';
+import { ChannelStatus } from '../Channels';
 import { Socket } from 'socket.io-client';
 import { Scrollbars } from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
-import { ChatListContainer } from '../ChatList/styles';
 import { SmallButton, MiddleButton } from '../Button';
 import closeButton from '../../assets/smallButton/modalCloseButton.svg';
 import sendButton from '../../assets/smallButton/chatSendButton.svg';
 import leaveButton from '../../assets/smallButton/leaveChannelButton.svg';
+import lockButton from '../../assets/smallButton/channelLockButton.svg';
+import { toast } from 'react-toastify';
+
+enum MemberType {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN',
+  MEMBER = 'MEMBER'
+}
+
+interface ChannelMembers {
+  userId: number;
+  channelId: number;
+  nickname: string;
+  type: MemberType;
+  avatar: any;
+}
+
+interface ChannelInfo {
+  channelStatus: ChannelStatus;
+  channelMembers: ChannelMembers[];
+  myType: MemberType;
+}
 
 interface ChatData {
   channelId: number;
   content: string;
   createdAt: string;
   id: number;
-  avatar: Uint8Array;
   senderUserId: number;
   senderUserNickname: string;
 }
@@ -30,140 +51,109 @@ interface Chat {
   createdAt: string;
 }
 
-// const EachChat = React.memo(function EachChat({
-//   index,
-//   chatData,
-//   roomDatas,
-//   myUser,
-//   roomId,
-// }: EachChatProps) {
-//   const [selectedChatProfile, setSelectedChatProfile] =
-//     useState<boolean>(false);
-
-//   const handleChatProfileClick = useCallback((e: any) => {
-//     e.stopPropagation();
-//     setSelectedChatProfile((prev) => !prev);
-//   }, []);
-
-//   const isOther = chatData.user !== myUser.username;
-
-//   return (
-//     <ChatItem other={isOther} key={index}>
-//       <ChatProfile>
-//         <img
-//           src={chatData.imgSrc}
-//           alt="User profile"
-//           onClick={handleChatProfileClick}
-//         />
-//       </ChatProfile>
-//       {selectedChatProfile && (
-//         <ChatsMenu
-//           username={chatData.user}
-//           roomDatas={roomDatas}
-//           myUser={myUser}
-//           roomId={roomId}
-//         />
-//       )}
-//       <ChatMain other={isOther}>
-//         <span>{chatData.user}</span>
-//         <span>{dayjs(chatData.createdAt).format('h:mm:ss a')}</span>
-//         <ChatBubble other={isOther} style={{ whiteSpace: 'pre-wrap' }}>
-//           {chatData.chat}
-//         </ChatBubble>
-//       </ChatMain>
-//     </ChatItem>
-//   );
-// });
-
-// export const ChatList = ({ socket, channelId }: { socket: Socket | undefined, channelId: string }) => {
-//   const chatData = useGetChats(channelId);
-//   const chats: ChatData[] = chatData.data;
-
-//   const chatsByDate = useMemo(() => {
-//     const obj: { [key: string]: Chat[] } = {};
-//     chats.forEach((chat: ChatData) => {
-//       const date = dayjs(chat.createdAt);
-//       const key = date.format('YYYY-MM-DD');
-//       if (!(key in obj)) {
-//         obj[key] = [{ ...chat, hms: date.format('h:mm:ss a') }];
-//       } else {
-//         obj[key].push({ ...chat, hms: date.format('h:mm:ss a') });
-//       }
-//     });
-//     return obj;
-//   }, [chats]);
-
-//   const sortedDates = useMemo(() => {
-//     return Object.keys(chatsByDate).sort();
-//   }, [chatsByDate]);
-
-//   const weekDays: { [key: string]: string } = useMemo(
-//     () => ({
-//       Sunday: '일',
-//       Monday: '월',
-//       Tuesday: '화',
-//       Wednesday: '수',
-//       Thursday: '목',
-//       Friday: '금',
-//       Saturday: '토',
-//     }),
-//     []
-//   );
-//   return (
-//     <ChatLists>
-//       {obj.map((obj_key, index) => {
-//         const week = weekDays[dayjs(obj_key).locale('ko').format('dddd')];
-
-//         return (
-//           <div key={index}>
-//             <div className="YYYY_MM_DD">
-//               <div>
-//                 {obj_key} {week}
-//               </div>
-//             </div>
-//             {obj[obj_key].map((chatData, index2) => {
-//               return (
-//                 <EachChat
-//                   key={index2}
-//                   index={index2}
-//                   chatData={chatData}
-//                   roomDatas={roomDatas}
-//                   myUser={myUser}
-//                   roomId={roomId}
-//                 />
-//               );
-//             })}
-//           </div>
-//         );
-//       })}
-//       <></>
-//     </ChatLists>
-//   );
-// }
-
 interface ChatProps {
+  channelInfo: ChannelInfo;
   chat: ChatData;
   isMe: boolean;
+  idAvatarMap: Map<number, Blob>;
+  socket: Socket | undefined;
 }
 
-const ChatBubble = ({ chat, isMe }: ChatProps) => {
-  // const userInfo = useChatUserInfo(chat.senderUserNickname).data;
-  // const bufferObj: { type: "Buffer", data: [] } = { type: chat.avatar.type, data: userInfo?.avatar.data };
-  // const uint8Array = new Uint8Array(bufferObj.data);
-  const userAvatar  = new Blob([chat.avatar], { type: "application/octet-stream" });
+interface Member {
+  id: number;
+}
+
+const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { userId: string, channelInfo: ChannelInfo, channelId: string, socket: Socket | undefined, setPopMenu: React.Dispatch<React.SetStateAction<boolean>> }) => {
+  const admin = useAdmin();
+  const kick = useKick();
+  const ban = useBan();
+  const mute = useMute();
+
+  const onAdminOther = () => {
+    admin.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
+  }
+  const onKickOther = () => {
+    kick.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
+  }
+  const onBanOther = () => {
+    ban.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
+  }
+  const onMuteOther = () => {
+    mute.mutate({ id: channelId, user: userId, socket: socket });
+    setPopMenu(false);
+  }
+
+  return (
+    <ChatsMenuContainer>
+      {channelInfo.myType === MemberType.OWNER ? (
+        <>
+          <div onClick={onAdminOther}>Grant Admin</div>
+          <div onClick={onKickOther}>Kick</div>
+          <div onClick={onBanOther}>Ban</div>
+          <div onClick={onMuteOther}>Mute</div>
+        </>
+      ) : (
+        channelInfo.myType === MemberType.ADMIN ? (
+          <>
+            {channelInfo.channelMembers?.map((member) => {
+              if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                return (<div>Channel Owner</div>);
+              else if (String(member.userId) === userId)
+                return (
+                  <>
+                    <div onClick={onKickOther}>Kick</div>
+                    <div onClick={onBanOther}>Ban</div>
+                    <div onClick={onMuteOther}>Mute</div>
+                  </>
+                );
+              return null;
+            })}
+          </>
+        ) : (
+          <>
+            {channelInfo.channelMembers?.map((member) => {
+              if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                return (<div>Channel Owner</div>);
+              else if (String(member.userId) === userId && member.type === MemberType.ADMIN)
+                return (<div>Channel Administrator</div>);
+              else if (String(member.userId) === userId && member.type === MemberType.MEMBER)
+                return (<div>Channel Member</div>);
+              return null;
+            })}
+          </>
+        )
+      )}
+    </ChatsMenuContainer>
+  );
+}
+
+const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps) => {
+  const [popMenu, setPopMenu] = useState(false);
+  const avatar = idAvatarMap.get(chat.senderUserId);
+
   const eachChat: Chat = {
     user: chat.senderUserNickname,
-    imgSrc: URL.createObjectURL(userAvatar),
+    imgSrc: URL.createObjectURL(avatar ? avatar : new Blob()),
     content: chat.content,
     createdAt: chat.createdAt
+  };
+
+  const onClickProfile = () => {
+    setPopMenu((prev) => !prev);
   };
 
   return (
     <ChatItem isMe={isMe} >
       {!isMe && (
         <ChatProfile>
-          <img src={eachChat.imgSrc} alt={eachChat.user} />
+          <img src={eachChat.imgSrc} alt={eachChat.user} onClick={onClickProfile} />
         </ChatProfile>
+      )}
+      {popMenu && (
+        <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} socket={socket} setPopMenu={setPopMenu} />
       )}
       <ChatMain isMe={isMe} >
         {!isMe && (<span>{eachChat.user}</span>)}
@@ -176,41 +166,59 @@ const ChatBubble = ({ chat, isMe }: ChatProps) => {
   )
 };
 
-const ChatBox = ({ chats }: { chats: ChatData[] }) => {
-  const userInfo = useUserInfo().data;
-  
+const ChatBox = ({ channelInfo, chats, userId, idAvatarMap, socket }: { channelInfo: ChannelInfo, chats: ChatData[], userId: number, idAvatarMap: Map<number, Blob>, socket: Socket | undefined }) => {
+
   return (
     <ChatLists>
       {chats?.map((chat, index) => {
         return (
           <div key={index}>
-            <ChatBubble 
+            <ChatBubble
               key={`chat-${index}`}
+              channelInfo={channelInfo}
               chat={chat}
-              isMe={chat.senderUserId === userInfo.id}
+              isMe={chat.senderUserId === userId}
+              idAvatarMap={idAvatarMap}
+              socket={socket}
             />
           </div>
-      )})}
+        )
+      })}
     </ChatLists>
   );
 };
 
 export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket | undefined, channelId: string, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  const userInfo = useUserInfo().data;
+  const userInfo: UserInfo = useUserInfo().data;
+  const chats: ChatData[] = useGetChats(channelId).data;
+  const channelInfo: ChannelInfo = useChannelInfo(channelId).data;
   const postChat = usePostChat();
+  const setChannelPassword = useSetChannelPassword();
   const [chat, setChat] = useState('');
-  const chatData = useGetChats(channelId);
-  const chats: ChatData[] = chatData.data;
   const queryClient = useQueryClient();
+  const scrollbarRef = useRef<Scrollbars>(null);
+  const idAvatarMap: Map<number, Blob> = new Map();
+
+
+  if (channelInfo) {
+    channelInfo.channelMembers?.map((member) => {
+      const bufferObj: { type: 'Buffer', data: [] } = { type: member.avatar.type, data: member.avatar.data };
+      const uint8Array = new Uint8Array(bufferObj.data);
+      const userAvatar = new Blob([uint8Array], { type: 'application/octet-stream' });
+      idAvatarMap.set(member.userId, userAvatar);
+    })
+  }
 
   const onClickClose = () => {
-    socket?.emit('closeChannel', {'channelId': String(channelId)});
+    socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   }
 
-  const onClickLeave = () => {
-    socket?.emit('leaveChannel', {'channelId': String(channelId), 'userId': String(userInfo.id)});
-    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+  const onClickLeave = async () => {
+    socket?.emit('leaveChannel', { 'channelId': String(channelId), 'userId': String(userInfo.id) });
+    await queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    await queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    toast.success('Successfully leaved channel');
     setPopChatting(false);
   }
 
@@ -219,11 +227,23 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     setChat(e.target.value);
   }, []);
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+  function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (!chat?.trim()) return;
       postChat.mutate({ id: channelId, chat: chat });
+      // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
+      //   const newChat: ChatData = {
+      //     channelId: Number(channelId),
+      //     content: chat,
+      //     createdAt: String(new Date()),
+      //     avatar: userInfo.avatar,
+      //     id: 0,
+      //     senderUserId: userInfo.id,
+      //     senderUserNickname: userInfo.nickname,
+      //   };
+      //   return prevChats ? [...prevChats, newChat] : [newChat];
+      // });
       setChat('');
     } else if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault();
@@ -231,49 +251,92 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     }
   }
 
-  const onSubmitChat = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitChat = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!chat?.trim()) return;
     postChat.mutate({ id: channelId, chat: chat });
-    // queryClient.setQueryData(['getChats'], () => {
-    //   return [...chats, chat];
+    // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
+    //   const newChat: ChatData = {
+    //     channelId: Number(channelId),
+    //     content: chat,
+    //     createdAt: String(new Date()),
+    //     avatar: userInfo.avatar,
+    //     id: 0,
+    //     senderUserId: userInfo.id,
+    //     senderUserNickname: userInfo.nickname,
+    //   };
+    //   return prevChats ? [...prevChats, newChat] : [newChat];
     // });
-    queryClient.invalidateQueries({ queryKey: ['getChats'] });
     setChat('');
   }, [chat, postChat]);
 
-  const onMessage = useCallback(async (data: ChatData) => {
-    console.log(data.content);
-    // queryClient.setQueryData(['getChats'], () => {
-    //   return [...chats, data];
-    // });
-    queryClient.invalidateQueries({ queryKey: ['getChats'] });
-  }, []);
+  const onClickSetPassword = useCallback(() => {
+    const pwd = prompt('Enter password (leave it empty if you want to make this channel public)');
+    if (pwd !== null)
+      setChannelPassword.mutate({ id: channelId, password: String(pwd) });
+  }, [setChannelPassword]);
 
   useEffect(() => {
+    scrollbarRef.current?.scrollToBottom();
+  }, [chats]);
+
+  const onMessage = useCallback(async (data: ChatData) => {
+    queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
+      return prevChats ? [...prevChats, data] : [data];
+    })
+  }, [channelId]);
+
+  const onOutMember = useCallback(async (data: any) => {
+    if (Number(data.id) === userInfo.id) {
+      socket?.emit('leaveChannel', { 'channelId': String(data.id), 'userId': String(userInfo.id) });
+      setPopChatting(false);
+    }
+    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannel'] });
+  }, [channelId]);
+
+  const onMuteMember = useCallback(async (data: any) => {
+    if (Number(data.id) === userInfo.id)
+      toast.warning('You are muted for 5 minutes');
+  }, [channelId]);
+
+  const onRemoveChannel = useCallback(async (data: Member) => {
+    if (Number(channelId) === data.id)
+      setPopChatting(false);
+  }, [channelId]);
+
+  useEffect(() => {
+    socket?.emit('joinChannel', { 'channelId': String(channelId) });
     socket?.on('message', onMessage);
-    socket?.emit('joinChannel', {'channelId:': String(channelId)});
+    socket?.on('outMember', onOutMember);
+    socket?.on('muteMember', onMuteMember);
+    socket?.on('removeChannel', onRemoveChannel);
     return () => {
       socket?.off('message', onMessage);
-      // socket?.emit('closeChannel', {'channelId:': String(channelId)});
+      socket?.off('outMember', onOutMember);
+      socket?.off('muteMember', onMuteMember);
+      socket?.off('removeChannel', onRemoveChannel);
     }
-  }, []);
+  }, [socket, channelId]);
 
   return (
     <ChatsContainer>
       <div className='Button'>
         <SmallButton img_url={closeButton} onClick={onClickClose} />
         <SmallButton img_url={leaveButton} onClick={onClickLeave} />
+        {channelInfo?.myType === MemberType.OWNER && (
+          <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
+        )}
       </div>
       <ChatsBar>
-        <Scrollbars autoHide>
-          <ChatBox chats={chats} />
+        <Scrollbars autoHide ref={scrollbarRef}>
+          <ChatBox channelInfo={channelInfo} chats={chats} userId={userInfo.id} idAvatarMap={idAvatarMap} socket={socket} />
         </Scrollbars>
       </ChatsBar>
       <SendChatBar onSubmit={onSubmitChat} >
         <textarea
           onChange={onChangeChat}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyPress}
           value={chat}
           autoFocus={true}
           title='chat'
@@ -282,8 +345,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
         />
         <MiddleButton img_url={sendButton} onClick={onSubmitChat} />
       </SendChatBar>
-      {/* <GoBackBar>
-      </GoBackBar> */}
     </ChatsContainer>
   )
 }

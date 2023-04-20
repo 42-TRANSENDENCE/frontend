@@ -26,23 +26,7 @@ export const useUserInfo = () => {
       throw response;
     },
     retry: 0,
-  });
-  return data;
-}
-
-export const useChatUserInfo = (nickname: string) => {
-  const fetcher = useFetcher();
-  const data = useQuery({
-    queryKey: ['chatUserInfo'],
-    queryFn: async () => {
-      const response = await fetcher('/users/search/' + 'nickname', {
-        method: 'GET',
-        credentials: 'include',
-      })
-      if (response.ok) return response.json();
-      throw response;
-    },
-    retry: 0,
+    refetchOnWindowFocus: false,
   });
   return data;
 }

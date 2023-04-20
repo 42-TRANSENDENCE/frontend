@@ -8,11 +8,13 @@ import {
   SingleUser,
 } from "./styles";
 import { useGetFriendList } from "../../hooks/query/friend";
-import { SocketContext } from "../../contexts/ClientSocket";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
 import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import InviteButton from "./InviteButton";
+// import { useGetFriendList } from '../../hooks/query/friend';
+import { useSendDm } from "../../hooks/mutation/chat";
+import { SocketContext } from "../../contexts/ClientSocket";
 
 export enum ClientStatus {
   ONLINE = "ONLINE",
@@ -38,6 +40,7 @@ export interface User {
 
 const onlineList = function () {
   const clientSocket = useContext(SocketContext);
+  const sendDM = useSendDm();
   // const response = useGetFriendList().data;
   // const getFriendList: FriendList[] = response;
   const [friendList, setFriendList] = useState<User[]>([]);
@@ -85,7 +88,7 @@ const onlineList = function () {
     return () => {};
   }, []);
 
-  const onClickSendDm = useCallback(() => {}, []);
+  const onClickSendDm = useCallback((userinfo: User) => {}, []);
 
   return (
     <FriendListContainer>
@@ -102,7 +105,7 @@ const onlineList = function () {
                     color="success"
                     size="large"
                     edge="end"
-                    onClick={onClickSendDm}
+                    onClick={() => onClickSendDm(userinfo)}
                   >
                     <ChatIcon />
                   </IconButton>
