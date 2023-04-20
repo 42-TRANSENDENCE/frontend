@@ -287,8 +287,10 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   }, [channelId]);
 
   const onOutMember = useCallback(async (data: any) => {
-    if (Number(data.id) === userInfo.id)
+    if (Number(data.id) === userInfo.id) {
+      socket?.emit('leaveChannel', { 'channelId': String(data.id), 'userId': String(userInfo.id) });
       setPopChatting(false);
+    }
     queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
     queryClient.invalidateQueries({ queryKey: ['myChannel'] });
   }, [channelId]);
