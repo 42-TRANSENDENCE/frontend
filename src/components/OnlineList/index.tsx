@@ -121,10 +121,10 @@ const onlineList = function () {
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
-                <div key={userinfo.id}>
+                <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
-                </div>
+                </SingleUser>
               );
           })}
         </Scrollbars>

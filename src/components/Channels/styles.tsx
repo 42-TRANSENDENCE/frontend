@@ -1,84 +1,108 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ChannelContainer = styled.div`
-  --section-width: calc(
-    var(--body-width) * 0.33 - var(--html-padding-horizontal)
+  --channel-width: calc(var(--section-width));
+  --channel-height: calc(var(--section-height) * 0.9);
+  --channel-padding: var(--section-padding);
+
+  --header-height: var(--fontsize-big);
+  --header-width: calc(
+    var(--channel-width) - 2 * (var(--channel-padding) + var(--border-width))
   );
-  --width: calc(var(--section-width) * 0.9);
-  --height: var(--body-height);
+
+  box-sizing: border-box;
+  width: var(--channel-width);
+  height: var(--channel-height);
+  border-radius: calc(var(--channel-height) * 0.05);
+  border: var(--border-width) solid black;
+  padding: calc(var(--channel-padding) / 3) var(--channel-padding);
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: var(--height);
-  width: var(--width);
-  border-radius: 2rem;
-  border: var(--border-width) solid black;
-  padding: calc(var(--height) * 0.01) calc(var(--width) * 0.01);
-  // background: white;
 
-  @media screen and (max-width: 600px) {
-    & {
-      border-radius: 1rem;
-    }
-  }
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
 `;
 
 export const SearchChannel = styled.form`
-  /* flex: 1; */
-  --w: var(--width);
-  --h: calc(var(--height) * (1 / 15));
-  width: var(--w);
-  height: var(--h);
+  --button-size: min(
+    calc(var(--header-width) * 0.18),
+    calc(var(--header-height) * 0.7)
+  );
+
+  box-sizing: border-box;
+  width: var(--header-width);
+  height: var(--header-height);
   display: flex;
-  justify-content: flex-end;
   align-items: center;
-  margin-bottom: 1rem;
+  gap: calc(var(--button-size) * 0.1);
 
   & > input {
+    box-sizing: boarder-box;
     display: inline-block;
-    width: calc(var(--w) * 0.4);
-    height: var(--h);
-    border-radius: 2rem;
-    border: var(--border-width) solid black;
-    padding-left: calc(var(--w) * 0.6 * 0.1);
-    padding-right: calc(var(--w) * 0.6 * 0.1);
+    width: calc(var(--header-width) - 2.4 * var(--button-size));
+    height: calc(var(--header-height) * 0.6);
+    border-radius: calc(var(--header-height) * 0.3);
+    border: calc(var(--border-width) / 2) solid black;
+    padding: 0;
+    padding-left: calc(var(--h) * 0.15);
+    background-color: var(--color-gray);
   }
-  & > span > img {
-    height: min(var(--h), calc(var(--w) * 0.4));
+  & > button {
+    box-sizing: boarder-box;
+    height: var(--button-size);
+    width: var(--button-size);
     aspect-ratio: 1;
+    border: calc(var(--border-width) / 2) solid black;
     cursor: pointer;
   }
 `;
 
 export const ChannelList = styled.div`
-  /* flex: 13; */
-  --w: var(--width);
-  --h: calc(var(--height) * 11 / 15);
-  width: var(--w);
+  --list-padding: calc(var(--channel-padding) * 0.5);
+  --list-width: var(--header-width);
+  --h: 100%;
+
+  box-sizing: border-box;
+  width: var(--list-width);
   height: var(--h);
-  font-size: calc(var(--h) * 0.03);
-  line-height: calc(var(--h) * 0.05);
+  padding: var(--list-padding) 0;
+  line-height: var(--fontsize-small);
+  font-size: var(--fontsize-small);
+  overflow-y: auto;
 
   & .eachChannel {
-    height: calc(var(--h) * (0.1));
-    border-radius: 2rem;
-    border: var(--border-width) solid black;
-    margin: calc(var(--h) * (0.01));
-    padding: calc(var(--h) * (0.01)) calc(var(--w) * (0.1));
-    position: relative;
+    --single-channel-height: calc(3 * var(--fontsize-small));
+    box-sizing: border-box;
+
+    width: 100%;
+    height: var(--single-channel-height);
+
+    background: white;
+    border-radius: calc(var(--single-channel-height) / 3);
+    border: calc(var(--border-width) / 2) solid black;
+    padding: calc(var(--single-channel-height) * 0.125);
+    padding-left: calc(var(--single-channel-height) * 0.25);
+    margin-bottom: calc(var(--single-channel-height) * 0.125);
+
+    font-size: var(--fontsize-small);
+    font-weight: var(--fontweight-small);
+    text-align: left;
     cursor: pointer;
 
     &:hover {
       opacity: 0.9;
       transform: scale(0.98);
-    };
+    }
 
     & > div:first-child {
-      position: absolute;
-      right: calc(var(--w) * (0.1));
-      height: calc(var(--h) * (0.1));
+      --lockimg-size: var(--fontsize-small);
+      width: var(--lockimg-size);
+      height: var(--lockimg-size);
       & > img {
-        height: calc(var(--h) * (0.1) * (0.3));
+        width: 100%;
+        height: 100%;
       }
     }
     & > div:nth-child(2) {
@@ -92,9 +116,12 @@ export const Input = styled.input`
   background-color: yellow;
   padding: 1rem;
   margin: 1rem;
-`
+`;
 
 export const Header = styled.div`
-  font-size: 3rem;
-  padding-left: 1rem;
-`
+  width: var(--header-width);
+  height: var(--header-height);
+  line-height: var(--fontsize-big);
+  font-size: var(--fontsize-big);
+  font-weight: var(--fontweight-big);
+`;
