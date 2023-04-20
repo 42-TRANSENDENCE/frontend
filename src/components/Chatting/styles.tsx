@@ -1,260 +1,233 @@
 import styled from "styled-components";
 
+/*=======================================*/
+/*                                       */
+/*                 WHOLE                 */
+/*                                       */
+/*=======================================*/
+
 export const ChatsContainer = styled.div`
-  --section-width: calc(
-    var(--body-width) * 0.33 - var(--html-padding-horizontal)
-  );
-  --width: calc(var(--section-width) * 0.9);
-  --height: var(--body-height);
+  --chat-width: var(--section-width);
+  --chat-height: calc(var(--section-height) * 0.9);
+  --chat-radius: calc(var(--chat-height) * 0.05);
 
-  --buttons-height: max(min(calc(var(--height) * 0.1), 5vh), 30px);
-  --send-height: max(min(calc(var(--height) * 0.1), 5vh), 30px);
-  --gap: calc(var(--height) * 0.01);
-  --padding-vertical: calc(var(--height) * 0.02);
-  --padding-horizontal: calc(var(--width) * 0.01);
+  --title-height: var(--fontsize-big);
+  --footer-height: calc(var(--fontsize-big) + var(--section-padding));
+
+  --send-height: max(min(calc(var(--chat-height) * 0.1), 5vh), 30px);
+  --padding-vertical: calc(var(--chat-height) * 0.02);
+  --padding-horizontal: calc(var(--chat-width) * 0.01);
   --contents-height: calc(
-    var(--height) - var(--buttons-height) - var(--send-height) - 2 *
-      var(--padding-vertical) - 2 * var(--gap)
+    var(--chat-height) - var(--title-height) - var(--footer-height) -
+      var(--border-width)
   );
 
+  box-sizing: border-box;
+  height: var(--chat-height);
+  width: var(--chat-width);
+  border-radius: var(--chat-radius);
+  border: var(--border-width) solid black;
   display: flex;
-  // position: relative;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  height: var(--height);
-  width: var(--width);
-  border-radius: calc(var(--width) * 0.1);
-  border: var(--border-width) solid black;
-  padding: var(--padding-vertical) var(--padding-horizontal);
   background: rgba(255, 255, 255, 0.3);
   overflow: hidden;
 
-  .Button {
-    width: 10%;
-    aspect-ratio: 1;
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
+  font-size: var(--fontsize-small);
+`;
+
+/*=======================================*/
+/*                                       */
+/*                 TITLE                 */
+/*                                       */
+/*=======================================*/
+
+export const ChatTitle = styled.div`
+  --title-height: var(--fontsize-big);
+
+  background-color: rgba(255, 255, 255, 0.6);
+  width: calc(var(--chat-width));
+  height: var(--title-height);
+
+  line-height: var(--title-height);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  & > .Title {
+    height: var(--title-height);
+    width: fit-content;
+    text-justify: left;
+    font-size: calc(var(--fontsize-big) * 0.7);
+    font-weight: 600;
+    margin-left: calc(var(--chat-radius) * 0.5);
+  }
+
+  & > .Buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-right: calc(var(--chat-radius) * 0.8);
+  }
+
+  button {
+    --button-size: calc(var(--title-height) * 0.8);
+    box-sizing: border-box;
+    width: var(--button-size);
+    height: var(--button-size);
+    border: calc(var(--button-size) * 0.1) solid black;
+    margin: 0 calc(var(--button-size) * 0.1);
   }
 `;
 
+/*=======================================*/
+/*                                       */
+/*                  BODY                 */
+/*                                       */
+/*=======================================*/
+
+// 전체 채팅 담는 박스
 export const ChatsBar = styled.div`
-  --w: var(--width);
-  --h: var(--contents-height);
-  width: var(--w);
-  height: var(--h);
+  width: var(--chat-width);
+  height: var(--contents-height);
   max-width: 100%;
 `;
 
-export const SendChatBar = styled.form`
-  --w: var(--width);
-  --h: var(--send-height);
-
-  --send-button-height: calc(var(--h));
-  --send-button-width: calc(var(--send-button-height) * 1.5);
-  width: var(--w);
-  height: var(--send-height);
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: calc(var(--w) * 0.01);
-
-  & > textarea {
-    box-sizing: border-box;
-    width: calc(var(--w) - var(--send-button-width) - var(--gap));
-    height: calc(var(--send-height) * 1.2);
-    display: flex;
-    border-radius: calc(var(--h) * 0.3);
-    border: calc(var(--border-width) / 2) solid black;
-    overflow: hidden;
-    resize: none;
-  }
-
-  Button {
-    box-sizing: border-box;
-    width: var(--send-button-width);
-    height: var(--send-button-height);
-    border: calc(var(--border-width) / 2) solid black;
-  }
-`;
-
-export const GoBackBar = styled.div`
-  --w: var(--width);
-  --h: var(--buttons-height);
-  width: var(--w);
-  height: var(--h);
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
-  & button {
-    /* display: inline-block; */
-    --button-width: calc(var(--w) * 0.4);
-    --button-height: calc(var(--button-width) / 5);
-    height: var(--button-height);
-    width: var(--button-width);
-    border: calc(var(--border-width) / 2) solid black;
-    border-radius: calc(var(--h) * 0.3);
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    color: #376277;
-    font-family: inherit;
-    font-size: calc(var(--button-height) * 0.5);
-    font-weight: bold;
-    cursor: pointer;
-    outline: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    padding: 0;
-
-    &.goBack:hover {
-      background-color: #18f123;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      opacity: 0.8;
-    }
-    &.leaveRoom:hover {
-      background-color: #fe3838;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      opacity: 0.8;
-    }
-
-    &:active {
-      animation: shake 0.3s;
-      transform: translateY(2px);
-      box-shadow: none;
-      opacity: 0.8;
-    }
-
-    @keyframes shake {
-      0% {
-        transform: translateX(0);
-      }
-      10% {
-        transform: translateX(-5px);
-      }
-      20% {
-        transform: translateX(5px);
-      }
-      30% {
-        transform: translateX(-5px);
-      }
-      40% {
-        transform: translateX(5px);
-      }
-      50% {
-        transform: translateX(-5px);
-      }
-      60% {
-        transform: translateX(5px);
-      }
-      70% {
-        transform: translateX(-5px);
-      }
-      80% {
-        transform: translateX(5px);
-      }
-      90% {
-        transform: translateX(-5px);
-      }
-      100% {
-        transform: translateX(0);
-      }
-    }
-  }
-`;
-
-/* ChatLists */
+// 채팅들
 export const ChatLists = styled.div`
+  width: var(--chat-width);
+  height: var(--contents-height);
+  max-width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-
-  & .YYYY_MM_DD {
-    text-align: center;
-    margin: calc(var(--h) * 0.01) 0;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    & > div {
-      width: fit-content;
-      --line-height: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
-      line-height: var(--line-height);
-      font-size: calc(var(--line-height) * 0.9);
-      border: none;
-      background-color: rgb(180, 195, 211);
-      color: rgb(47, 50, 54);
-      border-radius: calc(var(--h) * 0.3);
-      padding: calc(var(--h) * 0.003) calc(var(--w) * 0.05);
-    }
-  }
+  text-align: left;
+  gap: calc(var(--fontsize-small) / 2);
+  padding-right: 10px;
 `;
 
+// 채팅 하나
 export const ChatItem = styled.div<{ isMe?: boolean }>`
-  /* margin: 0.5rem; */
-  font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
-  margin: calc(var(--w) * 0.02);
+  --chat-bubble-color: ${(props) => (props.isMe ? "yellow" : "white")};
+
+  font-size: var(--fontsize-small);
   display: flex;
   justify-content: "flex-start";
   flex-direction: ${(props) => (props.isMe ? "row-reverse" : "row")};
   position: relative;
-  gap: calc(var(--w) * 0.02);
-`;
 
-export const ChatBubbled = styled.div<{ isMe?: boolean }>`
-  position: relative;
-  padding: calc(var(--h) * 0.01) calc(var(--h) * 0.02);
-  max-width: 97%;
-  border-radius: ${(props) => (props.isMe ? "1rem" : "0")}
-    ${(props) => (props.isMe ? "0" : "1rem")} 1rem 1rem;
-  background-color: ${(props) =>
-    props.isMe ? "var(--color-yellow)" : "#FFF"};
-  color: ${(props) => (props.isMe ? "#555" : "#000")};
-  border: calc(var(--border-width) / 2) solid black;
-`;
-
-export const ChatProfile = styled.div`
-  display: flex;
-
-  & > img {
-    cursor: pointer;
-    height: calc(var(--w) * 0.3 * 0.4);
-    aspect-ratio: 1;
+  .ChatProfile {
+    width: var(--fontsize-big);
+    height: var(--fontsize-big);
+    background-color: pink;
     border-radius: 50%;
     border: calc(var(--border-width) / 2) solid black;
+    margin: 0 calc(var(--fontsize-big) / 4);
+    img {
+      cursor: pointer;
+      width: var(--fontsize-big);
+      height: var(--fontsize-big);
+      border-radius: 50%;
+    }
+  }
+
+  .ChatMain {
+    display: flex;
+    flex-direction: column;
+    width: calc(var(--chat-width) * 0.7);
+    word-wrap: break-word;
+    margin: 0;
+    & > span {
+      text-align: ${(props) => (props.isMe ? "right" : "left")};
+      height: calc(var(--fontsize-small) * 0.8);
+      font-size: calc(var(--fontsize-small) * 0.8);
+      font-weight: 700;
+    }
+
+    .ChatBubble {
+      line-height: var(--fontsize-small);
+      font-size: var(--fontsize-small);
+      font-weight: 500;
+      position: relative;
+      padding: calc(var(--fontsize-small) * 0.5);
+      border-radius: ${(props) => (props.isMe ? "var(--fontsize-small)" : "0")}
+        ${(props) => (props.isMe ? "0" : "var(--fontsize-small)")}
+        var(--fontsize-small) var(--fontsize-small);
+      background-color: var(--chat-bubble-color);
+      color: ${(props) => (props.isMe ? "#555" : "#000")};
+      border: calc(var(--border-width) / 2) solid black;
+    }
   }
 `;
 
-export const ChatMain = styled.div<{ isMe?: boolean }>`
-  display: flex;
-  flex-direction: column;
-  width: calc(var(--width) * 0.7);
-  word-wrap: break-word;
-  & > span {
-    text-align: ${(props) => (props.isMe ? 'right' : 'left')};
-    font-size: min(calc(var(--h) * 0.02), calc(var(--w) * 0.07));
-  }
-`;
-
+// 프로필 클릭 시 나오는 메뉴
 export const ChatsMenuContainer = styled.div`
   position: absolute;
   background-color: gray;
   border-radius: 10px;
-  padding: 10px;
-  font-size: min(calc(var(--h) * 0.03), calc(var(--w) * 0.1));
-  z-index: 1;
-  top: calc(var(--w) * 0.3 * 0.4);
+  font-size: var(--fontsize-small);
+  top: calc(var(--fontsize-big) * 1.1);
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
   color: white;
   font-weight: bold;
   text-align: center;
+
+  z-index: 1;
+
+  width: 200px;
+  height: 200px;
 
   div {
     &:hover {
       opacity: 0.9;
       transform: scale(0.98);
       cursor: pointer;
-    };
+    }
+  }
+`;
+
+/*=======================================*/
+/*                                       */
+/*                FOOTER                 */
+/*                                       */
+/*=======================================*/
+
+export const SendChatBar = styled.form`
+  --send-button-height: calc(var(--footer-height) - var(--section-padding));
+  --send-button-width: calc(var(--send-button-height) * 1.5);
+  --radius: calc(var(--send-button-height) * 0.5);
+
+  width: var(--chat-width);
+  height: var(--footer-height);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  & > textarea {
+    padding-top: calc(var(--send-button-height) * 0.25);
+    padding-left: calc(var(--send-button-height) * 0.25);
+    box-sizing: border-box;
+    width: calc(var(--chat-width) - var(--send-button-width));
+    height: var(--send-button-height);
+    display: flex;
+    border-radius: var(--radius) 0 0 var(--radius);
+    border: calc(var(--border-width) / 2) solid black;
+    overflow: hidden;
+    resize: none;
+    margin-left: calc(var(--chat-radius) / 2);
+  }
+
+  & > Button {
+    box-sizing: border-box;
+    height: var(--send-button-height);
+    width: var(--send-button-width);
+    border: calc(var(--border-width) / 2) solid black;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-right: calc(var(--chat-radius) / 2);
   }
 `;
