@@ -3,14 +3,15 @@ import { Socket } from 'socket.io-client';
 import { useQueryClient } from 'react-query';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useAllChannels, useMyChannels } from '../../hooks/query/chat';
-import { useUserInfo } from '../../hooks/query/user';
+import { UserInfo, useUserInfo } from '../../hooks/query/user';
 import { Chatting } from '../Chatting';
-import { CreateChannelData, useCreatChannel, useJoinChannel } from '../../hooks/mutation/chat';
+import { CreateChannelData, useCreateChannel, useJoinChannel } from '../../hooks/mutation/chat';
 import { ChannelContainer, ChannelList, Input, SearchChannel, Header } from './styles';
 import { SmallButton } from '../../components/Button';
 import Modal from '../Modal';
 import searchButton from '../../assets/Search.svg';
 import createChannelButton from '../../assets/smallButton/newChatRoomButton.svg';
+import lockImg from '../../assets/lock.svg';
 
 export enum ChannelStatus {
   PUBLIC = 'PUBLIC',
@@ -21,7 +22,7 @@ export enum ChannelStatus {
 export interface ChannelInfo {
   id: number;
   title: string;
-  owner: number;
+  owner: any;
   nickname: string;
   status: ChannelStatus;
   createdAt: string;
@@ -30,8 +31,8 @@ export interface ChannelInfo {
 
 export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { socket: Socket | undefined, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
   const queryClient = useQueryClient();
-  const userInfo = useUserInfo().data;
-  const createChannel = useCreatChannel();
+  const userInfo: UserInfo = useUserInfo().data;
+  const createChannel = useCreateChannel();
   const joinChannel = useJoinChannel();
   const allChannels: ChannelInfo[] = useAllChannels().data;
   const myChannels: ChannelInfo[] = useMyChannels().data;
@@ -78,7 +79,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     myChannels.forEach((channel) => {
       if (String(channel.id) === getChannelId) {
         setPopChatting(false);
-        socket?.emit('joinChannel', {'channelId': String(getChannelId)});
+        socket?.emit('joinChannel', { 'channelId': String(getChannelId) });
         setChannelId(getChannelId);
         setPopChatting(true);
         isJoined = true;
@@ -88,15 +89,10 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     if (isJoined) return;
     if (channelStatus === ChannelStatus.PROTECTED) {
       const pwd = prompt('Enter password');
-      joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket });
-      socket?.emit('closeChannel', {'channelId': String(channelId)});
-      setChannelId(getChannelId);
-      setPopChatting(true);
+      if (pwd !== null)
+        joinChannel.mutate({ id: getChannelId, password: String(pwd), socket: socket, setChannelId: setChannelId, setPopChatting: setPopChatting });
     } else {
-      joinChannel.mutate({ id: getChannelId, password: '', socket: socket });
-      socket?.emit('closeChannel', {'channelId': String(channelId)});
-      setChannelId(getChannelId);
-      setPopChatting(true);
+      joinChannel.mutate({ id: getChannelId, password: '', socket: socket, setChannelId: setChannelId, setPopChatting: setPopChatting });
     }
   }, [joinChannel]);
 
@@ -124,30 +120,27 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     e.preventDefault();
     const data: CreateChannelData = {
       title: title,
-      password: password,
-      socket: socket
+      password: password
     }
     createChannel.mutate(data);
     onCloseCreateChannelModal();
   }, [createChannel]);
 
   const onNewChannel = useCallback(async (data: ChannelInfo) => {
-    if (data.owner === userInfo.id) {
-      socket?.emit('joinChannel', {'channelId': String(data.id)});
+    if (data.owner.id === userInfo.id) {
+      socket?.emit('joinChannel', { 'channelId': String(data.id) });
       setChannelId(String(data.id));
       setPopChatting(true);
     }
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
-  }, [queryClient, createChannel]);
+  }, []);
 
   const onRemoveChannel = useCallback(async (data: ChannelInfo) => {
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     queryClient.invalidateQueries({ queryKey: ['myChannels'] });
     if (Number(channelId) === data.id)
       setPopChatting(false);
-    // if (channelId === '')
-    //   setPopChatting(false);
-  }, [queryClient]);
+  }, []);
 
   useEffect(() => {
     socket?.on('newChannel', onNewChannel);
@@ -180,7 +173,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
                 <div>
                   {channelInfo.status === ChannelStatus.PROTECTED ? (
                     <img
-                      src='./../../public/padlock_locked.png'
+                      src={lockImg}
                       alt='padlock_locked'
                     />
                   ) : (
@@ -257,7 +250,16 @@ export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, set
                     data-id={channelInfo.id}
                     onClick={onClickOpenChat}
                   >
-                    <div />
+                    <div>
+                      {channelInfo.status === ChannelStatus.PROTECTED ? (
+                        <img
+                          src={lockImg}
+                          alt='padlock_locked'
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                     <div>
                       {channelInfo.title.length > 20
                         ? channelInfo.title.slice(0, 20) + '...'

@@ -8,6 +8,7 @@ export const ChannelContainer = styled.div`
   --height: var(--body-height);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   height: var(--height);
   width: var(--width);
   border-radius: 2rem;

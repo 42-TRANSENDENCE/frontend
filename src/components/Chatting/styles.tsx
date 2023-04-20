@@ -28,6 +28,7 @@ export const ChatsContainer = styled.div`
   border: var(--border-width) solid black;
   padding: var(--padding-vertical) var(--padding-horizontal);
   background: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
 
   .Button {
     width: 10%;
