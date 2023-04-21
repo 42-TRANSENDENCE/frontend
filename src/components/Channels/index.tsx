@@ -12,6 +12,8 @@ import Modal from '../Modal';
 import searchButton from '../../assets/Search.svg';
 import createChannelButton from '../../assets/smallButton/newChatRoomButton.svg';
 import lockImg from '../../assets/lock.svg';
+import dmImg from '../../assets/DM.svg';
+import { toast } from 'react-toastify';
 
 export enum ChannelStatus {
   PUBLIC = 'PUBLIC',
@@ -19,7 +21,7 @@ export enum ChannelStatus {
   PRIVATE = 'PRIVATE'
 }
 
-export interface ChannelInfo {
+export interface ChannelsInfo {
   id: number;
   title: string;
   owner: any;
@@ -34,8 +36,8 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
   const userInfo: UserInfo = useUserInfo().data;
   const createChannel = useCreateChannel();
   const joinChannel = useJoinChannel();
-  const allChannels: ChannelInfo[] = useAllChannels().data;
-  const myChannels: ChannelInfo[] = useMyChannels().data;
+  const allChannels: ChannelsInfo[] = useAllChannels().data;
+  const myChannels: ChannelsInfo[] = useMyChannels().data;
   const [title, setTitle] = useState('');
   const [password, setPassword] = useState('');
   const [findChannelName, setFindChannelName] = useState('');
@@ -54,7 +56,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
       setFindChannelName('');
       return;
     }
-    const newFilteredChannels = allChannels.filter((channel: ChannelInfo) => {
+    const newFilteredChannels = allChannels.filter((channel: ChannelsInfo) => {
       return channel.title === findChannelName.trimStart();
     });
     setFilteredChannels(newFilteredChannels);
@@ -64,7 +66,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
   const onChangeInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setFindChannelName(e.target.value);
-    const newFilteredChannels = allChannels.filter((channel: ChannelInfo) => {
+    const newFilteredChannels = allChannels.filter((channel: ChannelsInfo) => {
       return channel.title.includes(e.target.value.trimStart());
     });
     setFilteredChannels(newFilteredChannels);
@@ -126,7 +128,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     onCloseCreateChannelModal();
   }, [createChannel]);
 
-  const onNewChannel = useCallback(async (data: ChannelInfo) => {
+  const onNewChannel = useCallback(async (data: ChannelsInfo) => {
     if (data.owner.id === userInfo.id) {
       socket?.emit('joinChannel', { 'channelId': String(data.id) });
       setChannelId(String(data.id));
@@ -135,7 +137,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
   }, []);
 
-  const onRemoveChannel = useCallback(async (data: ChannelInfo) => {
+  const onRemoveChannel = useCallback(async (data: ChannelsInfo) => {
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     queryClient.invalidateQueries({ queryKey: ['myChannels'] });
     if (Number(channelId) === data.id)
@@ -145,9 +147,11 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
   useEffect(() => {
     socket?.on('newChannel', onNewChannel);
     socket?.on('removeChannel', onRemoveChannel);
+    socket?.on('newChannelDm', (data: any) => { console.log(data) });
     return () => {
       socket?.off('newChannel', onNewChannel);
       socket?.off('removeChannel', onRemoveChannel);
+      socket?.off('newChannelDm', (data: any) => { })
     };
   }, [socket]);
 
@@ -161,7 +165,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
       </SearchChannel>
       <ChannelList>
         <Scrollbars autoHide>
-          {filteredChannels?.map((channelInfo: ChannelInfo) => {
+          {filteredChannels?.map((channelInfo: ChannelsInfo) => {
             return (
               <div
                 className='eachChannel'
@@ -173,9 +177,7 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
                 <div>
                   {channelInfo.status === ChannelStatus.PROTECTED ? (
                     <img
-                      src={lockImg}
-                      alt='padlock_locked'
-                    />
+                      src={lockImg} />
                   ) : (
                     <></>
                   )}
@@ -226,13 +228,26 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
 
 
 export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, setChannelId }: { socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
-  const myChannels: ChannelInfo[] = useMyChannels().data;
+  const queryClient = useQueryClient();
+  const myChannels: ChannelsInfo[] = useMyChannels().data;
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest('[data-id]');
     setChannelId(channelData.getAttribute('data-id'));
     setPopChatting(true);
   }, []);
+
+  const onNewChannelDm = useCallback(async (data: any) => {
+    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
+    toast.success('New message from ' + data.nickname);
+  }, []);
+
+  useEffect(() => {
+    socket?.on('newChannelDm', onNewChannelDm);
+    return () => {
+      socket?.off('newChannelDm', onNewChannelDm);
+    }
+  })
 
   return (
     <>
@@ -243,7 +258,7 @@ export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, set
           <Header>Chats</Header>
           <ChannelList>
             <Scrollbars autoHide>
-              {myChannels?.map((channelInfo: ChannelInfo) => {
+              {myChannels?.map((channelInfo: ChannelsInfo) => {
                 return (
                   <div
                     className='eachChannel'
@@ -253,19 +268,24 @@ export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, set
                     <div>
                       {channelInfo.status === ChannelStatus.PROTECTED ? (
                         <img
-                          src={lockImg}
-                          alt='padlock_locked'
-                        />
+                          src={lockImg} />
+                      ) : channelInfo.status === ChannelStatus.PRIVATE ? (
+                        <img
+                          src={dmImg} />
                       ) : (
                         <></>
                       )}
                     </div>
                     <div>
-                      {channelInfo.title.length > 20
-                        ? channelInfo.title.slice(0, 20) + '...'
-                        : channelInfo.title}
+                      {channelInfo.status === ChannelStatus.PRIVATE ? (
+                        channelInfo.nickname
+                      ) : (
+                        channelInfo.title.length > 20
+                          ? channelInfo.title.slice(0, 20) + '...'
+                          : channelInfo.title)}
                     </div>
-                    <div>{channelInfo.nickname}</div>
+                    {channelInfo.status === ChannelStatus.PRIVATE ?
+                      <></> : <div>{channelInfo.nickname}</div>}
                   </div>
                 )
               })}
