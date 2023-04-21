@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { ChannelStatus } from "../Channels";
+import { ChannelStatus } from "../Channels/interface";
 
 export enum MemberType {
   OWNER = "OWNER",
