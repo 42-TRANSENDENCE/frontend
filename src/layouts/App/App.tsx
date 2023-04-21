@@ -19,6 +19,7 @@ const TwoFactor = loadable(() => import('../../pages/LogIn/TwoFactor'));
 const Home = loadable(() => import('../Home/Home'));
 const Chat = loadable(() => import('../../pages/Chat/Chat'));
 const Game = loadable(() => import('../../pages/Game/Game'));
+const InGame = loadable(() => import('../../pages/Game/Ingame'));
 
 const queryClient = new QueryClient();
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
             <Route path="/home" element={<PrivateRoute component={Home} />} />
             <Route path="/chat/*" element={<PrivateRoute component={Chat} />} />
             <Route path="/game" element={<PrivateRoute component={Game} />} />
+            <Route path="/game/play" element={<PrivateRoute component={InGame} />} />
             <Route path="/*" element={<div>NOTFOUND</div>} />
           </Routes>
           <ToastContainer

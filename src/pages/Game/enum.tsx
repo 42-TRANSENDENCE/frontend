@@ -1,11 +1,9 @@
 export enum GameState {
-    Lobby,
-    Waiting,
-    InGame
+  Lobby,
+  Waiting,
 }
 
 export enum GameMode {
-    NORMAL = 'NORMAL',
-    SPECIAL = 'SPECIAL',
+  NORMAL = "NORMAL",
+  SPECIAL = "SPECIAL",
 }
-  

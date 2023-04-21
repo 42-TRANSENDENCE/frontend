@@ -1,7 +1,7 @@
-import styled from 'styled-components'
-import triangle from '../../assets/triangle.svg'
+import styled from "styled-components";
+import triangle from "../../assets/triangle.svg";
 
-export const GameContainer = styled.div `
+export const GameContainer = styled.div`
   width: var(--page-width);
   height: var(--page-height);
   padding: var(--html-padding-vertical) var(--html-padding-horizontal);
@@ -11,7 +11,8 @@ export const GameContainer = styled.div `
   /* justify-content: top; */
   align-items: center;
 
-  .Title, .Footer{
+  .Title,
+  .Footer {
     width: var(--title-width);
     height: var(--title-height);
 
@@ -19,8 +20,11 @@ export const GameContainer = styled.div `
     flex-direction: column;
     justify-content: top;
   }
-  .Body{
-    --body-height: calc(var(--page-height) - 2*var(--title-height) - 4*var(--html-padding-vertical));
+  .Body {
+    --body-height: calc(
+      var(--page-height) - 2 * var(--title-height) - 4 *
+        var(--html-padding-vertical)
+    );
     width: var(--body-width);
     height: var(--body-height);
     display: flex;
@@ -28,8 +32,7 @@ export const GameContainer = styled.div `
     align-items: center;
   }
 
-  .Footer{
-    transform: rotate(180deg)
+  .Footer {
+    transform: rotate(180deg);
   }
-
-`
+`;
