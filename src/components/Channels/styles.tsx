@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ChannelContainer = styled.div`
   --channel-width: calc(var(--section-width));
-  --channel-height: calc(var(--section-height) * 0.7);
+  --channel-height: calc(var(--section-height) * 0.9);
   --channel-padding: var(--section-padding);
 
   --header-height: var(--fontsize-big);

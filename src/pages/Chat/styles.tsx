@@ -25,7 +25,6 @@ export const ChatBody = styled.div`
       calc((var(--body-width) * 0.33 - var(--html-padding-horizontal))),
       400px
     );
-    --section-height: min(var(--body-height), var(--body-width));
     --section-padding: calc(var(--section-height) * 0.02);
 
     --fontsize-big: calc(var(--section-height) * 0.045);
@@ -43,21 +42,23 @@ export const ChatBody = styled.div`
 
   > .OnlineList {
     text-align: left;
+    --section-height: min(var(--body-height), var(--body-width));
   }
 
   > .ChatOrMyChannels {
     --section-width: calc(
       (var(--body-width) * 0.34 - var(--html-padding-horizontal))
     );
+    --section-height: min(var(--body-height), var(--body-width));
     text-align: center;
   }
 
   > .AllChannels {
+    --section-height: calc(min(var(--body-height), var(--body-width)) * 0.9);
     text-align: right;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-top: calc(var(--section-height) * 0.1);
-    gap: calc(var(--section-height) * 0.01);
+    /* gap: calc(var(--section-height) * 0.01); */
   }
 `;
