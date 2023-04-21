@@ -333,15 +333,14 @@ export const MyChannels = ({
                     onClick={onClickOpenChat}
                     key={index}
                   >
-                    <div>
-                      {channelInfo.status === ChannelStatus.PROTECTED ? (
-                        <img src={lockImg} />
-                      ) : channelInfo.status === ChannelStatus.PRIVATE ? (
-                        <img src={dmImg} />
-                      ) : (
-                        <></>
-                      )}
-                    </div>
+                    <div className="channelName">
+                      {
+                        {
+                          [ChannelStatus.PROTECTED]: <img src={lockImg} />,
+                          [ChannelStatus.PRIVATE]: <img src={dmImg} />,
+                          [ChannelStatus.PUBLIC]: <></>,
+                        }[channelInfo.status]
+                      }
                     <div>
                       {channelInfo.status === ChannelStatus.PRIVATE
                         ? channelInfo.title.replace(myNickname, "")
@@ -349,10 +348,9 @@ export const MyChannels = ({
                         ? channelInfo.title.slice(0, 20) + "..."
                         : channelInfo.title}
                     </div>
-                    {channelInfo.status === ChannelStatus.PRIVATE ? (
-                      <></>
-                    ) : (
-                      <div>{channelInfo.nickname}</div>
+                    </div>
+                    {channelInfo.status !== ChannelStatus.PRIVATE && (
+                      <div className="ownerName">{channelInfo.nickname}</div>
                     )}
                   </div>
                 );
