@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled, { css } from "styled-components";
 
 export const TitleContainer = styled.div`
   box-sizing: border-box;
@@ -19,12 +19,12 @@ export const TitleContainer = styled.div`
     aspect-ratio: 1;
     position: absolute;
     left: calc(var(--title-height) * 0.125);
-
     img {
+      position: absolute;
+      margin: 0;
+      padding: 0;
       width: 100%;
       aspect-ratio: 1;
-      border-radius: 50%;
-      // background-color: var(--color-yellow);
     }
   }
 
@@ -66,10 +66,10 @@ export const TitleContainer = styled.div`
 
 /** */
 
-const backgroundColor = '#2A2E37';
-const searchBgColor = 'transparent';
-const iconColor = 'rgb(52, 54, 62)';
-const transition = 'all .5s ease';
+const backgroundColor = "#2A2E37";
+const searchBgColor = "transparent";
+const iconColor = "rgb(52, 54, 62)";
+const transition = "all .5s ease";
 
 export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   background-color: ${searchBgColor};
@@ -92,7 +92,7 @@ export const SearchWrapper = styled.div<{ isOpen: boolean }>`
   }
   @media screen and (min-width: 250px) and (max-width: 600px) {
     & {
-      width: ${(props) => (props.isOpen ? '13.25rem' : '3.25rem')};
+      width: ${(props) => (props.isOpen ? "13.25rem" : "3.25rem")};
     }
   }
 
@@ -153,7 +153,7 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   transition: ${transition};
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     display: block;
     background-color: ${iconColor};
@@ -168,7 +168,7 @@ export const SearchIcon = styled.span<{ isOpen: boolean }>`
   }
 
   &:after {
-    content: '';
+    content: "";
     height: calc(var(--button-size) * 0.5);
     width: var(--line-width);
     position: absolute;
