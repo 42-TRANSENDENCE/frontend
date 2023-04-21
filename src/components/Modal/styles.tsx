@@ -36,7 +36,7 @@ export const CreateModal = styled.div`
     align-items: center;
     text-align: center;
   }
-  z-index: 10;
+  z-index: 1000;
 `;
 
 export const CloseModalButton = styled.button`
