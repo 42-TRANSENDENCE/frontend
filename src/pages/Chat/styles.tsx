@@ -59,6 +59,5 @@ export const ChatBody = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    /* gap: calc(var(--section-height) * 0.01); */
   }
 `;

@@ -252,10 +252,13 @@ export const ChatsMenuContainer = styled.div`
     border-radius: calc(var(--fontsize-small) / 2);
 
     z-index: 100;
-    &:hover {
+
+    & div:hover {
+      backdrop-filter: blur(100px);
       opacity: 0.9;
       transform: scale(0.98);
       cursor: pointer;
+      border-radius: calc(var(--fontsize-small) / 4);
     }
   }
 `;
