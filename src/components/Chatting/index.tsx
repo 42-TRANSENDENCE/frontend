@@ -201,7 +201,9 @@ const ChatBubble = ({
       <div className="ChatMain">
         {!isMe && <div>{eachChat.user ? eachChat.user : "nonamed"}</div>}
         <div className="ChatBubble">{eachChat.content}</div>
-        <span>{dayjs(eachChat.createdAt).locale("ko").format("hh:mm a")}</span>
+        <span>
+          {dayjs(eachChat.createdAt).locale("ko").format("MM.DD. ddd hh:mm a")}
+        </span>
       </div>
     </ChatItem>
   );
