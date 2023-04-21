@@ -249,27 +249,25 @@ export const Channels = ({
         showInfoButton
         tooltipText="If you do not set password, public channel will be created."
       >
-        <form onSubmit={onSubmitCreateChannel}>
-          <div>
+        <ModalChild onSubmit={onSubmitCreateChannel}>
             <Input
+            className="ChannelName"
               type="text"
               name="title"
               placeholder="Channel Name"
               value={title}
               onChange={onChangeTitle}
             />
-          </div>
-          <div>
             <Input
+            className="ChannelPassword"
               type="password"
               name="password"
               placeholder="Password"
               value={password}
             onChange={onChangePassword}
             />
-          </div>
           <SmallButton img_url={createChannelButton} type="submt" />
-        </form>
+        </ModalChild>
       </Modal>
     </>
   );
