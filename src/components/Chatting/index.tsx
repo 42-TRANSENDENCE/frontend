@@ -191,17 +191,10 @@ const ChatBubble = ({
       )}
 
       <div className="ChatMain">
-        {!isMe && <span>{eachChat.user}</span>}
+        {!isMe && <div>{eachChat.user ? eachChat.user : "nonamed"}</div>}
         <div className="ChatBubble">{eachChat.content}</div>
         <span>{dayjs(eachChat.createdAt).locale("ko").format("hh:mm a")}</span>
       </div>
-      {/* <ChatMain isMe={isMe} >
-        {!isMe && eachChat.user}
-        <ChatBubbled isMe={isMe} style={{ whiteSpace: 'pre-wrap' }} >
-          {eachChat.content}
-        </ChatBubbled>
-        <span>{dayjs(eachChat.createdAt).locale('ko').format('hh:mm a')}</span>
-      </ChatMain> */}
     </ChatItem>
   );
 };
@@ -415,7 +408,9 @@ export const Chatting = ({
   return (
     <ChatsContainer>
       <ChatTitle>
-        <p className="Title">Chat Title (n/m)</p>
+        <p className="Title">
+          {channelId} ({"?"}/{channelInfo.channelMembers.length})
+        </p>
         <div className="Buttons">
           {channelInfo?.myType === MemberType.OWNER && (
             <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
