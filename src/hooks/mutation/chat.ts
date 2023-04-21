@@ -193,6 +193,7 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
 
 export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function admin(data: AKBMData): Promise<void> {
     const { id, user } = data;
@@ -210,11 +211,17 @@ export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFun
           toast.warning('User is alreay Administrator');
       })
   }
-  return useMutation(admin);
+  return useMutation({
+    mutationFn: admin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function kick(data: AKBMData): Promise<void> {
     const { id, user, socket } = data;
@@ -231,11 +238,17 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
         }
       })
   }
-  return useMutation(kick);
+  return useMutation({
+    mutationFn: kick,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function ban(data: AKBMData): Promise<void> {
     const { id, user, socket } = data;
@@ -252,7 +265,12 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
         }
       })
   }
-  return useMutation(ban);
+  return useMutation({
+    mutationFn: ban,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {

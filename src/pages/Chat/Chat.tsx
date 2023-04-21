@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import useSocket from '../../hooks/useSocket';
 import { useSendDm } from '../../hooks/mutation/chat';

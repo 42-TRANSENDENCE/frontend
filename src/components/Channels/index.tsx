@@ -135,23 +135,20 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
       setPopChatting(true);
     }
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    queryClient.invalidateQueries({ queryKey: ['myChannels'] });
   }, []);
 
-  const onRemoveChannel = useCallback(async (data: ChannelsInfo) => {
+  const onRemoveChannel = useCallback(async () => {
     queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     queryClient.invalidateQueries({ queryKey: ['myChannels'] });
-    if (Number(channelId) === data.id)
-      setPopChatting(false);
   }, []);
 
   useEffect(() => {
     socket?.on('newChannel', onNewChannel);
     socket?.on('removeChannel', onRemoveChannel);
-    socket?.on('newChannelDm', (data: any) => { console.log(data) });
     return () => {
       socket?.off('newChannel', onNewChannel);
       socket?.off('removeChannel', onRemoveChannel);
-      socket?.off('newChannelDm', (data: any) => { })
     };
   }, [socket]);
 
@@ -237,15 +234,18 @@ export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, set
     setPopChatting(true);
   }, []);
 
-  const onNewChannelDm = useCallback(async (data: any) => {
+  const onNewMessage = useCallback(async (data: any) => {
     queryClient.invalidateQueries({ queryKey: ['myChannels'] });
-    toast.success('New message from ' + data.nickname);
+    myChannels?.map((channel) => {
+      if (channel.id === Number(data.channelId))
+        toast.success('asdf');
+    })
   }, []);
 
   useEffect(() => {
-    socket?.on('newChannelDm', onNewChannelDm);
+    socket?.on('newMessage', onNewMessage);
     return () => {
-      socket?.off('newChannelDm', onNewChannelDm);
+      socket?.off('newMessage', onNewMessage);
     }
   })
 
