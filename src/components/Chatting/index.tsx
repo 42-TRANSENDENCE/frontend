@@ -133,15 +133,23 @@ const ChatMenu = ({
 
   return (
     <ChatsMenuContainer>
-      {isMember ? (
-        {
-          [MemberType.OWNER]: <OwnerRoll />,
-          [MemberType.ADMIN]: <AdminRoll />,
-          [MemberType.MEMBER]: <MemberRoll />,
-        }[channelInfo.myType]
-      ) : (
-        <div>Out Member</div>
-      )}
+      <div
+        className="outMenu"
+        onClick={() => {
+          setPopMenu(false);
+        }}
+      ></div>
+      <div className="InMenu">
+        {isMember ? (
+          {
+            [MemberType.OWNER]: <OwnerRoll />,
+            [MemberType.ADMIN]: <AdminRoll />,
+            [MemberType.MEMBER]: <MemberRoll />,
+          }[channelInfo.myType]
+        ) : (
+          <div>Out Member</div>
+        )}
+      </div>
     </ChatsMenuContainer>
   );
 };
