@@ -281,10 +281,6 @@ export const Chatting = ({
     });
   }
 
-  useEffect(() => {
-    console.log("dfadsfads", channelInfo);
-  });
-
   const onClickClose = () => {
     // socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
