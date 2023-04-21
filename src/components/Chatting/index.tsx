@@ -3,9 +3,6 @@ import {
   ChatsBar,
   SendChatBar,
   ChatItem,
-  // ChatProfile,
-  // ChatBubbled,
-  // ChatMain,
   ChatLists,
   ChatsMenuContainer,
   ChatTitle,
@@ -22,7 +19,7 @@ import {
   useKick,
   useMute,
 } from "../../hooks/mutation/chat";
-import { ChannelStatus, ChannelsInfo } from "../Channels";
+import { ChannelsInfo } from "../Channels/interface";
 import { Socket } from "socket.io-client";
 import { Scrollbars } from "react-custom-scrollbars";
 import dayjs from "dayjs";

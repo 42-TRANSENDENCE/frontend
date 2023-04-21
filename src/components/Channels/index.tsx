@@ -24,22 +24,7 @@ import createChannelButton from "../../assets/smallButton/newChatRoomButton.svg"
 import lockImg from "../../assets/lock.svg";
 import dmImg from "../../assets/DM.svg";
 import { toast } from "react-toastify";
-
-export enum ChannelStatus {
-  PUBLIC = "PUBLIC",
-  PROTECTED = "PROTECTED",
-  PRIVATE = "PRIVATE",
-}
-
-export interface ChannelsInfo {
-  id: number;
-  title: string;
-  owner: any;
-  nickname: string;
-  status: ChannelStatus;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ChannelStatus, ChannelsInfo } from "./interface";
 
 export const Channels = ({
   socket,
