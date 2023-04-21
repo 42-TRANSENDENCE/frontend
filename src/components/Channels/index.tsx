@@ -228,11 +228,11 @@ export const Channels = ({
                     {channelInfo.status === ChannelStatus.PROTECTED && (
                       <img src={lockImg} />
                     )}
-                  <div>
-                    {channelInfo.title.length > 20
-                      ? channelInfo.title.slice(0, 20) + "..."
-                      : channelInfo.title}
-                  </div>
+                    <div>
+                      {channelInfo.title.length > 20
+                        ? channelInfo.title.slice(0, 20) + "..."
+                        : channelInfo.title}
+                    </div>
                   </div>
                   <div className="ownerName">{channelInfo.nickname}</div>
                 </div>
@@ -249,22 +249,22 @@ export const Channels = ({
         tooltipText="If you do not set password, public channel will be created."
       >
         <ModalChild onSubmit={onSubmitCreateChannel}>
-            <Input
+          <Input
             className="ChannelName"
-              type="text"
-              name="title"
-              placeholder="Channel Name"
-              value={title}
-              onChange={onChangeTitle}
-            />
-            <Input
+            type="text"
+            name="title"
+            placeholder="Channel Name"
+            value={title}
+            onChange={onChangeTitle}
+          />
+          <Input
             className="ChannelPassword"
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={password}
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={password}
             onChange={onChangePassword}
-            />
+          />
           <SmallButton img_url={createChannelButton} type="submt" />
         </ModalChild>
       </Modal>
@@ -340,13 +340,13 @@ export const MyChannels = ({
                           [ChannelStatus.PUBLIC]: <></>,
                         }[channelInfo.status]
                       }
-                    <div>
-                      {channelInfo.status === ChannelStatus.PRIVATE
-                        ? channelInfo.title.replace(myNickname, "")
-                        : channelInfo.title.length > 20
-                        ? channelInfo.title.slice(0, 20) + "..."
-                        : channelInfo.title}
-                    </div>
+                      <div>
+                        {channelInfo.status === ChannelStatus.PRIVATE
+                          ? channelInfo.title.replace(myNickname, "")
+                          : channelInfo.title.length > 20
+                          ? channelInfo.title.slice(0, 20) + "..."
+                          : channelInfo.title}
+                      </div>
                     </div>
                     {channelInfo.status !== ChannelStatus.PRIVATE && (
                       <div className="ownerName">{channelInfo.nickname}</div>
