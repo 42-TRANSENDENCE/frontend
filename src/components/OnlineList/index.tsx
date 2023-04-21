@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
+import { useNavigate } from 'react-router';
 import { FriendListContainer, OnOffLineList, Header, UserStatus } from './styles';
 // import { useGetFriendList } from '../../hooks/query/friend';
 import { useSendDm } from '../../hooks/mutation/chat';
@@ -30,8 +31,9 @@ export interface User {
 //   nickname: string;
 // }
 
-const onlineList = function () {
+const OnlineList = ({ isHome, setChannelId, setPopChatting }: { isHome: boolean, setChannelId: React.Dispatch<React.SetStateAction<string>> | null, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null }) => {
   const clientSocket = useContext(SocketContext);
+  const navigate = useNavigate();
   const sendDM = useSendDm();
   // const response = useGetFriendList().data;
   // const getFriendList: FriendList[] = response;
@@ -78,11 +80,19 @@ const onlineList = function () {
     });
 
     return () => {
+      clientSocket.off('change_status');
     };
   }, []);
 
   const onClickSendDm = useCallback((userinfo: User) => {
-    sendDM.mutate({ id: userinfo.id, nickname: userinfo.nickname })
+    if (isHome) {
+      navigate('/chat', {
+        state: { user: userinfo },
+      });
+    }
+    else {
+      sendDM.mutate({ id: userinfo.id, nickname: userinfo.nickname, setChannelId: setChannelId, setPopChatting: setPopChatting });
+    }
   }, []
   );
 
@@ -131,4 +141,4 @@ const onlineList = function () {
   );
 };
 
-export default onlineList;
+export default OnlineList;
