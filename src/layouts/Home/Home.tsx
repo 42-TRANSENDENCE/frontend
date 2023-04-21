@@ -27,7 +27,7 @@ const Home = () => {
   const userInfoData = useUserInfo().data;
   const bufferObj: { type: "Buffer", data: [] } = { type: userInfoData?.avatar.type, data: userInfoData?.avatar.data };
   const uint8Array = new Uint8Array(bufferObj.data);
-  const userAvatar  = new Blob([uint8Array], { type: "application/octet-stream" });
+  const userAvatar = new Blob([uint8Array], { type: "application/octet-stream" });
 
   useEffect(() => {
     if (userSearch) {
@@ -63,7 +63,7 @@ const Home = () => {
         <div className='BodyOuter'>
           <div className='Body'>
             <div className="LeftSide Section">
-              <OnlineList />
+              <OnlineList isHome={true} setChannelId={null} setPopChatting={null} />
             </div>
 
             <div className="MiddleSide Section">

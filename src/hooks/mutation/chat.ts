@@ -27,8 +27,10 @@ interface PostChatData {
 }
 
 interface SendDMData {
-  id: number;
-  nickname: string;
+  id: number | undefined;
+  nickname: string | undefined;
+  setChannelId: React.Dispatch<React.SetStateAction<string>> | null;
+  setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null;
 }
 
 interface AKBMData {
@@ -160,7 +162,7 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
   const fetcher = useFetcher();
 
   async function sendDM(data: SendDMData): Promise<void> {
-    const { id, nickname } = data;
+    const { id, nickname, setChannelId, setPopChatting } = data;
     await fetcher('/channels/dm', {
       method: 'POST',
       headers: {
@@ -169,7 +171,18 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
       credentials: 'include',
       body: JSON.stringify({ id: id, nickname: nickname }),
     })
+      .then((response) => {
+        if (response.status === 201 || response.status === 400) {
+          response.json().then(data => {
+            if (setChannelId && setPopChatting) {
+              setChannelId(data.channelId);
+              setPopChatting(true);
+            }
+          })
+        }
+      })
   }
+
   return useMutation({
     mutationFn: sendDM,
     onSuccess: () => {
@@ -180,6 +193,7 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
 
 export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function admin(data: AKBMData): Promise<void> {
     const { id, user } = data;
@@ -197,11 +211,17 @@ export function useAdmin(): UseMutationResult<void, Error, AKBMData, MutationFun
           toast.warning('User is alreay Administrator');
       })
   }
-  return useMutation(admin);
+  return useMutation({
+    mutationFn: admin,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function kick(data: AKBMData): Promise<void> {
     const { id, user, socket } = data;
@@ -215,15 +235,20 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
       .then((response) => {
         if (response.status === 200) {
           toast.success(user + ' is kicked out');
-          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }
-  return useMutation(kick);
+  return useMutation({
+    mutationFn: kick,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function ban(data: AKBMData): Promise<void> {
     const { id, user, socket } = data;
@@ -237,11 +262,15 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
       .then((response) => {
         if (response.status === 200) {
           toast.success(user + ' is banned in this channel');
-          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }
-  return useMutation(ban);
+  return useMutation({
+    mutationFn: ban,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  });
 }
 
 export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunction<void, AKBMData>> {

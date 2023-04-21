@@ -1,4 +1,3 @@
-import { StyledComponent } from "@emotion/styled";
 import styled from "styled-components";
 
 export const ChatBody = styled.div`

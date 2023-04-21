@@ -3,6 +3,9 @@ import {
   ChatsBar,
   SendChatBar,
   ChatItem,
+  // ChatProfile,
+  // ChatBubbled,
+  // ChatMain,
   ChatLists,
   ChatsMenuContainer,
   ChatTitle,
@@ -19,7 +22,7 @@ import {
   useKick,
   useMute,
 } from "../../hooks/mutation/chat";
-import { ChannelStatus } from "../Channels";
+import { ChannelStatus, ChannelsInfo } from "../Channels";
 import { Socket } from "socket.io-client";
 import { Scrollbars } from "react-custom-scrollbars";
 import dayjs from "dayjs";
@@ -28,6 +31,7 @@ import closeButton from "../../assets/smallButton/modalCloseButton.svg";
 import sendButton from "../../assets/smallButton/chatSendButton.svg";
 import leaveButton from "../../assets/smallButton/leaveChannelButton.svg";
 import lockButton from "../../assets/smallButton/channelLockButton.svg";
+import outMember from "../../assets/outMember.svg";
 import { toast } from "react-toastify";
 import {
   ChannelInfo,
@@ -55,6 +59,9 @@ const ChatMenu = ({
   const kick = useKick();
   const ban = useBan();
   const mute = useMute();
+  const isMember = channelInfo.channelMembers
+    ?.map((member) => String(member.userId) === userId)
+    .includes(true);
 
   const onAdminOther = () => {
     admin.mutate({ id: channelId, user: userId, socket: socket });
@@ -114,32 +121,39 @@ const ChatMenu = ({
   const MemberRoll = (): JSX.Element => {
     return (
       <>
-        {" "}
-        <>
-          {channelInfo.channelMembers?.map((member) => {
-            if (String(member.userId) === userId) {
-              return {
-                [MemberType.OWNER]: <div>Channel Owner</div>,
-                [MemberType.ADMIN]: <div>Channel Admin</div>,
-                [MemberType.MEMBER]: <div>Channel Member</div>,
-              }[member.type];
-            }
-            return null;
-          })}
-        </>
+        {channelInfo.channelMembers?.map((member) => {
+          if (
+            String(member.userId) === userId &&
+            member.type === MemberType.OWNER
+          )
+            return <div>Channel Owner</div>;
+          else if (
+            String(member.userId) === userId &&
+            member.type === MemberType.ADMIN
+          )
+            return <div>Channel Administrator</div>;
+          else if (
+            String(member.userId) === userId &&
+            member.type === MemberType.MEMBER
+          )
+            return <div>Channel Member</div>;
+          return null;
+        })}
       </>
     );
   };
 
   return (
     <ChatsMenuContainer>
-      {
+      {isMember ? (
+        <div>Out Member</div>
+      ) : (
         {
           [MemberType.OWNER]: <OwnerRoll />,
           [MemberType.ADMIN]: <AdminRoll />,
           [MemberType.MEMBER]: <MemberRoll />,
         }[channelInfo.myType]
-      }
+      )}
     </ChatsMenuContainer>
   );
 };
@@ -156,7 +170,7 @@ const ChatBubble = ({
 
   const eachChat: Chat = {
     user: chat.senderUserNickname,
-    imgSrc: URL.createObjectURL(avatar ? avatar : new Blob()),
+    imgSrc: avatar ? URL.createObjectURL(avatar) : outMember,
     content: chat.content,
     createdAt: chat.createdAt,
   };
@@ -193,6 +207,13 @@ const ChatBubble = ({
         <div className="ChatBubble">{eachChat.content}</div>
         <span>{dayjs(eachChat.createdAt).locale("ko").format("hh:mm a")}</span>
       </div>
+      {/* <ChatMain isMe={isMe} >
+        {!isMe && eachChat.user}
+        <ChatBubbled isMe={isMe} style={{ whiteSpace: 'pre-wrap' }} >
+          {eachChat.content}
+        </ChatBubbled>
+        <span>{dayjs(eachChat.createdAt).locale('ko').format('hh:mm a')}</span>
+      </ChatMain> */}
     </ChatItem>
   );
 };
@@ -268,7 +289,7 @@ export const Chatting = ({
   });
 
   const onClickClose = () => {
-    socket?.emit("closeChannel", { channelId: String(channelId) });
+    // socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   };
 
@@ -277,10 +298,10 @@ export const Chatting = ({
       channelId: String(channelId),
       userId: String(userInfo.id),
     });
-    await queryClient.invalidateQueries({ queryKey: ["myChannels"] });
-    await queryClient.invalidateQueries({ queryKey: ["allChannels"] });
     toast.success("Successfully leaved channel");
     setPopChatting(false);
+    await queryClient.invalidateQueries({ queryKey: ["allChannels"] });
+    await queryClient.invalidateQueries({ queryKey: ["myChannels"] });
   };
 
   const onChangeChat = useCallback(
@@ -323,38 +344,63 @@ export const Chatting = ({
 
   const onMessage = useCallback(
     async (data: ChatData) => {
-      queryClient.setQueryData(["getChats", channelId], (prevChats: any) => {
-        return prevChats ? [...prevChats, data] : [data];
-      });
+      if (Number(channelId) === data.channelId) {
+        queryClient.setQueryData(["getChats", channelId], (prevChats: any) => {
+          return prevChats ? [...prevChats, data] : [data];
+        });
+      }
     },
     [channelId]
   );
 
   const onOutMember = useCallback(
-    async (data: any) => {
-      if (Number(data.id) === userInfo.id) {
+    async (data: Member) => {
+      if (Number(data.userId) === userInfo.id) {
         socket?.emit("leaveChannel", {
-          channelId: String(data.id),
+          channelId: data.channelId,
           userId: String(userInfo.id),
         });
-        setPopChatting(false);
+        if (Number(channelId) === Number(data.channelId)) {
+          toast.warning("You are kicked out from the channel");
+          setPopChatting(false);
+        }
+        queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+        queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
       }
-      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
+    },
+    [channelId]
+  );
+
+  const onInMember = useCallback(
+    async (data: Member) => {
       queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
   );
 
   const onMuteMember = useCallback(
-    async (data: any) => {
-      if (Number(data.id) === userInfo.id)
-        toast.warning("You are muted for 5 minutes");
+    async (data: Member) => {
+      if (Number(channelId) === Number(data.channelId)) {
+        if (Number(data.userId) === userInfo.id)
+          toast.warning("You are muted for 5 minutes");
+      }
+    },
+    [channelId]
+  );
+
+  const onAdminMember = useCallback(
+    async (data: Member) => {
+      if (Number(channelId) === Number(data.channelId)) {
+        if (Number(data.userId) === userInfo.id)
+          toast.success("You are now administrator");
+      }
     },
     [channelId]
   );
 
   const onRemoveChannel = useCallback(
-    async (data: Member) => {
+    async (data: ChannelsInfo) => {
       if (Number(channelId) === data.id) setPopChatting(false);
     },
     [channelId]
@@ -368,12 +414,16 @@ export const Chatting = ({
     socket?.emit("joinChannel", { channelId: String(channelId) });
     socket?.on("message", onMessage);
     socket?.on("outMember", onOutMember);
+    socket?.on("inMember", onInMember);
     socket?.on("muteMember", onMuteMember);
+    socket?.on("adminMember", onAdminMember);
     socket?.on("removeChannel", onRemoveChannel);
     return () => {
       socket?.off("message", onMessage);
       socket?.off("outMember", onOutMember);
+      socket?.off("inMember", onInMember);
       socket?.off("muteMember", onMuteMember);
+      socket?.off("adminMember", onAdminMember);
       socket?.off("removeChannel", onRemoveChannel);
     };
   }, [socket, channelId]);

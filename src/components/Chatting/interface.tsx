@@ -46,5 +46,6 @@ export interface ChatProps {
 }
 
 export interface Member {
-  id: number;
+  userId: number;
+  channelId: number;
 }
