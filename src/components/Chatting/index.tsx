@@ -13,6 +13,7 @@ import closeButton from '../../assets/smallButton/modalCloseButton.svg';
 import sendButton from '../../assets/smallButton/chatSendButton.svg';
 import leaveButton from '../../assets/smallButton/leaveChannelButton.svg';
 import lockButton from '../../assets/smallButton/channelLockButton.svg';
+import outMember from '../../assets/outMember.svg';
 import { toast } from 'react-toastify';
 
 enum MemberType {
@@ -68,6 +69,7 @@ const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { user
   const kick = useKick();
   const ban = useBan();
   const mute = useMute();
+  const isMember = channelInfo.channelMembers?.map((member) => String(member.userId) === userId).includes(true);
 
   const onAdminOther = () => {
     admin.mutate({ id: channelId, user: userId, socket: socket });
@@ -88,44 +90,45 @@ const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { user
 
   return (
     <ChatsMenuContainer>
-      {channelInfo.myType === MemberType.OWNER ? (
-        <>
-          <div onClick={onAdminOther}>Grant Admin</div>
-          <div onClick={onKickOther}>Kick</div>
-          <div onClick={onBanOther}>Ban</div>
-          <div onClick={onMuteOther}>Mute</div>
-        </>
-      ) : (
-        channelInfo.myType === MemberType.ADMIN ? (
+      {!isMember ? <div>Out Member</div> :
+        channelInfo.myType === MemberType.OWNER ? (
           <>
-            {channelInfo.channelMembers?.map((member) => {
-              if (String(member.userId) === userId && member.type === MemberType.OWNER)
-                return (<div>Channel Owner</div>);
-              else if (String(member.userId) === userId)
-                return (
-                  <>
-                    <div onClick={onKickOther}>Kick</div>
-                    <div onClick={onBanOther}>Ban</div>
-                    <div onClick={onMuteOther}>Mute</div>
-                  </>
-                );
-              return null;
-            })}
+            <div onClick={onAdminOther}>Grant Admin</div>
+            <div onClick={onKickOther}>Kick</div>
+            <div onClick={onBanOther}>Ban</div>
+            <div onClick={onMuteOther}>Mute</div>
           </>
         ) : (
-          <>
-            {channelInfo.channelMembers?.map((member) => {
-              if (String(member.userId) === userId && member.type === MemberType.OWNER)
-                return (<div>Channel Owner</div>);
-              else if (String(member.userId) === userId && member.type === MemberType.ADMIN)
-                return (<div>Channel Administrator</div>);
-              else if (String(member.userId) === userId && member.type === MemberType.MEMBER)
-                return (<div>Channel Member</div>);
-              return null;
-            })}
-          </>
-        )
-      )}
+          channelInfo.myType === MemberType.ADMIN ? (
+            <>
+              {channelInfo.channelMembers?.map((member) => {
+                if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                  return (<div>Channel Owner</div>);
+                else if (String(member.userId) === userId)
+                  return (
+                    <>
+                      <div onClick={onKickOther}>Kick</div>
+                      <div onClick={onBanOther}>Ban</div>
+                      <div onClick={onMuteOther}>Mute</div>
+                    </>
+                  );
+                return null;
+              })}
+            </>
+          ) : (
+            <>
+              {channelInfo.channelMembers?.map((member) => {
+                if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                  return (<div>Channel Owner</div>);
+                else if (String(member.userId) === userId && member.type === MemberType.ADMIN)
+                  return (<div>Channel Administrator</div>);
+                else if (String(member.userId) === userId && member.type === MemberType.MEMBER)
+                  return (<div>Channel Member</div>);
+                return null;
+              })}
+            </>
+          )
+        )}
     </ChatsMenuContainer>
   );
 }
@@ -134,9 +137,10 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps)
   const [popMenu, setPopMenu] = useState(false);
   const avatar = idAvatarMap.get(chat.senderUserId);
 
+
   const eachChat: Chat = {
     user: chat.senderUserNickname,
-    imgSrc: URL.createObjectURL(avatar ? avatar : new Blob()),
+    imgSrc: avatar ? URL.createObjectURL(avatar) : outMember,
     content: chat.content,
     createdAt: chat.createdAt
   };
@@ -288,16 +292,22 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
 
   const onOutMember = useCallback(async (data: any) => {
     if (Number(data.id) === userInfo.id) {
-      socket?.emit('leaveChannel', { 'channelId': String(data.id), 'userId': String(userInfo.id) });
+      toast.warning('You are kicked out from the channel');
+      socket?.emit('leaveChannel', { 'channelId': channelId, 'userId': String(userInfo.id) });
       setPopChatting(false);
+      queryClient.invalidateQueries({ queryKey: ['myChannel'] });
     }
     queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
-    queryClient.invalidateQueries({ queryKey: ['myChannel'] });
   }, [channelId]);
 
   const onMuteMember = useCallback(async (data: any) => {
     if (Number(data.id) === userInfo.id)
       toast.warning('You are muted for 5 minutes');
+  }, [channelId]);
+
+  const onAdminMember = useCallback(async (data: any) => {
+    if (Number(data.id) === userInfo.id)
+      toast.success('You are now administrator');
   }, [channelId]);
 
   const onRemoveChannel = useCallback(async (data: Member) => {
@@ -310,11 +320,13 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     socket?.on('message', onMessage);
     socket?.on('outMember', onOutMember);
     socket?.on('muteMember', onMuteMember);
+    socket?.on('adminMember', onAdminMember);
     socket?.on('removeChannel', onRemoveChannel);
     return () => {
       socket?.off('message', onMessage);
       socket?.off('outMember', onOutMember);
       socket?.off('muteMember', onMuteMember);
+      socket?.off('adminMember', onAdminMember);
       socket?.off('removeChannel', onRemoveChannel);
     }
   }, [socket, channelId]);
