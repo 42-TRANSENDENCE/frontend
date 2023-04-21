@@ -228,7 +228,6 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
       .then((response) => {
         if (response.status === 200) {
           toast.success(user + ' is kicked out');
-          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }
@@ -250,7 +249,6 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
       .then((response) => {
         if (response.status === 200) {
           toast.success(user + ' is banned in this channel');
-          // socket?.emit('leaveChannel', { 'channelId': String(id), 'userId': String(user) });
         }
       })
   }

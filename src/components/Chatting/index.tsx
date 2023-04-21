@@ -236,18 +236,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
       e.preventDefault();
       if (!chat?.trim()) return;
       postChat.mutate({ id: channelId, chat: chat });
-      // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
-      //   const newChat: ChatData = {
-      //     channelId: Number(channelId),
-      //     content: chat,
-      //     createdAt: String(new Date()),
-      //     avatar: userInfo.avatar,
-      //     id: 0,
-      //     senderUserId: userInfo.id,
-      //     senderUserNickname: userInfo.nickname,
-      //   };
-      //   return prevChats ? [...prevChats, newChat] : [newChat];
-      // });
       setChat('');
     } else if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault();
@@ -259,18 +247,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     e.preventDefault();
     if (!chat?.trim()) return;
     postChat.mutate({ id: channelId, chat: chat });
-    // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
-    //   const newChat: ChatData = {
-    //     channelId: Number(channelId),
-    //     content: chat,
-    //     createdAt: String(new Date()),
-    //     avatar: userInfo.avatar,
-    //     id: 0,
-    //     senderUserId: userInfo.id,
-    //     senderUserNickname: userInfo.nickname,
-    //   };
-    //   return prevChats ? [...prevChats, newChat] : [newChat];
-    // });
     setChat('');
   }, [chat, postChat]);
 

@@ -17,14 +17,11 @@ const Chat = () => {
     user: User | null;
   }
 
-  // console.log('connecting chat_socket: ', chat_socket);
-
   useEffect(() => {
     if (state) {
       sendDM.mutate({ id: state.user?.id, nickname: state.user?.nickname, setChannelId: setChannelId, setPopChatting: setPopChatting })
     }
     return () => {
-      // console.log('disconnecting chat socket');
       disconnect_chat_socket();
     }
   }, []);

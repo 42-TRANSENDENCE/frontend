@@ -2,7 +2,6 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { useNavigate } from 'react-router';
 import { FriendListContainer, OnOffLineList, Header, UserStatus } from './styles';
-// import { useGetFriendList } from '../../hooks/query/friend';
 import { useSendDm } from '../../hooks/mutation/chat';
 import { SocketContext } from '../../contexts/ClientSocket';
 import IconButton from '@mui/material/IconButton';
@@ -26,31 +25,11 @@ export interface User {
   status: ClientStatus;
 }
 
-// interface FriendList {
-//   id: number;
-//   nickname: string;
-// }
-
 const OnlineList = ({ isHome, setChannelId, setPopChatting }: { isHome: boolean, setChannelId: React.Dispatch<React.SetStateAction<string>> | null, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null }) => {
   const clientSocket = useContext(SocketContext);
   const navigate = useNavigate();
   const sendDM = useSendDm();
-  // const response = useGetFriendList().data;
-  // const getFriendList: FriendList[] = response;
   const [friendList, setFriendList] = useState<User[]>([]);
-
-  // useEffect(() => {
-  //   if (getFriendList) {
-  //     const updatedFriendList = getFriendList.map((friend) => {
-  //       return {
-  //         id: friend.id,
-  //         nickname: friend.nickname,
-  //         status: ClientStatus.OFFLINE,
-  //       };
-  //     });
-  //     setFriendList(updatedFriendList);
-  //   }
-  // }, [getFriendList]);
 
   useEffect(() => {
     clientSocket.on('friends_status', (data: User[]) => {
