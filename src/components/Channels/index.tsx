@@ -16,6 +16,7 @@ import {
   Input,
   SearchChannel,
   Header,
+  ModalChild,
 } from "./styles";
 import { SmallButton } from "../../components/Button";
 import Modal from "../Modal";
