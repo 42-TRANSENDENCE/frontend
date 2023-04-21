@@ -84,10 +84,10 @@ const ChatMenu = ({
   const OwnerRoll = (): JSX.Element => {
     return (
       <>
-        <div onClick={onAdminOther}>Grant Admin</div>
-        <div onClick={onKickOther}>Kick</div>
-        <div onClick={onBanOther}>Ban</div>
-        <div onClick={onMuteOther}>Mute</div>
+        <div onClick={onAdminOther}>- Grant Admin</div>
+        <div onClick={onKickOther}>- Kick</div>
+        <div onClick={onBanOther}>- Ban</div>
+        <div onClick={onMuteOther}>- Mute</div>
       </>
     );
   };
@@ -418,9 +418,7 @@ export const Chatting = ({
   return (
     <ChatsContainer>
       <ChatTitle>
-        <p className="Title">
-          {channelId} ({"?"}/{channelInfo.channelMembers.length})
-        </p>
+        <p className="Title">CHANNEL NAME</p>
         <div className="Buttons">
           {channelInfo?.myType === MemberType.OWNER && (
             <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
