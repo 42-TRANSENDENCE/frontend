@@ -48,7 +48,7 @@ export const Container = styled.div`
     .Section {
       --section-width: min(
         calc(var(--body-width) * 0.33 - var(--html-padding-horizontal)),
-        400px
+        330px
       );
       --section-height: var(--body-height);
       --section-padding: calc(var(--section-height) * 0.02);
@@ -100,8 +100,8 @@ export const Container = styled.div`
     .RightSide {
       gap: var(--html-padding-vertical);
       .Profile {
-        --w: calc(var(--section-width) * 0.8);
-        width: var(--w);
+        --profile-width: calc(var(--section-width) * 0.8);
+        width: var(--profile-width);
         position: relative;
       }
 
