@@ -107,7 +107,7 @@ export const ChatLists = styled.div`
   flex-direction: column;
   text-align: left;
   gap: calc(var(--fontsize-small) / 2);
-  padding-right: 10px;
+  padding: 10px;
 `;
 
 // 채팅 하나
@@ -119,6 +119,7 @@ export const ChatItem = styled.div<{ isMe?: boolean }>`
   justify-content: "flex-start";
   flex-direction: ${(props) => (props.isMe ? "row-reverse" : "row")};
   position: relative;
+  overflow: visible;
 
   .ChatProfile {
     width: var(--fontsize-big);
@@ -147,46 +148,20 @@ export const ChatItem = styled.div<{ isMe?: boolean }>`
       font-size: calc(var(--fontsize-small) * 0.8);
       font-weight: 700;
     }
-
-    .ChatBubble {
-      line-height: var(--fontsize-small);
-      font-size: var(--fontsize-small);
-      font-weight: 500;
-      position: relative;
-      padding: calc(var(--fontsize-small) * 0.5);
-      border-radius: ${(props) => (props.isMe ? "var(--fontsize-small)" : "0")}
-        ${(props) => (props.isMe ? "0" : "var(--fontsize-small)")}
-        var(--fontsize-small) var(--fontsize-small);
-      background-color: var(--chat-bubble-color);
-      color: ${(props) => (props.isMe ? "#555" : "#000")};
-      border: calc(var(--border-width) / 2) solid black;
-    }
   }
-`;
 
-// 프로필 클릭 시 나오는 메뉴
-export const ChatsMenuContainer = styled.div`
-  position: absolute;
-  background-color: gray;
-  border-radius: 10px;
-  font-size: var(--fontsize-small);
-  top: calc(var(--fontsize-big) * 1.1);
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
-  color: white;
-  font-weight: bold;
-  text-align: center;
-
-  z-index: 1;
-
-  width: 200px;
-  height: 200px;
-
-  div {
-    &:hover {
-      opacity: 0.9;
-      transform: scale(0.98);
-      cursor: pointer;
-    }
+  .ChatMain > .ChatBubble {
+    line-height: var(--fontsize-small);
+    font-size: var(--fontsize-small);
+    font-weight: 500;
+    /* position: relative; */
+    padding: calc(var(--fontsize-small) * 0.5);
+    border-radius: ${(props) => (props.isMe ? "var(--fontsize-small)" : "0")}
+      ${(props) => (props.isMe ? "0" : "var(--fontsize-small)")}
+      var(--fontsize-small) var(--fontsize-small);
+    background-color: var(--chat-bubble-color);
+    color: ${(props) => (props.isMe ? "#555" : "#000")};
+    border: calc(var(--border-width) / 2) solid black;
   }
 `;
 
@@ -207,6 +182,7 @@ export const SendChatBar = styled.form`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  z-index: 0;
 
   & > textarea {
     padding-top: calc(var(--send-button-height) * 0.25);
@@ -229,5 +205,57 @@ export const SendChatBar = styled.form`
     border: calc(var(--border-width) / 2) solid black;
     border-radius: 0 var(--radius) var(--radius) 0;
     margin-right: calc(var(--chat-radius) / 2);
+  }
+`;
+
+/*=======================================*/
+/*                                       */
+/*                 MENU                  */
+/*                                       */
+/*=======================================*/
+
+export const ChatsMenuContainer = styled.div`
+  .outMenu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: none;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+  }
+
+  .InMenu {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--fontsize-small) / 4);
+
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border-radius: 2px;
+
+    margin: 2px;
+    padding: calc(var(--fontsize-small) / 4);
+
+    top: calc(var(--fontsize-big) * 1.1);
+    left: 0;
+
+    font-size: var(--fontsize-small);
+    line-height: var(--fontsize-small);
+    font-weight: bold;
+    text-align: left;
+    white-space: nowrap;
+    color: black;
+
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 1);
+    border-radius: calc(var(--fontsize-small) / 2);
+
+    z-index: 100;
+    &:hover {
+      opacity: 0.9;
+      transform: scale(0.98);
+      cursor: pointer;
+    }
   }
 `;
