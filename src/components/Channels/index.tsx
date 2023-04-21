@@ -224,19 +224,17 @@ export const Channels = ({
                   key={channelInfo.id}
                   onClick={onClickJoinChannel}
                 >
-                  <div>
-                    {channelInfo.status === ChannelStatus.PROTECTED ? (
+                  <div className="channelName">
+                    {channelInfo.status === ChannelStatus.PROTECTED && (
                       <img src={lockImg} />
-                    ) : (
-                      <></>
                     )}
-                  </div>
                   <div>
                     {channelInfo.title.length > 20
                       ? channelInfo.title.slice(0, 20) + "..."
                       : channelInfo.title}
                   </div>
-                  <div>{channelInfo.nickname}</div>
+                  </div>
+                  <div className="ownerName">{channelInfo.nickname}</div>
                 </div>
               );
             })}
