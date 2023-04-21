@@ -4,7 +4,7 @@ import { useQueryClient } from 'react-query';
 import { UserInfo, useUserInfo } from '../../hooks/query/user';
 import { useGetChats, useChannelInfo } from '../../hooks/query/chat';
 import { usePostChat, useSetChannelPassword, useAdmin, useBan, useKick, useMute } from '../../hooks/mutation/chat';
-import { ChannelStatus } from '../Channels';
+import { ChannelStatus, ChannelsInfo } from '../Channels';
 import { Socket } from 'socket.io-client';
 import { Scrollbars } from 'react-custom-scrollbars';
 import dayjs from 'dayjs';
@@ -13,6 +13,7 @@ import closeButton from '../../assets/smallButton/modalCloseButton.svg';
 import sendButton from '../../assets/smallButton/chatSendButton.svg';
 import leaveButton from '../../assets/smallButton/leaveChannelButton.svg';
 import lockButton from '../../assets/smallButton/channelLockButton.svg';
+import outMember from '../../assets/outMember.svg';
 import { toast } from 'react-toastify';
 
 enum MemberType {
@@ -60,7 +61,8 @@ interface ChatProps {
 }
 
 interface Member {
-  id: number;
+  userId: number;
+  channelId: number;
 }
 
 const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { userId: string, channelInfo: ChannelInfo, channelId: string, socket: Socket | undefined, setPopMenu: React.Dispatch<React.SetStateAction<boolean>> }) => {
@@ -68,6 +70,7 @@ const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { user
   const kick = useKick();
   const ban = useBan();
   const mute = useMute();
+  const isMember = channelInfo.channelMembers?.map((member) => String(member.userId) === userId).includes(true);
 
   const onAdminOther = () => {
     admin.mutate({ id: channelId, user: userId, socket: socket });
@@ -88,44 +91,45 @@ const ChatMenu = ({ userId, channelInfo, channelId, socket, setPopMenu }: { user
 
   return (
     <ChatsMenuContainer>
-      {channelInfo.myType === MemberType.OWNER ? (
-        <>
-          <div onClick={onAdminOther}>Grant Admin</div>
-          <div onClick={onKickOther}>Kick</div>
-          <div onClick={onBanOther}>Ban</div>
-          <div onClick={onMuteOther}>Mute</div>
-        </>
-      ) : (
-        channelInfo.myType === MemberType.ADMIN ? (
+      {!isMember ? <div>Out Member</div> :
+        channelInfo.myType === MemberType.OWNER ? (
           <>
-            {channelInfo.channelMembers?.map((member) => {
-              if (String(member.userId) === userId && member.type === MemberType.OWNER)
-                return (<div>Channel Owner</div>);
-              else if (String(member.userId) === userId)
-                return (
-                  <>
-                    <div onClick={onKickOther}>Kick</div>
-                    <div onClick={onBanOther}>Ban</div>
-                    <div onClick={onMuteOther}>Mute</div>
-                  </>
-                );
-              return null;
-            })}
+            <div onClick={onAdminOther}>Grant Admin</div>
+            <div onClick={onKickOther}>Kick</div>
+            <div onClick={onBanOther}>Ban</div>
+            <div onClick={onMuteOther}>Mute</div>
           </>
         ) : (
-          <>
-            {channelInfo.channelMembers?.map((member) => {
-              if (String(member.userId) === userId && member.type === MemberType.OWNER)
-                return (<div>Channel Owner</div>);
-              else if (String(member.userId) === userId && member.type === MemberType.ADMIN)
-                return (<div>Channel Administrator</div>);
-              else if (String(member.userId) === userId && member.type === MemberType.MEMBER)
-                return (<div>Channel Member</div>);
-              return null;
-            })}
-          </>
-        )
-      )}
+          channelInfo.myType === MemberType.ADMIN ? (
+            <>
+              {channelInfo.channelMembers?.map((member) => {
+                if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                  return (<div>Channel Owner</div>);
+                else if (String(member.userId) === userId)
+                  return (
+                    <>
+                      <div onClick={onKickOther}>Kick</div>
+                      <div onClick={onBanOther}>Ban</div>
+                      <div onClick={onMuteOther}>Mute</div>
+                    </>
+                  );
+                return null;
+              })}
+            </>
+          ) : (
+            <>
+              {channelInfo.channelMembers?.map((member) => {
+                if (String(member.userId) === userId && member.type === MemberType.OWNER)
+                  return (<div>Channel Owner</div>);
+                else if (String(member.userId) === userId && member.type === MemberType.ADMIN)
+                  return (<div>Channel Administrator</div>);
+                else if (String(member.userId) === userId && member.type === MemberType.MEMBER)
+                  return (<div>Channel Member</div>);
+                return null;
+              })}
+            </>
+          )
+        )}
     </ChatsMenuContainer>
   );
 }
@@ -136,7 +140,7 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps)
 
   const eachChat: Chat = {
     user: chat.senderUserNickname,
-    imgSrc: URL.createObjectURL(avatar ? avatar : new Blob()),
+    imgSrc: avatar ? URL.createObjectURL(avatar) : outMember,
     content: chat.content,
     createdAt: chat.createdAt
   };
@@ -156,7 +160,7 @@ const ChatBubble = ({ channelInfo, chat, isMe, idAvatarMap, socket }: ChatProps)
         <ChatMenu userId={String(chat.senderUserId)} channelInfo={channelInfo} channelId={String(chat.channelId)} socket={socket} setPopMenu={setPopMenu} />
       )}
       <ChatMain isMe={isMe} >
-        {!isMe && (<span>{eachChat.user}</span>)}
+        {!isMe && eachChat.user}
         <ChatBubbled isMe={isMe} style={{ whiteSpace: 'pre-wrap' }} >
           {eachChat.content}
         </ChatBubbled>
@@ -199,7 +203,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   const scrollbarRef = useRef<Scrollbars>(null);
   const idAvatarMap: Map<number, Blob> = new Map();
 
-
   if (channelInfo) {
     channelInfo.channelMembers?.map((member) => {
       const bufferObj: { type: 'Buffer', data: [] } = { type: member.avatar.type, data: member.avatar.data };
@@ -210,16 +213,16 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   }
 
   const onClickClose = () => {
-    socket?.emit('closeChannel', { 'channelId': String(channelId) });
+    // socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   }
 
   const onClickLeave = async () => {
     socket?.emit('leaveChannel', { 'channelId': String(channelId), 'userId': String(userInfo.id) });
-    await queryClient.invalidateQueries({ queryKey: ['myChannels'] });
-    await queryClient.invalidateQueries({ queryKey: ['allChannels'] });
     toast.success('Successfully leaved channel');
     setPopChatting(false);
+    await queryClient.invalidateQueries({ queryKey: ['allChannels'] });
+    await queryClient.invalidateQueries({ queryKey: ['myChannels'] });
   }
 
   const onChangeChat = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -232,18 +235,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
       e.preventDefault();
       if (!chat?.trim()) return;
       postChat.mutate({ id: channelId, chat: chat });
-      // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
-      //   const newChat: ChatData = {
-      //     channelId: Number(channelId),
-      //     content: chat,
-      //     createdAt: String(new Date()),
-      //     avatar: userInfo.avatar,
-      //     id: 0,
-      //     senderUserId: userInfo.id,
-      //     senderUserNickname: userInfo.nickname,
-      //   };
-      //   return prevChats ? [...prevChats, newChat] : [newChat];
-      // });
       setChat('');
     } else if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault();
@@ -255,18 +246,6 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     e.preventDefault();
     if (!chat?.trim()) return;
     postChat.mutate({ id: channelId, chat: chat });
-    // queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
-    //   const newChat: ChatData = {
-    //     channelId: Number(channelId),
-    //     content: chat,
-    //     createdAt: String(new Date()),
-    //     avatar: userInfo.avatar,
-    //     id: 0,
-    //     senderUserId: userInfo.id,
-    //     senderUserNickname: userInfo.nickname,
-    //   };
-    //   return prevChats ? [...prevChats, newChat] : [newChat];
-    // });
     setChat('');
   }, [chat, postChat]);
 
@@ -281,26 +260,45 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
   }, [chats]);
 
   const onMessage = useCallback(async (data: ChatData) => {
-    queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
-      return prevChats ? [...prevChats, data] : [data];
-    })
-  }, [channelId]);
-
-  const onOutMember = useCallback(async (data: any) => {
-    if (Number(data.id) === userInfo.id) {
-      socket?.emit('leaveChannel', { 'channelId': String(data.id), 'userId': String(userInfo.id) });
-      setPopChatting(false);
+    if (Number(channelId) === data.channelId) {
+      queryClient.setQueryData(['getChats', channelId], (prevChats: any) => {
+        return prevChats ? [...prevChats, data] : [data];
+      })
     }
-    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+  }, [channelId]);
+
+  const onOutMember = useCallback(async (data: Member) => {
+    if (Number(data.userId) === userInfo.id) {
+      socket?.emit('leaveChannel', { 'channelId': data.channelId, 'userId': String(userInfo.id) });
+      if (Number(channelId) === Number(data.channelId)) {
+        toast.warning('You are kicked out from the channel');
+        setPopChatting(false);
+      }
+      queryClient.invalidateQueries({ queryKey: ['myChannel'] });
+      queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
+    }
+  }, [channelId]);
+
+  const onInMember = useCallback(async (data: Member) => {
     queryClient.invalidateQueries({ queryKey: ['myChannel'] });
+    queryClient.invalidateQueries({ queryKey: ['channelInfo'] });
   }, [channelId]);
 
-  const onMuteMember = useCallback(async (data: any) => {
-    if (Number(data.id) === userInfo.id)
-      toast.warning('You are muted for 5 minutes');
+  const onMuteMember = useCallback(async (data: Member) => {
+    if (Number(channelId) === Number(data.channelId)) {
+      if (Number(data.userId) === userInfo.id)
+        toast.warning('You are muted for 5 minutes');
+    }
   }, [channelId]);
 
-  const onRemoveChannel = useCallback(async (data: Member) => {
+  const onAdminMember = useCallback(async (data: Member) => {
+    if (Number(channelId) === Number(data.channelId)) {
+      if (Number(data.userId) === userInfo.id)
+        toast.success('You are now administrator');
+    }
+  }, [channelId]);
+
+  const onRemoveChannel = useCallback(async (data: ChannelsInfo) => {
     if (Number(channelId) === data.id)
       setPopChatting(false);
   }, [channelId]);
@@ -309,12 +307,16 @@ export const Chatting = ({ socket, channelId, setPopChatting }: { socket: Socket
     socket?.emit('joinChannel', { 'channelId': String(channelId) });
     socket?.on('message', onMessage);
     socket?.on('outMember', onOutMember);
+    socket?.on('inMember', onInMember);
     socket?.on('muteMember', onMuteMember);
+    socket?.on('adminMember', onAdminMember);
     socket?.on('removeChannel', onRemoveChannel);
     return () => {
       socket?.off('message', onMessage);
       socket?.off('outMember', onOutMember);
+      socket?.off('inMember', onInMember);
       socket?.off('muteMember', onMuteMember);
+      socket?.off('adminMember', onAdminMember);
       socket?.off('removeChannel', onRemoveChannel);
     }
   }, [socket, channelId]);

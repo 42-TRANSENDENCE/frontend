@@ -1,5 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { Scrollbars } from "react-custom-scrollbars";
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
+import { useNavigate } from 'react-router';
+import { useSendDm } from '../../hooks/mutation/chat';
+import { SocketContext } from '../../contexts/ClientSocket';
+import IconButton from '@mui/material/IconButton';
+import ChatIcon from '@mui/icons-material/Chat';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import {
   FriendListContainer,
   OnOffLineList,
@@ -8,11 +14,7 @@ import {
   SingleUser,
 } from "./styles";
 import { useGetFriendList } from "../../hooks/query/friend";
-import IconButton from "@mui/material/IconButton";
-import ChatIcon from "@mui/icons-material/Chat";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import InviteButton from "./InviteButton";
-// import { useGetFriendList } from '../../hooks/query/friend';
 import { useSendDm } from "../../hooks/mutation/chat";
 import { SocketContext } from "../../contexts/ClientSocket";
 
@@ -33,30 +35,11 @@ export interface User {
   status: ClientStatus;
 }
 
-// interface FriendList {
-//   id: number;
-//   nickname: string;
-// }
-
-const onlineList = function () {
+const OnlineList = ({ isHome, setChannelId, setPopChatting }: { isHome: boolean, setChannelId: React.Dispatch<React.SetStateAction<string>> | null, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null }) => {
   const clientSocket = useContext(SocketContext);
+  const navigate = useNavigate();
   const sendDM = useSendDm();
-  // const response = useGetFriendList().data;
-  // const getFriendList: FriendList[] = response;
   const [friendList, setFriendList] = useState<User[]>([]);
-
-  // useEffect(() => {
-  //   if (getFriendList) {
-  //     const updatedFriendList = getFriendList.map((friend) => {
-  //       return {
-  //         id: friend.id,
-  //         nickname: friend.nickname,
-  //         status: ClientStatus.OFFLINE,
-  //       };
-  //     });
-  //     setFriendList(updatedFriendList);
-  //   }
-  // }, [getFriendList]);
 
   useEffect(() => {
     clientSocket.on("friends_status", (data: User[]) => {
@@ -85,10 +68,28 @@ const onlineList = function () {
       });
     });
 
-    return () => {};
+    return () => {
+      clientSocket.off('change_status');
+    };
   }, []);
 
-  const onClickSendDm = useCallback((userinfo: User) => {}, []);
+  const onClickSendDm = useCallback((userinfo: User) => {
+    if (isHome) {
+      navigate('/chat', {
+        state: { user: userinfo },
+      });
+    }
+    else {
+      sendDM.mutate({ id: userinfo.id, nickname: userinfo.nickname, setChannelId: setChannelId, setPopChatting: setPopChatting });
+    }
+  }, []
+  );
+
+  const onClickInviteGame = useCallback(() => {
+
+  }, []
+  );
+
 
   return (
     <FriendListContainer>
@@ -133,4 +134,4 @@ const onlineList = function () {
   );
 };
 
-export default onlineList;
+export default OnlineList;

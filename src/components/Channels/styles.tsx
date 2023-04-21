@@ -14,7 +14,6 @@ export const ChannelContainer = styled.div`
   border-radius: 2rem;
   border: var(--border-width) solid black;
   padding: calc(var(--height) * 0.01) calc(var(--width) * 0.01);
-  // background: white;
 
   @media screen and (max-width: 600px) {
     & {
