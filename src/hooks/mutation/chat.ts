@@ -27,8 +27,10 @@ interface PostChatData {
 }
 
 interface SendDMData {
-  id: number;
-  nickname: string;
+  id: number | undefined;
+  nickname: string | undefined;
+  setChannelId: React.Dispatch<React.SetStateAction<string>> | null;
+  setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null;
 }
 
 interface AKBMData {
@@ -160,7 +162,7 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
   const fetcher = useFetcher();
 
   async function sendDM(data: SendDMData): Promise<void> {
-    const { id, nickname } = data;
+    const { id, nickname, setChannelId, setPopChatting } = data;
     await fetcher('/channels/dm', {
       method: 'POST',
       headers: {
@@ -169,7 +171,18 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
       credentials: 'include',
       body: JSON.stringify({ id: id, nickname: nickname }),
     })
+      .then((response) => {
+        if (response.status === 201 || response.status === 400) {
+          response.json().then(data => {
+            if (setChannelId && setPopChatting) {
+              setChannelId(data.channelId);
+              setPopChatting(true);
+            }
+          })
+        }
+      })
   }
+
   return useMutation({
     mutationFn: sendDM,
     onSuccess: () => {
