@@ -54,5 +54,10 @@ export const ChatBody = styled.div`
 
   > .AllChannels {
     text-align: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: calc(var(--section-height) * 0.1);
+    gap: calc(var(--section-height) * 0.01);
   }
 `;

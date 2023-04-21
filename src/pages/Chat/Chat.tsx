@@ -9,6 +9,7 @@ import Title from "../../components/Title";
 import { Channels, MyChannels } from "../../components/Channels";
 import { Container } from "../../layouts/Home/styles";
 import { ChatBody } from "./styles";
+import Notification from "../../components/Notification";
 
 const Chat = () => {
   const [channelId, setChannelId] = useState("");
@@ -93,6 +94,7 @@ const Chat = () => {
                 channelId={channelId}
                 setChannelId={setChannelId}
               />
+              <Notification />
             </div>
           </ChatBody>
         </div>
