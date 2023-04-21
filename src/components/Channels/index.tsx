@@ -192,50 +192,56 @@ export const Channels = ({
   }, [socket]);
 
   return (
-    <ChannelContainer>
-      <Header>CHANNELS</Header>
-      <SearchChannel onSubmit={onSubmitChannelName}>
-        <input
-          title="searchInput"
-          onChange={onChangeInput}
-          value={findChannelName}
-        />
-        <SmallButton className="search" img_url={searchButton} type="submit" />
-        <SmallButton
-          className="create"
-          img_url={createChannelButton}
-          onClick={onClickCreatChennel}
-        />
-      </SearchChannel>
-      <ChannelList>
-        <Scrollbars autoHide>
-          {filteredChannels?.map((channelInfo: ChannelsInfo) => {
-            return (
-              <div
-                className="eachChannel"
-                data-id={channelInfo.id}
-                data-status={channelInfo.status}
-                key={channelInfo.id}
-                onClick={onClickJoinChannel}
-              >
-                <div>
-                  {channelInfo.status === ChannelStatus.PROTECTED ? (
-                    <img src={lockImg} />
-                  ) : (
-                    <></>
-                  )}
+    <>
+      <ChannelContainer>
+        <Header>CHANNELS</Header>
+        <SearchChannel onSubmit={onSubmitChannelName}>
+          <input
+            title="searchInput"
+            onChange={onChangeInput}
+            value={findChannelName}
+          />
+          <SmallButton
+            className="search"
+            img_url={searchButton}
+            type="submit"
+          />
+          <SmallButton
+            className="create"
+            img_url={createChannelButton}
+            onClick={onClickCreatChennel}
+          />
+        </SearchChannel>
+        <ChannelList>
+          <Scrollbars autoHide>
+            {filteredChannels?.map((channelInfo: ChannelsInfo) => {
+              return (
+                <div
+                  className="eachChannel"
+                  data-id={channelInfo.id}
+                  data-status={channelInfo.status}
+                  key={channelInfo.id}
+                  onClick={onClickJoinChannel}
+                >
+                  <div>
+                    {channelInfo.status === ChannelStatus.PROTECTED ? (
+                      <img src={lockImg} />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div>
+                    {channelInfo.title.length > 20
+                      ? channelInfo.title.slice(0, 20) + "..."
+                      : channelInfo.title}
+                  </div>
+                  <div>{channelInfo.nickname}</div>
                 </div>
-                <div>
-                  {channelInfo.title.length > 20
-                    ? channelInfo.title.slice(0, 20) + "..."
-                    : channelInfo.title}
-                </div>
-                <div>{channelInfo.nickname}</div>
-              </div>
-            );
-          })}
-        </Scrollbars>
-      </ChannelList>
+              );
+            })}
+          </Scrollbars>
+        </ChannelList>
+      </ChannelContainer>
       <Modal
         show={showCreateChannelModal}
         onCloseModal={onCloseCreateChannelModal}
@@ -265,7 +271,7 @@ export const Channels = ({
           <SmallButton img_url={createChannelButton} type="submt" />
         </form>
       </Modal>
-    </ChannelContainer>
+    </>
   );
 };
 
