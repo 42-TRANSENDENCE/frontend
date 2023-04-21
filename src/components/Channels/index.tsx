@@ -146,7 +146,7 @@ export const Channels = ({
     [title]
   );
 
-  const onChangePassowrd = useCallback(
+  const onChangePassword = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       setPassword(e.target.value);
@@ -265,7 +265,7 @@ export const Channels = ({
               name="password"
               placeholder="Password"
               value={password}
-              onChange={onChangePassowrd}
+            onChange={onChangePassword}
             />
           </div>
           <SmallButton img_url={createChannelButton} type="submt" />
