@@ -119,22 +119,13 @@ const ChatMenu = ({
     return (
       <>
         {channelInfo.channelMembers?.map((member) => {
-          if (
-            String(member.userId) === userId &&
-            member.type === MemberType.OWNER
-          )
-            return <div>Channel Owner</div>;
-          else if (
-            String(member.userId) === userId &&
-            member.type === MemberType.ADMIN
-          )
-            return <div>Channel Administrator</div>;
-          else if (
-            String(member.userId) === userId &&
-            member.type === MemberType.MEMBER
-          )
-            return <div>Channel Member</div>;
-          return null;
+          return String(member.userId) === userId
+            ? {
+                [MemberType.OWNER]: <div>Channel Owner</div>,
+                [MemberType.ADMIN]: <div>Channel Administrator</div>,
+                [MemberType.MEMBER]: <div>Channel Member</div>,
+              }[member.type]
+            : null;
         })}
       </>
     );
@@ -143,13 +134,13 @@ const ChatMenu = ({
   return (
     <ChatsMenuContainer>
       {isMember ? (
-        <div>Out Member</div>
-      ) : (
         {
           [MemberType.OWNER]: <OwnerRoll />,
           [MemberType.ADMIN]: <AdminRoll />,
           [MemberType.MEMBER]: <MemberRoll />,
         }[channelInfo.myType]
+      ) : (
+        <div>Out Member</div>
       )}
     </ChatsMenuContainer>
   );
