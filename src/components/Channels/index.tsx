@@ -224,9 +224,10 @@ export const Channels = ({ socket, setPopChatting, channelId, setChannelId }: { 
 }
 
 
-export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, setChannelId }: { socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
+export const MyChannels = ({ myNickname, socket, popChatting, setPopChatting, channelId, setChannelId }: { myNickname: string, socket: Socket | undefined, popChatting: boolean, setPopChatting: React.Dispatch<React.SetStateAction<boolean>>, channelId: string, setChannelId: React.Dispatch<React.SetStateAction<string>> }) => {
   const queryClient = useQueryClient();
   const myChannels: ChannelsInfo[] = useMyChannels().data;
+  const [title, setTitle] = useState<String>('');
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest('[data-id]');
@@ -278,7 +279,7 @@ export const MyChannels = ({ socket, popChatting, setPopChatting, channelId, set
                     </div>
                     <div>
                       {channelInfo.status === ChannelStatus.PRIVATE ? (
-                        channelInfo.nickname
+                        channelInfo.title.replace(myNickname, '')
                       ) : (
                         channelInfo.title.length > 20
                           ? channelInfo.title.slice(0, 20) + '...'
