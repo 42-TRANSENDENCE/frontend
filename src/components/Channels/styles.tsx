@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const ChannelContainer = styled.div`
   --channel-width: calc(var(--section-width));
-  --channel-height: calc(var(--section-height) * 0.9);
+  --channel-height: calc(var(--section-height) * 0.7);
   --channel-padding: var(--section-padding);
 
   --header-height: var(--fontsize-big);
@@ -96,7 +96,10 @@ export const ChannelList = styled.div`
       transform: scale(0.98);
     }
 
-    & > div:first-child {
+    & > .channelName {
+      display: flex;
+      flex-direction: row;
+      font-weight: 600;
       --lockimg-size: var(--fontsize-small);
       width: var(--lockimg-size);
       height: var(--lockimg-size);
@@ -105,7 +108,9 @@ export const ChannelList = styled.div`
         height: 100%;
       }
     }
-    & > div:nth-child(2) {
+    & > .ownerName {
+      text-align: right;
+      color: gray;
     }
   }
 `;
@@ -124,4 +129,46 @@ export const Header = styled.div`
   line-height: var(--fontsize-big);
   font-size: var(--fontsize-big);
   font-weight: var(--fontweight-big);
+`;
+
+// Modal child
+export const ModalChild = styled.form`
+  background-color: pink;
+  margin-top: calc(var(--modal-width) * 0.05);
+  width: calc(var(--modal-width) * 0.9);
+  height: var(--modal-width);
+
+  border-radius: calc(var(--modal-width) * 0.05);
+  border: var(--border-width) solid black;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  Input {
+    width: calc(var(--modal-width) * 0.8);
+    height: calc(var(--fontsize-big) * 1.5);
+    background-color: white;
+    border: calc(var(--border-width) / 1.5) solid black;
+
+    margin: 0;
+    margin-bottom: calc(var(--modal-width) * 0.1);
+    padding: 0;
+    padding-left: calc(var(--fontsize-big) * 0.5);
+
+    font-size: calc(var(--fontsize-big) / 1.5);
+  }
+
+  button {
+    margin-top: calc(var(--modal-width) * 0.1);
+
+    width: calc(var(--modal-width) * 0.3);
+    height: calc(var(--modal-width) * 0.2);
+    background-color: yellow;
+    border: calc(var(--border-width) / 1.5) solid black;
+    > img {
+      width: calc(var(--modal-width) * 0.15);
+    }
+  }
 `;
