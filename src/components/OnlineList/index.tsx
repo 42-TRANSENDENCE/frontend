@@ -1,11 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { Scrollbars } from 'react-custom-scrollbars';
-import { useNavigate } from 'react-router';
-import { useSendDm } from '../../hooks/mutation/chat';
-import { SocketContext } from '../../contexts/ClientSocket';
-import IconButton from '@mui/material/IconButton';
-import ChatIcon from '@mui/icons-material/Chat';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Scrollbars } from "react-custom-scrollbars";
+import { useNavigate } from "react-router";
+import IconButton from "@mui/material/IconButton";
+import ChatIcon from "@mui/icons-material/Chat";
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import {
   FriendListContainer,
   OnOffLineList,
@@ -35,7 +33,15 @@ export interface User {
   status: ClientStatus;
 }
 
-const OnlineList = ({ isHome, setChannelId, setPopChatting }: { isHome: boolean, setChannelId: React.Dispatch<React.SetStateAction<string>> | null, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null }) => {
+const OnlineList = ({
+  isHome,
+  setChannelId,
+  setPopChatting,
+}: {
+  isHome: boolean;
+  setChannelId: React.Dispatch<React.SetStateAction<string>> | null;
+  setPopChatting: React.Dispatch<React.SetStateAction<boolean>> | null;
+}) => {
   const clientSocket = useContext(SocketContext);
   const navigate = useNavigate();
   const sendDM = useSendDm();
@@ -69,27 +75,26 @@ const OnlineList = ({ isHome, setChannelId, setPopChatting }: { isHome: boolean,
     });
 
     return () => {
-      clientSocket.off('change_status');
+      clientSocket.off("change_status");
     };
   }, []);
 
   const onClickSendDm = useCallback((userinfo: User) => {
     if (isHome) {
-      navigate('/chat', {
+      navigate("/chat", {
         state: { user: userinfo },
       });
+    } else {
+      sendDM.mutate({
+        id: userinfo.id,
+        nickname: userinfo.nickname,
+        setChannelId: setChannelId,
+        setPopChatting: setPopChatting,
+      });
     }
-    else {
-      sendDM.mutate({ id: userinfo.id, nickname: userinfo.nickname, setChannelId: setChannelId, setPopChatting: setPopChatting });
-    }
-  }, []
-  );
+  }, []);
 
-  const onClickInviteGame = useCallback(() => {
-
-  }, []
-  );
-
+  const onClickInviteGame = useCallback(() => {}, []);
 
   return (
     <FriendListContainer>
