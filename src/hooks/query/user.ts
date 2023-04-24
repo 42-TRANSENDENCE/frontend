@@ -67,6 +67,7 @@ export const useUserSearch = (): UseUserSearchReturnType => {
           win: data.win,
           lose: data.lose,
           who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS,
+          isBlocked: data.isBlocked,
           achievements: data.achievements
         };
         setUser(userProfile);
@@ -74,6 +75,7 @@ export const useUserSearch = (): UseUserSearchReturnType => {
       });
       return response;
     } else {
+      setPopProfile(false);
       toast.error('User not found (' + userSearch + ')');
     }
   };

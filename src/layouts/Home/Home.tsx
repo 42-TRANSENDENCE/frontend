@@ -87,6 +87,7 @@ const Home = () => {
                     win: userInfoData?.wins ? userInfoData?.wins : 0,
                     lose: userInfoData?.loses ? userInfoData?.loses : 0,
                     who: ProfileEnum.ME,
+                    isBlocked: false,
                     achievements: userInfoData?.achievements
                   }}
                   setPopProfile={setPopProfile}
