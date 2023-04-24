@@ -59,5 +59,15 @@ export const ChatBody = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+
+    > .Profile {
+      display: flex;
+      height: calc(var(--section-height) * 0.9);
+      justify-content: center;
+      align-items: center;
+      > .pop-profile {
+        --profile-width: calc(var(--section-width) * 0.7);
+      }
+    }
   }
 `;

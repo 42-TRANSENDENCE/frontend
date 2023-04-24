@@ -81,21 +81,21 @@ const Chat = () => {
             </div>
 
             <div className="AllChannels Section">
-              {popProfile && user && (
+              {popProfile && user ? (
                 <div className="Profile">
                   <div className="pop-profile">
                     <Profile profile={user} setPopProfile={setPopProfile} />
                   </div>
                 </div>
+              ) : (
+                <Channels
+                  socket={chat_socket}
+                  setPopChatting={setPopChatting}
+                  channelId={channelId}
+                  setChannelId={setChannelId}
+                />
               )}
-              <Channels
-                socket={chat_socket}
-                setPopChatting={setPopChatting}
-                channelId={channelId}
-                setChannelId={setChannelId}
-              />
               <Notification />
-
             </div>
           </ChatBody>
         </div>
