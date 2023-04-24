@@ -1,12 +1,11 @@
 import styled from "styled-components";
 
 export const FriendListContainer = styled.div`
-  --friendlist-width: calc(var(--section-width) * 0.9);
-  --friendlist-height: min(
-    calc(var(--body-height) * 0.9),
-    calc(var(--body-width) * 0.9)
-  );
-  --friendlist-padding: calc(var(--friendlist-height) * 0.02);
+  --friendlist-width: calc(var(--section-width));
+  --friendlist-height: calc(var(--section-height) * 0.9);
+  --friendlist-padding: calc(var(--section-padding));
+
+  box-sizing: border-box;
   border-radius: calc(var(--friendlist-height) * 0.05);
   border: var(--border-width) solid black;
   height: var(--friendlist-height);
@@ -30,14 +29,13 @@ export const OnOffLineList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  font-size: 2rem;
-  overflow: auto;
 `;
 
 export const Header = styled.div`
-  font-size: calc(var(--friendlist-height) * 0.05);
+  height: var(--fontsize-big);
+  font-size: var(--fontsize-big);
   font-weight: 600;
-  padding-left: var(--friendlist-padding);
+  padding: 0 var(--friendlist-padding);
 `;
 
 export const SingleUser = styled.div`

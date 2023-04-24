@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: var(--page-width);
@@ -44,11 +44,14 @@ export const Container = styled.div`
     justify-content: space-between;
     flex-direction: row;
     overflow: hidden;
-    
+
     .Section {
-      --section-width: calc(
-        var(--body-width) * 0.33 - var(--html-padding-horizontal)
-        );
+      --section-width: min(
+        calc(var(--body-width) * 0.33 - var(--html-padding-horizontal)),
+        330px
+      );
+      --section-height: var(--body-height);
+      --section-padding: calc(var(--section-height) * 0.02);
       width: var(--section-width);
       height: var(--body-height);
       display: flex;
@@ -58,15 +61,15 @@ export const Container = styled.div`
     }
 
     .LeftSide {
-      --section-width: calc(var(--body-width) * 0.33);
-      // --section-height: calc(var(--body-height) * 1);
+      --fontsize-big: calc(var(--section-height) * 0.045);
+      --fontweight-big: 600;
       width: var(--section-width);
       height: var(--section-height);
       gap: var(--html-padding-vertical);
     }
 
     .MiddleSide {
-      --section-width: calc(var(--body-width) * 0.34);
+      --section-width: min(calc(var(--body-width) * 0.34), 400px);
       width: var(--section-width);
       gap: var(--html-padding-vertical);
       .BigButtons {
@@ -97,15 +100,15 @@ export const Container = styled.div`
     .RightSide {
       gap: var(--html-padding-vertical);
       .Profile {
-        --w: calc(var(--section-width) * 0.8);
-        width: var(--w);
+        --profile-width: calc(var(--section-width) * 0.8);
+        width: var(--profile-width);
         position: relative;
       }
 
       .Profile > :first-child {
         position: relative;
       }
-      
+
       .Profile > :last-child.pop-profile {
         position: absolute;
         top: 0;
@@ -119,4 +122,3 @@ export const Container = styled.div`
     }
   }
 `;
-

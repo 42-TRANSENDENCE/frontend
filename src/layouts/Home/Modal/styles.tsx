@@ -1,15 +1,15 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const ModalContainer = styled.div`
-  --width : calc(var(--modal-width) * 0.98);
-  --padding : calc(var(--width) * 0.01);
+  --width: calc(var(--modal-width) * 0.98);
+  --padding: calc(var(--width) * 0.01);
   --buttun-height: calc(var(--width) / 6);
   box-sizing: border-box;
-  
+
   width: var(--width);
   height: var(--width);
   background: pink;
-  
+
   border: var(--border-width) solid black;
   border-radius: calc(var(--width) * 0.05);
   padding: var(--padding);
@@ -17,30 +17,31 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  overflow-x : hidden;
+  overflow-x: hidden;
   overflow-y: hidden;
 
-  Button, .custom-file-upload{
+  Button,
+  .custom-file-upload {
     height: var(--buttun-height);
-    width : calc(var(--buttun-height) * 1.5);
-    border : calc(var(--border-width) / 1.5) solid black;
+    width: calc(var(--buttun-height) * 1.5);
+    border: calc(var(--border-width) / 1.5) solid black;
     border-radius: calc(var(--buttun-height) / 2);
   }
 
   > div {
-    background-color: rgba(255,255,255, 0.5);
+    background-color: rgba(255, 255, 255, 0.5);
   }
-`
+`;
 /*==================================*/
 /*                                  */
 /*          MODAL AVATAR          */
 /*                                  */
 /*==================================*/
 export const ModalAvatar = styled.div`
-  --width : calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
-  --height : calc(var(--width) * 7/12);
+  --width: calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
+  --height: calc(var(--width) * 7 / 12);
   --button-height: var(--buttun-height);
-  overflow : hidden;
+  overflow: hidden;
   box-sizing: border-box;
 
   width: var(--width);
@@ -50,9 +51,9 @@ export const ModalAvatar = styled.div`
   justify-content: space-evenly;
   align-items: center;
   padding: var(--padding);
-  
+
   border-radius: calc(var(--width) * 0.03);
-  border: calc(var(--border-width)/1.5) solid black;
+  border: calc(var(--border-width) / 1.5) solid black;
 
   div {
     width: calc(var(--button-height) * 1.5);
@@ -62,7 +63,7 @@ export const ModalAvatar = styled.div`
     justify-content: space-evenly;
     align-items: center;
   }
-  
+
   #file-upload {
     display: none;
   }
@@ -73,7 +74,7 @@ export const ModalAvatar = styled.div`
     align-items: center;
     overflow: hidden;
     cursor: pointer;
-    
+
     img {
       width: 100%;
     }
@@ -87,13 +88,13 @@ export const ModalAvatar = styled.div`
       opacity: 0.4;
     }
   }
-`
+`;
 
 export const Avatar = styled.img`
   border-radius: 50%;
-  border : calc(var(--border-width) / 1.5) solid black;
+  border: calc(var(--border-width) / 1.5) solid black;
   background: gray;
-  width : calc(var(--height) * 0.9 - 2 * var(--padding));
+  width: calc(var(--height) * 0.9 - 2 * var(--padding));
   aspect-ratio: 1;
 `;
 
@@ -103,15 +104,15 @@ export const Avatar = styled.img`
 /*                                  */
 /*==================================*/
 export const ModalNickName = styled.div`
-  --width : calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
-  --height : calc(var(--width) * 3/12);
-  overflow : hidden;
+  --width: calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
+  --height: calc(var(--width) * 3 / 12);
+  overflow: hidden;
 
   width: var(--width);
   height: var(--height);
   box-sizing: border-box;
   border-radius: calc(var(--width) * 0.03);
-  border: calc(var(--border-width)/1.5) solid black;
+  border: calc(var(--border-width) / 1.5) solid black;
   padding: var(--padding);
   form {
     width: calc(var(--width) - 2 * var(--padding) - var(--border-width));
@@ -121,7 +122,7 @@ export const ModalNickName = styled.div`
     justify-content: space-evenly;
     align-items: center;
   }
-`
+`;
 
 export const Label = styled.label`
   display: flex;
@@ -138,13 +139,13 @@ export const InputName = styled.input`
   display: flex;
   border-radius: 4px;
   border: 1px solid var(--saf-0);
-  
+
   transition: border 80ms ease-out, box-shadow 80ms ease-out;
   box-sizing: border-box;
-  
+
   width: calc(var(--width) * 0.5);
-  margin-left : calc(var(--width) * 0.01);
-  
+  margin-left: calc(var(--width) * 0.01);
+
   height: 30px;
   font-size: 12px;
   transition: 0.4s;
@@ -154,7 +155,6 @@ export const InputName = styled.input`
     box-shadow: 0 0 0 1px var(--saf-0), 0 0 0 5px rgba(29, 155, 209, 0.3);
     width: calc(var(--width) * 0.55);
   }
-
 `;
 
 /*==================================*/
@@ -163,22 +163,22 @@ export const InputName = styled.input`
 /*                                  */
 /*==================================*/
 export const TwoFactorPart = styled.div`
-  --width : calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
-  --height : calc(var(--width) * 2/12 - calc(var(--width) * 0.02));
+  --width: calc(var(--modal-width) * 0.96 - var(--border-width) * 2);
+  --height: calc(var(--width) * 2 / 12 - calc(var(--width) * 0.02));
 
-  width: calc(var(--width) * 0.9) ;
+  width: calc(var(--width) * 0.9);
   height: var(--height);
 
   box-sizing: border-box;
   border-radius: calc(var(--height) * 0.5);
-  
-  border: calc(var(--border-width)/1.5) solid black;
+
+  border: calc(var(--border-width) / 1.5) solid black;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-`
+`;
 /*==================================*/
 /*                                  */
 /*            WITHDRAWAL            */
@@ -189,19 +189,19 @@ export const WithdrawalButton = styled.div`
   --height: calc(var(--modal-height) - var(--modal-width));
 
   display: flex;
-  width : var(--width);
-  height : calc(var(--modal-height) - var(--modal-width));
+  width: var(--width);
+  height: calc(var(--modal-height) - var(--modal-width));
   flex-direction: row;
   overflow: hidden;
   justify-content: right;
   align-items: end;
-  Button{
+  Button {
     width: calc(var(--width) * 0.35);
     height: calc(var(--height) * 0.8);
     border-radius: 1vw;
     border: calc(var(--border-width)) solid black;
   }
-`
+`;
 
 export const WithdrawalModalContainer = styled.div<{ isOpen: boolean }>`
   position: fixed;
@@ -213,8 +213,8 @@ export const WithdrawalModalContainer = styled.div<{ isOpen: boolean }>`
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  opacity: ${props => props.isOpen ? 1 : 0};
+  visibility: ${(props) => (props.isOpen ? "visible" : "hidden")};
+  opacity: ${(props) => (props.isOpen ? 1 : 0)};
   transition: visibility 0s, opacity 0.3s ease-in-out;
 `;
 

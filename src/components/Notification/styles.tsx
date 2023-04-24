@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const NotificationContainer = styled.div`
   --w: calc(var(--section-width) * 0.85);
@@ -15,7 +15,7 @@ export const NotificationContainer = styled.div`
 
   h1 {
     line-height: 1vw;
-    font-size : 1.5vw;
+    font-size: 1.5vw;
   }
 
   h3 {
@@ -35,4 +35,4 @@ export const NotificationContainer = styled.div`
     align-items: center;
     margin-bottom: 1rem;
   }
-`
+`;

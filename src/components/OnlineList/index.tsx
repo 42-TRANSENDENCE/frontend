@@ -3,7 +3,6 @@ import { Scrollbars } from "react-custom-scrollbars";
 import { useNavigate } from "react-router";
 import IconButton from "@mui/material/IconButton";
 import ChatIcon from "@mui/icons-material/Chat";
-import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import {
   FriendListContainer,
   OnOffLineList,
@@ -127,10 +126,10 @@ const OnlineList = ({
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
-                <div key={userinfo.id}>
+                <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
-                </div>
+                </SingleUser>
               );
           })}
         </Scrollbars>
