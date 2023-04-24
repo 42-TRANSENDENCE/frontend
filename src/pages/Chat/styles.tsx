@@ -22,7 +22,7 @@ export const ChatBody = styled.div`
 
   > .Section {
     --section-width: min(
-      calc((var(--body-width) * 0.33 - var(--html-padding-horizontal))),
+      calc((var(--body-width) * 0.25 - var(--html-padding-horizontal))),
       400px
     );
     --section-padding: calc(var(--section-height) * 0.02);
@@ -47,7 +47,7 @@ export const ChatBody = styled.div`
 
   > .ChatOrMyChannels {
     --section-width: calc(
-      (var(--body-width) * 0.34 - var(--html-padding-horizontal))
+      (var(--body-width) * 0.5 - var(--html-padding-horizontal))
     );
     --section-height: min(var(--body-height), var(--body-width));
     text-align: center;
