@@ -289,7 +289,6 @@ export const MyChannels = ({
 }) => {
   const queryClient = useQueryClient();
   const myChannels: ChannelsInfo[] = useMyChannels().data;
-  const [title, setTitle] = useState<String>("");
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest("[data-id]");
@@ -306,8 +305,12 @@ export const MyChannels = ({
 
   useEffect(() => {
     socket?.on("newMessage", onNewMessage);
+    // socket?.on("outMember", () => {
+    //   queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+    // })
     return () => {
       socket?.off("newMessage", onNewMessage);
+      // socket?.off("outMember");
     };
   });
   return (
@@ -343,8 +346,8 @@ export const MyChannels = ({
                         {channelInfo.status === ChannelStatus.PRIVATE
                           ? channelInfo.title.replace(myNickname, "")
                           : channelInfo.title.length > 20
-                          ? channelInfo.title.slice(0, 20) + "..."
-                          : channelInfo.title}
+                            ? channelInfo.title.slice(0, 20) + "..."
+                            : channelInfo.title}
                       </div>
                     </div>
                     {channelInfo.status !== ChannelStatus.PRIVATE && (
