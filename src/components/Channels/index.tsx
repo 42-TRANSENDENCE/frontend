@@ -310,7 +310,6 @@ export const MyChannels = ({
       socket?.off("newMessage", onNewMessage);
     };
   });
-
   return (
     <>
       {popChatting ? (

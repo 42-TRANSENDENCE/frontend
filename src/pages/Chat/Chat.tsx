@@ -95,6 +95,7 @@ const Chat = () => {
                 setChannelId={setChannelId}
               />
               <Notification />
+
             </div>
           </ChatBody>
         </div>
