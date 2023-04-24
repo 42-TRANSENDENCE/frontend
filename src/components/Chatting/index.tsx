@@ -19,7 +19,7 @@ import {
   useKick,
   useMute,
 } from "../../hooks/mutation/chat";
-import { ChannelsInfo } from "../Channels/interface";
+import { ChannelsInfo, ChannelStatus } from "../Channels/interface";
 import { Socket } from "socket.io-client";
 import { Scrollbars } from "react-custom-scrollbars";
 import dayjs from "dayjs";
@@ -121,10 +121,10 @@ const ChatMenu = ({
         {channelInfo.channelMembers?.map((member) => {
           return String(member.userId) === userId
             ? {
-                [MemberType.OWNER]: <div>Channel Owner</div>,
-                [MemberType.ADMIN]: <div>Channel Administrator</div>,
-                [MemberType.MEMBER]: <div>Channel Member</div>,
-              }[member.type]
+              [MemberType.OWNER]: <div>Channel Owner</div>,
+              [MemberType.ADMIN]: <div>Channel Administrator</div>,
+              [MemberType.MEMBER]: <div>Channel Member</div>,
+            }[member.type]
             : null;
         })}
       </>
@@ -199,7 +199,7 @@ const ChatBubble = ({
       )}
 
       <div className="ChatMain">
-        {!isMe && <div>{eachChat.user ? eachChat.user : "nonamed"}</div>}
+        {!isMe && <div>{eachChat.user}</div>}
         <div className="ChatBubble">{eachChat.content}</div>
         <span>
           {dayjs(eachChat.createdAt).locale("ko").format("MM.DD. ddd hh:mm a")}
@@ -222,6 +222,10 @@ const ChatBox = ({
   idAvatarMap: Map<number, Blob>;
   socket: Socket | undefined;
 }) => {
+  // const sortedChats: ChatData[] = chats?.sort((a, b) => {
+  //   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+  // });
+
   return (
     <ChatLists>
       {chats?.map((chat, index) => {
@@ -276,7 +280,6 @@ export const Chatting = ({
   }
 
   const onClickClose = () => {
-    // socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   };
 
@@ -398,6 +401,7 @@ export const Chatting = ({
   }, [chats]);
 
   useEffect(() => {
+    // setPopChatting(false);
     socket?.emit("joinChannel", { channelId: String(channelId) });
     socket?.on("message", onMessage);
     socket?.on("outMember", onOutMember);
@@ -418,13 +422,19 @@ export const Chatting = ({
   return (
     <ChatsContainer>
       <ChatTitle>
-        <p className="Title">CHANNEL NAME</p>
+        <p className="Title">{channelInfo?.channelStatus === ChannelStatus.PRIVATE ?
+          `${channelInfo?.title.replace(userInfo.nickname, "")}` :
+          `${channelInfo?.title} (${channelInfo?.howmany.joinMembers})`
+        }</p>
         <div className="Buttons">
           {channelInfo?.myType === MemberType.OWNER && (
             <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
           )}
           <SmallButton img_url={closeButton} onClick={onClickClose} />
           <SmallButton img_url={leaveButton} onClick={onClickLeave} />
+          {/* {channelInfo?.channelStatus !== ChannelStatus.PRIVATE && (
+            <SmallButton img_url={leaveButton} onClick={onClickLeave} />
+          )} */}
         </div>
       </ChatTitle>
 
