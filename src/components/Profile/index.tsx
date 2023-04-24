@@ -2,8 +2,10 @@ import { ProfileContainer, Avatar } from "./styles";
 import { MiddleButton, SmallButton } from "../Button";
 import friendAddButton from "../../assets/middleButton/friendAddButton.svg";
 import friendDeleteButton from "../../assets/middleButton/friendDeleteButton.svg";
+import friendBlockButton from "../../assets/middleButton/friendBlockButton.svg";
+import friendUnblockButton from "../../assets/middleButton/friendUnblockButton.svg";
 import closeButton from "../../assets/smallButton/modalCloseButton.svg";
-import { useAddFriend, useDeleteFriend } from "../../hooks/mutation/friend";
+import { useAddFriend, useDeleteFriend, useBlockFriend, useUnblockFriend } from "../../hooks/mutation/friend";
 import FIRST_LOGIN from "../../assets/achievements/firstLogin.svg";
 import FIRST_FRIENDSHIP from "../../assets/achievements/firstFriend.svg";
 import FIRST_GAME from "../../assets/achievements/firstGame.svg";
@@ -23,6 +25,7 @@ export type ProfileProps = {
   win: number;
   lose: number;
   who: ProfileEnum;
+  isBlocked: boolean;
   achievements: [];
 };
 
@@ -49,6 +52,8 @@ function Profile({
 
   const addFriend = useAddFriend();
   const deleteFriend = useDeleteFriend();
+  const blockFriend = useBlockFriend();
+  const unblockFriend = useUnblockFriend();
 
   const onClickAddFriend = useCallback(() => {
     addFriend.mutate(profile.id);
@@ -59,6 +64,16 @@ function Profile({
     deleteFriend.mutate(profile.id);
     setPopProfile(false);
   }, [profile.id, deleteFriend]);
+
+  const onClickBlockFriend = useCallback(() => {
+    blockFriend.mutate(profile.id);
+    setPopProfile(false);
+  }, [profile.id, blockFriend]);
+
+  const onClickUnblockFriend = useCallback(() => {
+    unblockFriend.mutate(profile.id);
+    setPopProfile(false);
+  }, [profile.id, unblockFriend]);
 
   const onClickClose = () => {
     setPopProfile(false);
@@ -95,6 +110,14 @@ function Profile({
 
         {profile.who === ProfileEnum.FRIEND && (
           <div className="Buttons">
+            {profile.isBlocked ?
+              <MiddleButton
+                img_url={friendUnblockButton}
+                onClick={onClickUnblockFriend} /> :
+              <MiddleButton
+                img_url={friendBlockButton}
+                onClick={onClickBlockFriend} />
+            }
             <MiddleButton
               img_url={friendDeleteButton}
               onClick={onClickDeleteFriend}

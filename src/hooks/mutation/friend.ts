@@ -152,3 +152,49 @@ export function useDeleteFriend(): UseMutationResult<
     },
   });
 }
+
+export function useBlockFriend(): UseMutationResult<
+  void,
+  Error,
+  number,
+  MutationFunction<void, number>
+> {
+  const fetcher = useFetcher();
+
+  async function blockFriend(id: number): Promise<void> {
+    await fetcher("/users/friends/request/block/" + id, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }).then((response) => {
+      if (response.status === 201) toast.success("Friend blocked");
+    });
+  }
+
+  return useMutation(blockFriend);
+}
+
+export function useUnblockFriend(): UseMutationResult<
+  void,
+  Error,
+  number,
+  MutationFunction<void, number>
+> {
+  const fetcher = useFetcher();
+
+  async function unblockFriend(id: number): Promise<void> {
+    await fetcher("/users/friends/block/" + id, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }).then((response) => {
+      if (response.status === 200) toast.success("Friend unblocked");
+    });
+  }
+
+  return useMutation(unblockFriend);
+}

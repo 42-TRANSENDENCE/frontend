@@ -180,6 +180,8 @@ export function useSendDm(): UseMutationResult<void, Error, SendDMData, Mutation
             }
           })
         }
+        if (response.status === 406)
+          toast.error('You blocked ' + nickname);
       })
   }
 
