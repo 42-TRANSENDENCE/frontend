@@ -59,6 +59,7 @@ export const ChatBody = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    z-index: 0;
 
     > .Profile {
       display: flex;
@@ -67,6 +68,7 @@ export const ChatBody = styled.div`
       align-items: center;
       > .pop-profile {
         --profile-width: calc(var(--section-width) * 0.7);
+        z-index: 1;
       }
     }
   }

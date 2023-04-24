@@ -82,8 +82,18 @@ const Chat = () => {
 
             <div className="AllChannels Section">
               {popProfile && user ? (
-                <div className="Profile">
-                  <div className="pop-profile">
+                <div
+                  className="Profile"
+                  onClick={() => {
+                    setPopProfile(false);
+                  }}
+                >
+                  <div
+                    className="pop-profile"
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Profile profile={user} setPopProfile={setPopProfile} />
                   </div>
                 </div>
