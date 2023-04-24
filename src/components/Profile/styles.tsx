@@ -32,8 +32,8 @@ export const ProfileContainer = styled.div<any>`
       width: calc(var(--profile-width) * 0.1);
       aspect-ratio: 1;
       position: absolute;
-      right: 1rem;
-      top: 1rem;
+      right: calc(var(--profile-width) * 0.05);
+      top: calc(var(--profile-width) * 0.05);
     }
   }
 
