@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import useSocket from "../../hooks/useSocket";
 import { useSendDm } from "../../hooks/mutation/chat";
@@ -39,6 +39,7 @@ const Chat = () => {
   }, [userSearch]);
 
   useEffect(() => {
+    history.replaceState(null, "", "/chat");
     if (state) {
       sendDM.mutate({
         id: state.user?.id,
