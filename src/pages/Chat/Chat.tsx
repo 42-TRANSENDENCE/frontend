@@ -81,21 +81,31 @@ const Chat = () => {
             </div>
 
             <div className="AllChannels Section">
-              {popProfile && user && (
-                <div className="Profile">
-                  <div className="pop-profile">
+              {popProfile && user ? (
+                <div
+                  className="Profile"
+                  onClick={() => {
+                    setPopProfile(false);
+                  }}
+                >
+                  <div
+                    className="pop-profile"
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <Profile profile={user} setPopProfile={setPopProfile} />
                   </div>
                 </div>
+              ) : (
+                <Channels
+                  socket={chat_socket}
+                  setPopChatting={setPopChatting}
+                  channelId={channelId}
+                  setChannelId={setChannelId}
+                />
               )}
-              <Channels
-                socket={chat_socket}
-                setPopChatting={setPopChatting}
-                channelId={channelId}
-                setChannelId={setChannelId}
-              />
               <Notification />
-
             </div>
           </ChatBody>
         </div>
