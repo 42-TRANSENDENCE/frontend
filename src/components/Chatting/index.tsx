@@ -353,7 +353,7 @@ export const Chatting = ({
           setPopChatting(false);
         }
       }
-      queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+      queryClient.invalidateQueries({ queryKey: ["myChannels"] });
       queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
@@ -361,7 +361,7 @@ export const Chatting = ({
 
   const onInMember = useCallback(
     async (data: Member) => {
-      queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+      queryClient.invalidateQueries({ queryKey: ["myChannels"] });
       queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
