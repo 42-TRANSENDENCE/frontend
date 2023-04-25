@@ -14,13 +14,11 @@ import {
 import WithdrawalModal from './WithdrawalModal';
 import { Switch as MuiTogleSwitch } from '@mui/material';
 import logoutButton from '../../../assets/middleButton/logoutButton.svg';
-
 import { isValidNickname, useUserDelete } from '../../../hooks/user';
 import { useInput } from '../../../hooks/useInput';
 import { useChangeNickname, useUploadAvatar } from '../../../hooks/mutation/user';
 import { useFetcher } from '../../../hooks/fetcher';
 import { useQueryClient } from 'react-query';
-
 import avatarSubmitButton from '../../../assets/middleButton/AvatarSubmitButton.svg';
 import avatarUploadButton from '../../../assets/middleButton/AvatarUploadButton.svg';
 import nicknameSubmitButton from '../../../assets/middleButton/nicknameSubmitButton.svg';
