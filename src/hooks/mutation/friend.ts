@@ -160,6 +160,7 @@ export function useBlockFriend(): UseMutationResult<
   MutationFunction<void, number>
 > {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function blockFriend(id: number): Promise<void> {
     await fetcher("/users/friends/request/block/" + id, {
@@ -173,7 +174,12 @@ export function useBlockFriend(): UseMutationResult<
     });
   }
 
-  return useMutation(blockFriend);
+  return useMutation({
+    mutationFn: blockFriend,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
+    }
+  });
 }
 
 export function useUnblockFriend(): UseMutationResult<
@@ -183,6 +189,7 @@ export function useUnblockFriend(): UseMutationResult<
   MutationFunction<void, number>
 > {
   const fetcher = useFetcher();
+  const queryClient = useQueryClient();
 
   async function unblockFriend(id: number): Promise<void> {
     await fetcher("/users/friends/block/" + id, {
@@ -196,5 +203,10 @@ export function useUnblockFriend(): UseMutationResult<
     });
   }
 
-  return useMutation(unblockFriend);
+  return useMutation({
+    mutationFn: unblockFriend,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
+    }
+  });
 }
