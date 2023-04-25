@@ -222,9 +222,6 @@ const ChatBox = ({
   idAvatarMap: Map<number, Blob>;
   socket: Socket | undefined;
 }) => {
-  // const sortedChats: ChatData[] = chats?.sort((a, b) => {
-  //   return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  // });
 
   return (
     <ChatLists>
@@ -257,7 +254,7 @@ export const Chatting = ({
 }) => {
   const userInfo: UserInfo = useUserInfo().data;
   const chats: ChatData[] = useGetChats(channelId).data;
-  const channelInfo: ChannelInfo = useChannelInfo(channelId).data;
+  const channelInfo: ChannelInfo = useChannelInfo({ id: channelId, setPopChatting: setPopChatting }).data;
   const postChat = usePostChat();
   const setChannelPassword = useSetChannelPassword();
   const [chat, setChat] = useState("");
@@ -334,7 +331,8 @@ export const Chatting = ({
 
   const onMessage = useCallback(
     async (data: ChatData) => {
-      if (Number(channelId) === data.channelId) {
+      if (Number(channelId) === data.channelId
+        && !channelInfo?.blockedArr.includes(data.senderUserId)) {
         queryClient.setQueryData(["getChats", channelId], (prevChats: any) => {
           return prevChats ? [...prevChats, data] : [data];
         });
@@ -354,9 +352,9 @@ export const Chatting = ({
           toast.warning("You are kicked out from the channel");
           setPopChatting(false);
         }
-        queryClient.invalidateQueries({ queryKey: ["myChannel"] });
-        queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
       }
+      queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
   );
@@ -401,7 +399,6 @@ export const Chatting = ({
   }, [chats]);
 
   useEffect(() => {
-    // setPopChatting(false);
     socket?.emit("joinChannel", { channelId: String(channelId) });
     socket?.on("message", onMessage);
     socket?.on("outMember", onOutMember);
@@ -432,9 +429,6 @@ export const Chatting = ({
           )}
           <SmallButton img_url={closeButton} onClick={onClickClose} />
           <SmallButton img_url={leaveButton} onClick={onClickLeave} />
-          {/* {channelInfo?.channelStatus !== ChannelStatus.PRIVATE && (
-            <SmallButton img_url={leaveButton} onClick={onClickLeave} />
-          )} */}
         </div>
       </ChatTitle>
 
