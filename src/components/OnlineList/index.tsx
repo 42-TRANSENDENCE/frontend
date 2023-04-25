@@ -10,7 +10,6 @@ import {
   UserStatus,
   SingleUser,
 } from "./styles";
-import { useGetFriendList } from "../../hooks/query/friend";
 import InviteButton from "./InviteButton";
 import { useSendDm } from "../../hooks/mutation/chat";
 import { SocketContext } from "../../contexts/ClientSocket";

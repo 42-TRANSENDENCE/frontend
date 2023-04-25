@@ -30,12 +30,10 @@ import { ChannelStatus, ChannelsInfo } from "./interface";
 export const Channels = ({
   socket,
   setPopChatting,
-  channelId,
   setChannelId,
 }: {
   socket: Socket | undefined;
   setPopChatting: React.Dispatch<React.SetStateAction<boolean>>;
-  channelId: string;
   setChannelId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const queryClient = useQueryClient();
@@ -305,12 +303,8 @@ export const MyChannels = ({
 
   useEffect(() => {
     socket?.on("newMessage", onNewMessage);
-    // socket?.on("outMember", () => {
-    //   queryClient.invalidateQueries({ queryKey: ["myChannel"] });
-    // })
     return () => {
       socket?.off("newMessage", onNewMessage);
-      // socket?.off("outMember");
     };
   });
   return (
