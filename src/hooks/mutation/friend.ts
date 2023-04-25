@@ -178,6 +178,7 @@ export function useBlockFriend(): UseMutationResult<
     mutationFn: blockFriend,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
+      queryClient.invalidateQueries({ queryKey: ["getChats"] });
     }
   });
 }
@@ -207,6 +208,7 @@ export function useUnblockFriend(): UseMutationResult<
     mutationFn: unblockFriend,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
+      queryClient.invalidateQueries({ queryKey: ["getChats"] });
     }
   });
 }
