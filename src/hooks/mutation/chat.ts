@@ -236,7 +236,7 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
     })
       .then((response) => {
         if (response.status === 200) {
-          toast.success(user + ' is kicked out');
+          toast.success('User is kicked out');
         }
       })
   }
@@ -263,7 +263,7 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
     })
       .then((response) => {
         if (response.status === 200) {
-          toast.success(user + ' is banned in this channel');
+          toast.success('User is banned in this channel');
         }
       })
   }
@@ -289,7 +289,7 @@ export function useMute(): UseMutationResult<void, Error, AKBMData, MutationFunc
     })
       .then((response) => {
         if (response.status === 200)
-          toast.success(user + ' has been muted in this channel');
+          toast.success('User has been muted in this channel');
       })
   }
   return useMutation(mute);
