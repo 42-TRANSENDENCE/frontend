@@ -70,11 +70,12 @@ export const ProfileContainer = styled.div<any>`
     }
 
     .Buttons {
-      width: var(--profile-width);
+      width: 80%;
       height: calc(var(--profile-halfheight) * 0.4);
       display: flex;
       flex-direction: row;
-      justify-content: flex-end;
+      justify-content: space-between;
+      padding-left: 3vw;
       padding-right: 3vw;
       padding-bottom: 1vw;
       Button {
