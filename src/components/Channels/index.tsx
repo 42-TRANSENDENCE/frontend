@@ -296,9 +296,9 @@ export const MyChannels = ({
 
   const onNewMessage = useCallback(async (data: any) => {
     queryClient.invalidateQueries({ queryKey: ["myChannels"] });
-    myChannels?.map((channel) => {
-      if (channel.id === Number(data.channelId)) toast.success("asdf");
-    });
+    // myChannels?.map((channel) => {
+    //   if (channel.id === Number(data.channelId)) toast.success("asdf");
+    // });
   }, []);
 
   useEffect(() => {
