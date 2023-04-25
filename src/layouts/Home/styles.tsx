@@ -42,6 +42,7 @@ export const Container = styled.div`
 
     display: flex;
     justify-content: space-between;
+    align-items: center;
     flex-direction: row;
     overflow: hidden;
 
@@ -50,7 +51,7 @@ export const Container = styled.div`
         calc(var(--body-width) * 0.33 - var(--html-padding-horizontal)),
         330px
       );
-      --section-height: var(--body-height);
+      --section-height: min(var(--body-height), var(--body-width));
       --section-padding: calc(var(--section-height) * 0.02);
       width: var(--section-width);
       height: var(--body-height);
@@ -70,6 +71,7 @@ export const Container = styled.div`
 
     .MiddleSide {
       --section-width: min(calc(var(--body-width) * 0.34), 400px);
+      --section-height: min(var(--body-height), var(--body-width));
       width: var(--section-width);
       gap: var(--html-padding-vertical);
       .BigButtons {

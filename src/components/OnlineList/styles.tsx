@@ -10,6 +10,7 @@ export const FriendListContainer = styled.div`
   border: var(--border-width) solid black;
   height: var(--friendlist-height);
   width: var(--friendlist-width);
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -29,6 +30,7 @@ export const OnOffLineList = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 `;
 
 export const Header = styled.div`
