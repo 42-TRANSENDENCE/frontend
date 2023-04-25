@@ -102,7 +102,6 @@ const Chat = () => {
                 <Channels
                   socket={chat_socket}
                   setPopChatting={setPopChatting}
-                  channelId={channelId}
                   setChannelId={setChannelId}
                 />
               )}
