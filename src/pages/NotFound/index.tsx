@@ -6,7 +6,7 @@ const NotFound = (): JSX.Element => {
     <BadPage>
       <p
         onClick={() => {
-          navigate("/");
+          navigate("/home");
         }}
       ></p>
     </BadPage>
