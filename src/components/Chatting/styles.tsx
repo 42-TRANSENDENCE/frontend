@@ -108,6 +108,7 @@ export const ChatLists = styled.div`
   text-align: left;
   gap: calc(var(--fontsize-small) / 2);
   padding: 10px;
+  padding-left: 0;
 `;
 
 // 채팅 하나

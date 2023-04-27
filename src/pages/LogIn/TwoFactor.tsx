@@ -1,14 +1,12 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useValidate2FA } from '../../hooks/mutation/user';
 import { Container, Label, TwoFactorSingleInput, TwoFactorInputContainer, Conflict, Form } from './styles';
 import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 import loginButton from '../../assets/bigButton/2FALoginButton.svg';
 
 const TwoFactor = () => {
-  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}`;
+  const validate2FA = useValidate2FA();
   const [password, setPassword] = useState('');
   const ref1 = useRef<HTMLInputElement>(null);
   const ref2 = useRef<HTMLInputElement>(null);
@@ -16,28 +14,7 @@ const TwoFactor = () => {
   const ref4 = useRef<HTMLInputElement>(null);
   const ref5 = useRef<HTMLInputElement>(null);
   const ref6 = useRef<HTMLInputElement>(null);
-  const navigate = useNavigate();
   const [twoFactorError, setTwoFactorError] = useState(false);
-
-  const mutation = useMutation(async (password: string) => {
-    const response = await fetch(awsUrl + '/2fa/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ token: password }),
-    });
-    if (response.status === 200) {
-      navigate('/socket');
-    } else if (response.status === 401) {
-      toast.error('Wrong password. Try again');
-      setTwoFactorError(true);
-      setPassword('');
-    } else {
-      throw new Error('Unexpected response status code');
-    }
-  });
 
   const handleOnChange = useCallback((index: number, value: string) => {
     if (value.length === 1 && !isNaN(Number(value))) {
@@ -81,12 +58,12 @@ const TwoFactor = () => {
   const onSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
-      mutation.mutate(password);
+      validate2FA.mutate({ password: password, setTwoFactorError: setTwoFactorError, setPassword: setPassword });
     },
-    [mutation, password]
+    [validate2FA, password]
   );
 
-   useEffect(() => {
+  useEffect(() => {
     ref1.current?.focus();
   }, []);
 
@@ -125,7 +102,7 @@ const TwoFactor = () => {
             {twoFactorError && (
               <Conflict>2FA authentication failed. Please try again.</Conflict>
             )}
-          </div> 
+          </div>
           <div className='BigButtons'>
             <BigButton img_url={loginButton} type='submit' />
           </div>

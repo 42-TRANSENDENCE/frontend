@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLogout } from '../../hooks/user';
+import { SocketContext } from "../../contexts/ClientSocket";
 import { useUserInfo, useUserSearch } from '../../hooks/query/user';
 import Modal from '../../components/Modal';
 import { Container } from './styles';
@@ -18,6 +19,7 @@ import SettingModal from './Modal/HomeModal';
 const Home = () => {
   const navigate = useNavigate();
   const onClickLogOut = useLogout();
+  const clientSocket = useContext(SocketContext);
   const [twoFactor, setTwoFactor] = useState(false);
   const [showSettingModal, setShowSettingModal] = useState(false);
   const [userSearch, setUserSearch] = useState<string | null>(null);
@@ -28,6 +30,10 @@ const Home = () => {
   const bufferObj: { type: "Buffer", data: [] } = { type: userInfoData?.avatar.type, data: userInfoData?.avatar.data };
   const uint8Array = new Uint8Array(bufferObj.data);
   const userAvatar = new Blob([uint8Array], { type: "application/octet-stream" });
+
+  useEffect(() => {
+    clientSocket.emit("friends_status");
+  }, []);
 
   useEffect(() => {
     if (userSearch) {
@@ -87,6 +93,7 @@ const Home = () => {
                     win: userInfoData?.wins ? userInfoData?.wins : 0,
                     lose: userInfoData?.loses ? userInfoData?.loses : 0,
                     who: ProfileEnum.ME,
+                    isBlocked: false,
                     achievements: userInfoData?.achievements
                   }}
                   setPopProfile={setPopProfile}

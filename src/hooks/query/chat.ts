@@ -49,7 +49,7 @@ export const useGetChats = (id: string) => {
   return data;
 };
 
-export const useChannelInfo = (id: string) => {
+export const useChannelInfo = ({ id, setPopChatting }: { id: string, setPopChatting: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const fetcher = useFetcher();
   const data = useQuery({
     queryKey: ["channelInfo", id],
@@ -58,8 +58,10 @@ export const useChannelInfo = (id: string) => {
         method: "GET",
         credentials: "include",
       });
-      if (response.ok) return await response.json();
-      throw response;
+      if (response.status === 200)
+        return await response.json();
+      else if (response.status === 404)
+        setPopChatting(false);
     },
   });
   return data;

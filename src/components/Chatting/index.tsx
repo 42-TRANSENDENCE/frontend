@@ -4,7 +4,6 @@ import {
   SendChatBar,
   ChatItem,
   ChatLists,
-  ChatsMenuContainer,
   ChatTitle,
 } from "./styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -12,7 +11,7 @@ import { useQueryClient } from "react-query";
 import { UserInfo, useUserInfo } from "../../hooks/query/user";
 import { useGetChats, useChannelInfo } from "../../hooks/query/chat";
 import { usePostChat, useSetChannelPassword } from "../../hooks/mutation/chat";
-import { ChannelsInfo } from "../Channels/interface";
+import { ChannelsInfo, ChannelStatus } from "../Channels/interface";
 import { Socket } from "socket.io-client";
 import { Scrollbars } from "react-custom-scrollbars";
 import dayjs from "dayjs";
@@ -78,7 +77,7 @@ const ChatBubble = ({
       )}
 
       <div className="ChatMain">
-        {!isMe && <div>{eachChat.user ? eachChat.user : "nonamed"}</div>}
+        {!isMe && <div>{eachChat.user}</div>}
         <div className="ChatBubble">{eachChat.content}</div>
         <span>
           {dayjs(eachChat.createdAt).locale("ko").format("MM.DD. ddd hh:mm a")}
@@ -132,7 +131,10 @@ export const Chatting = ({
 }) => {
   const userInfo: UserInfo = useUserInfo().data;
   const chats: ChatData[] = useGetChats(channelId).data;
-  const channelInfo: ChannelInfo = useChannelInfo(channelId).data;
+  const channelInfo: ChannelInfo = useChannelInfo({
+    id: channelId,
+    setPopChatting: setPopChatting,
+  }).data;
   const postChat = usePostChat();
   const setChannelPassword = useSetChannelPassword();
   const [chat, setChat] = useState("");
@@ -155,7 +157,6 @@ export const Chatting = ({
   }
 
   const onClickClose = () => {
-    // socket?.emit('closeChannel', { 'channelId': String(channelId) });
     setPopChatting(false);
   };
 
@@ -210,7 +211,10 @@ export const Chatting = ({
 
   const onMessage = useCallback(
     async (data: ChatData) => {
-      if (Number(channelId) === data.channelId) {
+      if (
+        Number(channelId) === data.channelId &&
+        !channelInfo?.blockedArr.includes(data.senderUserId)
+      ) {
         queryClient.setQueryData(["getChats", channelId], (prevChats: any) => {
           return prevChats ? [...prevChats, data] : [data];
         });
@@ -230,16 +234,16 @@ export const Chatting = ({
           toast.warning("You are kicked out from the channel");
           setPopChatting(false);
         }
-        queryClient.invalidateQueries({ queryKey: ["myChannel"] });
-        queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
       }
+      queryClient.invalidateQueries({ queryKey: ["myChannels"] });
+      queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
   );
 
   const onInMember = useCallback(
     async (data: Member) => {
-      queryClient.invalidateQueries({ queryKey: ["myChannel"] });
+      queryClient.invalidateQueries({ queryKey: ["myChannels"] });
       queryClient.invalidateQueries({ queryKey: ["channelInfo"] });
     },
     [channelId]
@@ -297,7 +301,11 @@ export const Chatting = ({
   return (
     <ChatsContainer>
       <ChatTitle>
-        <p className="Title">CHANNEL NAME</p>
+        <p className="Title">
+          {channelInfo?.channelStatus === ChannelStatus.PRIVATE
+            ? `${channelInfo?.title.replace(userInfo.nickname, "")}`
+            : `${channelInfo?.title} (${channelInfo?.howmany.joinMembers})`}
+        </p>
         <div className="Buttons">
           {channelInfo?.myType === MemberType.OWNER && (
             <SmallButton img_url={lockButton} onClick={onClickSetPassword} />
