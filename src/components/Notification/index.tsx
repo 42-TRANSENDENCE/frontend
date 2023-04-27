@@ -100,64 +100,63 @@ function Notification() {
         <h1>NOTIFICATION</h1>
         {friendReceivedList?.map((userinfo: any) => {
           return (
-            <>
-              <h3>Friend Received</h3>
-              <div className="Notification">
-                <span>{userinfo.nickname}</span>
+            <div className="Notification">
+              <h3>Friend Received ({userinfo.nickname})</h3>
+              <div>
                 <Button
                   variant="contained"
                   color="success"
                   onClick={() => onClickApproveFriend(userinfo.id)}
                 >
-                  Approve
+                  <h3>✔️</h3>
                 </Button>
                 <Button
                   variant="contained"
                   color="error"
                   onClick={() => onClickRefuseRequestFriend(userinfo.id)}
                 >
-                  Refuse
+                  <h3>✖️</h3>
                 </Button>
               </div>
-            </>
+            </div>
           );
         })}
         {friendPendingList?.map((userinfo: any) => {
           return (
-            <>
-              <h3>Friend Pending</h3>
-              <div className="Notification">
-                <span>{userinfo.nickname}</span>
+            <div className="Notification">
+              <h3>Friend Pending ({userinfo.nickname})</h3>
+              <div>
                 <Button
                   variant="contained"
                   color="error"
                   onClick={() => onClickDeleteRequestFriend(userinfo.id)}
                 >
-                  Cancel
+                  <h3>✖️</h3>
                 </Button>
               </div>
-            </>
+            </div>
           );
         })}
         {invitationList?.map((inviteInfo: InvitationInfo, index: number) => {
           return (
-            <div key={index}>
-              <h3>Invitation From "{inviteInfo.from.user.nickname}"</h3>
-              <div className="Notification">
-                <span>{inviteInfo.mode} Mode</span>
+            <div className="Notification" key={index}>
+              <h3>
+                {inviteInfo.mode} game from "{inviteInfo.from.user.nickname}"
+              </h3>
+              <div>
                 <Button
                   variant="contained"
                   color="success"
                   onClick={() => onClickAcceptInvitation(inviteInfo)}
                 >
-                  Approve
+                  <h3>✔️</h3>
                 </Button>
                 <Button
                   variant="contained"
                   color="error"
                   onClick={() => onClickRefuseInvitation(inviteInfo)}
                 >
-                  Refuse
+                  <h3>✖️</h3>
                 </Button>
               </div>
             </div>
