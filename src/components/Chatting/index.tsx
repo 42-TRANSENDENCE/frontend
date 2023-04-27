@@ -403,6 +403,7 @@ export const Chatting = ({
     socket?.on("message", onMessage);
     socket?.on("outMember", onOutMember);
     socket?.on("inMember", onInMember);
+    socket?.on("blockMember", onInMember);
     socket?.on("muteMember", onMuteMember);
     socket?.on("adminMember", onAdminMember);
     socket?.on("removeChannel", onRemoveChannel);
@@ -410,6 +411,7 @@ export const Chatting = ({
       socket?.off("message", onMessage);
       socket?.off("outMember", onOutMember);
       socket?.off("inMember", onInMember);
+      socket?.off("blockMember", onInMember);
       socket?.off("muteMember", onMuteMember);
       socket?.off("adminMember", onAdminMember);
       socket?.off("removeChannel", onRemoveChannel);
