@@ -1,22 +1,31 @@
 import { Socket } from "socket.io-client";
 import { ChannelInfo, MemberType } from "./interface";
 import { useAdmin, useBan, useKick, useMute } from "../../hooks/mutation/chat";
+import { useUserProfile } from "../../hooks/query/user";
 import { ChatsMenuContainer } from "./styles";
+import { ProfileProps } from '../Profile';
 import { useEffect } from "react";
 
 const ChatMenu = ({
   userId,
+  userNickname,
   channelInfo,
   channelId,
   socket,
   setPopMenu,
+  setPopProfile,
+  setUser
 }: {
   userId: string;
+  userNickname: string;
   channelInfo: ChannelInfo;
   channelId: string;
   socket: Socket | undefined;
   setPopMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 }): JSX.Element => {
+  useUserProfile({ nickname: userNickname, setUser: setUser }).data;
   const admin = useAdmin();
   const kick = useKick();
   const ban = useBan();
@@ -42,6 +51,11 @@ const ChatMenu = ({
     setPopMenu(false);
   };
 
+  const onClickProfile = () => {
+    setPopProfile(true);
+    setPopMenu(false);
+  }
+
   useEffect(() => {
     console.log(channelInfo.myType);
   });
@@ -53,7 +67,7 @@ const ChatMenu = ({
         <div onClick={onKickOther}>- Kick</div>
         <div onClick={onBanOther}>- Ban</div>
         <div onClick={onMuteOther}>- Mute</div>
-        <div onClick={() => {}}>- See Profile</div>
+        <div onClick={onClickProfile}>- See Profile</div>
       </>
     );
   };
@@ -73,6 +87,7 @@ const ChatMenu = ({
                 <div onClick={onKickOther}>Kick</div>
                 <div onClick={onBanOther}>Ban</div>
                 <div onClick={onMuteOther}>Mute</div>
+                <div onClick={onClickProfile}>- See Profile</div>
               </>
             );
           return null;
@@ -87,12 +102,13 @@ const ChatMenu = ({
         {channelInfo.channelMembers?.map((member) => {
           return String(member.userId) === userId
             ? {
-                [MemberType.OWNER]: <div>Channel Owner</div>,
-                [MemberType.ADMIN]: <div>Channel Administrator</div>,
-                [MemberType.MEMBER]: <div>Channel Member</div>,
-              }[member.type]
+              [MemberType.OWNER]: <div>Channel Owner</div>,
+              [MemberType.ADMIN]: <div>Channel Administrator</div>,
+              [MemberType.MEMBER]: <div>Channel Member</div>,
+            }[member.type]
             : null;
         })}
+        <div onClick={onClickProfile}>- See Profile</div>
       </>
     );
   };

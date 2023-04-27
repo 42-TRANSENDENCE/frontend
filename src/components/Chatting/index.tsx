@@ -22,6 +22,7 @@ import leaveButton from "../../assets/smallButton/leaveChannelButton.svg";
 import lockButton from "../../assets/smallButton/channelLockButton.svg";
 import outMember from "../../assets/outMember.svg";
 import { toast } from "react-toastify";
+import { ProfileProps } from '../Profile';
 import {
   ChannelInfo,
   Chat,
@@ -38,6 +39,8 @@ const ChatBubble = ({
   isMe,
   idAvatarMap,
   socket,
+  setPopProfile,
+  setUser
 }: ChatProps) => {
   const [popMenu, setPopMenu] = useState(false);
   const avatar = idAvatarMap.get(chat.senderUserId);
@@ -69,10 +72,13 @@ const ChatBubble = ({
       {popMenu && (
         <ChatMenu
           userId={String(chat.senderUserId)}
+          userNickname={chat.senderUserNickname}
           channelInfo={channelInfo}
           channelId={String(chat.channelId)}
           socket={socket}
           setPopMenu={setPopMenu}
+          setPopProfile={setPopProfile}
+          setUser={setUser}
         />
       )}
 
@@ -93,12 +99,16 @@ const ChatBox = ({
   userId,
   idAvatarMap,
   socket,
+  setPopProfile,
+  setUser
 }: {
   channelInfo: ChannelInfo;
   chats: ChatData[];
   userId: number;
   idAvatarMap: Map<number, Blob>;
   socket: Socket | undefined;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 }) => {
   return (
     <ChatLists>
@@ -112,6 +122,8 @@ const ChatBox = ({
               isMe={chat.senderUserId === userId}
               idAvatarMap={idAvatarMap}
               socket={socket}
+              setPopProfile={setPopProfile}
+              setUser={setUser}
             />
           </div>
         );
@@ -124,10 +136,14 @@ export const Chatting = ({
   socket,
   channelId,
   setPopChatting,
+  setPopProfile,
+  setUser
 }: {
   socket: Socket | undefined;
   channelId: string;
   setPopChatting: React.Dispatch<React.SetStateAction<boolean>>;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 }) => {
   const userInfo: UserInfo = useUserInfo().data;
   const chats: ChatData[] = useGetChats(channelId).data;
@@ -323,6 +339,8 @@ export const Chatting = ({
             userId={userInfo?.id}
             idAvatarMap={idAvatarMap}
             socket={socket}
+            setPopProfile={setPopProfile}
+            setUser={setUser}
           />
         </Scrollbars>
       </ChatsBar>

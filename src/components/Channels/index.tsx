@@ -25,6 +25,7 @@ import createChannelButton from "../../assets/smallButton/newChatRoomButton.svg"
 import lockImg from "../../assets/lock.svg";
 import dmImg from "../../assets/DM.svg";
 import { ChannelStatus, ChannelsInfo } from "./interface";
+import { ProfileProps } from '../Profile';
 
 export const Channels = ({
   socket,
@@ -276,6 +277,8 @@ export const MyChannels = ({
   setPopChatting,
   channelId,
   setChannelId,
+  setPopProfile,
+  setUser
 }: {
   myNickname: string;
   socket: Socket | undefined;
@@ -283,6 +286,8 @@ export const MyChannels = ({
   setPopChatting: React.Dispatch<React.SetStateAction<boolean>>;
   channelId: string;
   setChannelId: React.Dispatch<React.SetStateAction<string>>;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 }) => {
   const queryClient = useQueryClient();
   const myChannels: ChannelsInfo[] = useMyChannels().data;
@@ -313,6 +318,8 @@ export const MyChannels = ({
           socket={socket}
           channelId={channelId}
           setPopChatting={setPopChatting}
+          setPopProfile={setPopProfile}
+          setUser={setUser}
         />
       ) : (
         <ChannelContainer>
