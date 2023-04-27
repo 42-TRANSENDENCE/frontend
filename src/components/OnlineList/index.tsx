@@ -96,7 +96,7 @@ const OnlineList = ({
     <FriendListContainer>
       <OnOffLineList className="Online">
         <Header>ONLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status === "ONLINE" || userinfo?.status === "INGAME")
               return (
@@ -105,11 +105,11 @@ const OnlineList = ({
                   {userinfo.nickname}
                   <IconButton
                     color="success"
-                    size="large"
+                    size="small"
                     edge="end"
                     onClick={() => onClickSendDm(userinfo)}
                   >
-                    <ChatIcon />
+                    <ChatIcon className="icon" />
                   </IconButton>
                   <InviteButton socket={clientSocket} userinfo={userinfo} />
                 </SingleUser>
@@ -119,7 +119,7 @@ const OnlineList = ({
       </OnOffLineList>
       <OnOffLineList className="Offline">
         <Header>OFFLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
@@ -128,11 +128,11 @@ const OnlineList = ({
                   {userinfo.nickname}
                   <IconButton
                     color="success"
-                    size="large"
+                    size="small"
                     edge="end"
                     onClick={() => onClickSendDm(userinfo)}
                   >
-                    <ChatIcon />
+                    <ChatIcon className="icon" />
                   </IconButton>
                 </SingleUser>
               );

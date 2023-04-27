@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
   width: var(--page-width);
@@ -24,6 +24,7 @@ export const Container = styled.div`
     align-items: top;
     justify-content: top;
     overflow-y: scroll;
+    scrollbar-width: hidden;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
     }
