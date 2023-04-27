@@ -20,8 +20,8 @@ const PrivateRoute = ({ component: Component }: { component: React.ComponentType
         if (response2.status === 401) {
           setAuthenticated(false);
         }
-      } else {
-        // handle other response status codes...
+      } else if (response.status === 404) {
+        setAuthenticated(false);
       }
     };
 
