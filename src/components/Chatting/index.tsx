@@ -304,7 +304,7 @@ export const Chatting = ({
         <p className="Title">
           {channelInfo?.channelStatus === ChannelStatus.PRIVATE
             ? `${channelInfo?.title.replace(userInfo.nickname, "")}`
-            : `${channelInfo?.title} (${channelInfo?.howmany.joinMembers})`}
+            : `${channelInfo?.title} (🧑‍💼${channelInfo?.howmany.joinMembers})`}
         </p>
         <div className="Buttons">
           {channelInfo?.myType === MemberType.OWNER && (
