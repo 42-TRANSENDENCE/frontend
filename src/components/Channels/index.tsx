@@ -24,7 +24,6 @@ import searchButton from "../../assets/Search.svg";
 import createChannelButton from "../../assets/smallButton/newChatRoomButton.svg";
 import lockImg from "../../assets/lock.svg";
 import dmImg from "../../assets/DM.svg";
-import { toast } from "react-toastify";
 import { ChannelStatus, ChannelsInfo } from "./interface";
 
 export const Channels = ({
