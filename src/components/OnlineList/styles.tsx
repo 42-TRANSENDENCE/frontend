@@ -56,9 +56,11 @@ export const SingleUser = styled.div`
   font-size: calc(var(--singlefriend-height) * 0.75);
   font-weight: 500;
 
-  & > .icon {
+  & .icon {
+    margin: 0;
+    padding: 0;
+    width: calc(var(--singlefriend-height) * 0.75);
     height: calc(var(--singlefriend-height) * 0.75);
-    aspect-ratio: 1;
   }
 `;
 
