@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { useFetcher } from "../fetcher";
 import {
   useMutation,
@@ -5,6 +6,7 @@ import {
   MutationFunction,
   useQueryClient,
 } from "react-query";
+import { SocketContext } from "../../contexts/ClientSocket";
 import { toast } from "react-toastify";
 
 export function useAddFriend(): UseMutationResult<
@@ -44,6 +46,7 @@ export function useApproveFriend(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   async function approveFriend(id: number): Promise<void> {
     await fetcher("/users/friends/approve/" + id, {
@@ -53,7 +56,10 @@ export function useApproveFriend(): UseMutationResult<
       },
       credentials: "include",
     }).then((response) => {
-      if (response.status === 200) toast.success("Approved request");
+      if (response.status === 200) {
+        clientSocket.emit("friends_status");
+        toast.success("Approved request");
+      }
     });
   }
 
@@ -132,6 +138,7 @@ export function useDeleteFriend(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   async function deleteFriend(id: number): Promise<void> {
     await fetcher("/users/friends/" + id, {
@@ -141,7 +148,10 @@ export function useDeleteFriend(): UseMutationResult<
       },
       credentials: "include",
     }).then((response) => {
-      if (response.status === 200) toast.success("Friend deleted");
+      if (response.status === 200) {
+        clientSocket.emit("friends_status");
+        toast.success("Friend deleted");
+      }
     });
   }
 
