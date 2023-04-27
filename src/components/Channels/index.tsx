@@ -24,18 +24,15 @@ import searchButton from "../../assets/Search.svg";
 import createChannelButton from "../../assets/smallButton/newChatRoomButton.svg";
 import lockImg from "../../assets/lock.svg";
 import dmImg from "../../assets/DM.svg";
-import { toast } from "react-toastify";
 import { ChannelStatus, ChannelsInfo } from "./interface";
 
 export const Channels = ({
   socket,
   setPopChatting,
-  channelId,
   setChannelId,
 }: {
   socket: Socket | undefined;
   setPopChatting: React.Dispatch<React.SetStateAction<boolean>>;
-  channelId: string;
   setChannelId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const queryClient = useQueryClient();
@@ -289,7 +286,6 @@ export const MyChannels = ({
 }) => {
   const queryClient = useQueryClient();
   const myChannels: ChannelsInfo[] = useMyChannels().data;
-  const [title, setTitle] = useState<String>("");
   const onClickOpenChat = useCallback(async (e: any) => {
     e.preventDefault();
     const channelData = e.target.closest("[data-id]");
@@ -299,9 +295,9 @@ export const MyChannels = ({
 
   const onNewMessage = useCallback(async (data: any) => {
     queryClient.invalidateQueries({ queryKey: ["myChannels"] });
-    myChannels?.map((channel) => {
-      if (channel.id === Number(data.channelId)) toast.success("asdf");
-    });
+    // myChannels?.map((channel) => {
+    //   if (channel.id === Number(data.channelId)) toast.success("asdf");
+    // });
   }, []);
 
   useEffect(() => {
@@ -343,8 +339,8 @@ export const MyChannels = ({
                         {channelInfo.status === ChannelStatus.PRIVATE
                           ? channelInfo.title.replace(myNickname, "")
                           : channelInfo.title.length > 20
-                          ? channelInfo.title.slice(0, 20) + "..."
-                          : channelInfo.title}
+                            ? channelInfo.title.slice(0, 20) + "..."
+                            : channelInfo.title}
                       </div>
                     </div>
                     {channelInfo.status !== ChannelStatus.PRIVATE && (

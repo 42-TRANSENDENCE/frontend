@@ -1,10 +1,11 @@
 import { useFetcher } from './fetcher';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
+import { ClientSocket } from '../contexts/ClientSocket';
 
 export function useLogout() {
+  const navigate = useNavigate();
   const fetcher = useFetcher();
-  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${import.meta.env.VITE_AWS_PORT}`;
 
   const logout = async () => {
     await fetcher('/auth/logout', {
@@ -12,7 +13,9 @@ export function useLogout() {
       credentials: 'include',
     }).then((response) => {
       if (response.status === 200) {
-        window.location.href = `${awsUrl}:5173/`;
+        toast.success('Logged out');
+        ClientSocket.disconnect();
+        navigate('/');
       } else {
         throw new Error('Unexpected response status code');
       }
@@ -30,14 +33,15 @@ export function useUserDelete() {
       method: 'DELETE',
       credentials: 'include',
     })
-    .then(response => {
-      if (response.status === 200) {
-        navigate('/');
-        toast.success('User deleted successfully.');
-      } else {
-        toast.error('User not deleted.');
-      }
-    })
+      .then(response => {
+        if (response.status === 200) {
+          ClientSocket.disconnect();
+          navigate('/');
+          toast.success('User deleted successfully.');
+        } else {
+          toast.error('User not deleted.');
+        }
+      })
   }
   return userDelete;
 }

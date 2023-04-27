@@ -10,7 +10,6 @@ import {
   UserStatus,
   SingleUser,
 } from "./styles";
-import { useGetFriendList } from "../../hooks/query/friend";
 import InviteButton from "./InviteButton";
 import { useSendDm } from "../../hooks/mutation/chat";
 import { SocketContext } from "../../contexts/ClientSocket";
@@ -93,13 +92,11 @@ const OnlineList = ({
     }
   }, []);
 
-  const onClickInviteGame = useCallback(() => {}, []);
-
   return (
     <FriendListContainer>
       <OnOffLineList className="Online">
         <Header>ONLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status === "ONLINE" || userinfo?.status === "INGAME")
               return (
@@ -122,13 +119,21 @@ const OnlineList = ({
       </OnOffLineList>
       <OnOffLineList className="Offline">
         <Header>OFFLINE</Header>
-        <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+        <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
           {friendList?.map((userinfo: User) => {
             if (userinfo?.status !== "ONLINE" && userinfo?.status !== "INGAME")
               return (
                 <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
                   {userinfo.nickname}
+                  <IconButton
+                    color="success"
+                    size="large"
+                    edge="end"
+                    onClick={() => onClickSendDm(userinfo)}
+                  >
+                    <ChatIcon />
+                  </IconButton>
                 </SingleUser>
               );
           })}

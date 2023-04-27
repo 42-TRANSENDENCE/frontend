@@ -15,10 +15,18 @@ export interface ChannelMembers {
   avatar: any;
 }
 
+export interface HowMany {
+  connectedSockets: number;
+  joinMembers: number;
+}
+
 export interface ChannelInfo {
   channelStatus: ChannelStatus;
   channelMembers: ChannelMembers[];
   myType: MemberType;
+  title: string;
+  howmany: HowMany;
+  blockedArr: number[];
 }
 
 export interface ChatData {
