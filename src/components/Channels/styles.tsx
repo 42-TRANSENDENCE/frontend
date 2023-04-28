@@ -100,6 +100,7 @@ export const ChannelList = styled.div`
       display: flex;
       flex-direction: row;
       font-weight: 600;
+      white-space: nowrap;
       --lockimg-size: var(--fontsize-small);
       width: var(--lockimg-size);
       height: var(--lockimg-size);
