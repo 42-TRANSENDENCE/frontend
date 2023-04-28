@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
 import {
+  useGetFriendList,
   useReceivedFriendList,
   usePendingFriendList,
 } from "../../hooks/query/friend";
@@ -34,6 +35,7 @@ interface InvitationInfo {
 function Notification() {
   const navigate = useNavigate();
   const clientSocket = useContext(SocketContext);
+  const userFriendList = useGetFriendList().data;
   const userFriendReceived = useReceivedFriendList().data;
   const friendReceivedList: UserInfo[] = userFriendReceived;
   const userFriendPending = usePendingFriendList().data;
@@ -77,6 +79,10 @@ function Notification() {
   };
 
   useEffect(() => {
+    clientSocket.emit("friends_status")
+  }, [userFriendList]);
+
+  useEffect(() => {
     clientSocket.on("updateInviteList", (data: InvitationInfo[] | null) => {
       setInvitationList(data);
     });
@@ -96,7 +102,7 @@ function Notification() {
 
   return (
     <NotificationContainer>
-      <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+      <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
         <h1>NOTIFICATION</h1>
         {friendReceivedList?.map((userinfo: any) => {
           return (
