@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client";
 import { ChannelStatus } from "../Channels/interface";
+import { ProfileProps } from '../Profile';
 
 export enum MemberType {
   OWNER = "OWNER",
@@ -26,7 +27,6 @@ export interface ChannelInfo {
   myType: MemberType;
   title: string;
   howmany: HowMany;
-  blockedArr: number[];
 }
 
 export interface ChatData {
@@ -51,6 +51,8 @@ export interface ChatProps {
   isMe: boolean;
   idAvatarMap: Map<number, Blob>;
   socket: Socket | undefined;
+  setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
+  setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
 }
 
 export interface Member {

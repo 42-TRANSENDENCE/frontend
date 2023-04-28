@@ -85,3 +85,37 @@ export const useUserSearch = (): UseUserSearchReturnType => {
     queryKey: queryKey,
   };
 };
+
+export const useUserProfile = ({ nickname, setUser }: { nickname: string, setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>; }) => {
+  const fetcher = useFetcher();
+  const data = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      await fetcher('/users/search/' + nickname, {
+        method: 'GET',
+        credentials: 'include'
+      })
+        .then((response) => {
+          if (response.ok) {
+            response.json().then(data => {
+              const bufferObj: { type: "Buffer", data: [] } = { type: data.avatar.type, data: data.avatar.data };
+              const uint8Array = new Uint8Array(bufferObj.data);
+              const blob = new Blob([uint8Array], { type: "application/octet-stream" });
+              const userProfile: ProfileProps = {
+                id: data.id,
+                imageSrc: URL.createObjectURL(blob),
+                nickname: data.nickname,
+                win: data.win,
+                lose: data.lose,
+                who: data.isFriend ? ProfileEnum.FRIEND : ProfileEnum.OTHERS,
+                isBlocked: data.isBlocked,
+                achievements: data.achievements
+              };
+              setUser(userProfile);
+            })
+          }
+        })
+    }
+  })
+  return data;
+};

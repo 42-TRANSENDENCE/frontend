@@ -60,7 +60,8 @@ export const ChatTitle = styled.div`
   & > .Title {
     height: var(--title-height);
     width: fit-content;
-    text-justify: left;
+    /* text-justify: left; */
+    text-align: left;
     font-size: calc(var(--fontsize-big) * 0.7);
     font-weight: 600;
     margin-left: calc(var(--chat-radius) * 0.5);

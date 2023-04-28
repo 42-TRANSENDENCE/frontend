@@ -78,6 +78,8 @@ const Chat = () => {
                 setPopChatting={setPopChatting}
                 channelId={channelId}
                 setChannelId={setChannelId}
+                setPopProfile={setPopProfile}
+                setUser={setUser}
               />
             </div>
 
