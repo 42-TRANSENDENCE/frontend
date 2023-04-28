@@ -184,9 +184,11 @@ export const Channels = ({
   useEffect(() => {
     socket?.on("newChannel", onNewChannel);
     socket?.on("removeChannel", onRemoveChannel);
+    socket?.on("outMember", onRemoveChannel);
     return () => {
       socket?.off("newChannel", onNewChannel);
       socket?.off("removeChannel", onRemoveChannel);
+      socket?.off("outMember", onRemoveChannel);
     };
   }, [socket]);
 
