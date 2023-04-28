@@ -9,6 +9,7 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "react-query";
 import { UserInfo, useUserInfo } from "../../hooks/query/user";
+import { useBlocklist } from '../../hooks/query/friend';
 import { useGetChats, useChannelInfo } from "../../hooks/query/chat";
 import { usePostChat, useSetChannelPassword } from "../../hooks/mutation/chat";
 import { ChannelsInfo, ChannelStatus } from "../Channels/interface";
@@ -151,6 +152,7 @@ export const Chatting = ({
     id: channelId,
     setPopChatting: setPopChatting,
   }).data;
+  useBlocklist().data;
   const postChat = usePostChat();
   const setChannelPassword = useSetChannelPassword();
   const [chat, setChat] = useState("");
@@ -227,9 +229,10 @@ export const Chatting = ({
 
   const onMessage = useCallback(
     async (data: ChatData) => {
+      const blocklist: number[] = await queryClient.fetchQuery({ queryKey: ["blocklist"] });
       if (
         Number(channelId) === data.channelId &&
-        !channelInfo?.blockedArr.includes(data.senderUserId)
+        !blocklist?.includes(data.senderUserId)
       ) {
         queryClient.setQueryData(["getChats", channelId], (prevChats: any) => {
           return prevChats ? [...prevChats, data] : [data];
