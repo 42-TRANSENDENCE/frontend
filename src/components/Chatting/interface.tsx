@@ -27,7 +27,6 @@ export interface ChannelInfo {
   myType: MemberType;
   title: string;
   howmany: HowMany;
-  blockedArr: number[];
 }
 
 export interface ChatData {
