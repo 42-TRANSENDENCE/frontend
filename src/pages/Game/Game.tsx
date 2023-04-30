@@ -1,12 +1,17 @@
 import { useState, useContext, useEffect } from "react";
 import { SocketContext } from "../../contexts/ClientSocket";
 
-import { GameState } from "./enum";
+import { GameMode, GameState } from "./enum";
 import Title from "../../components/Title";
 import Lobby from "./Lobby";
 import Waiting from "./Waiting";
 import { GameContainer } from "./styles";
 import { useNavigate } from "react-router-dom";
+
+export interface MatchDTO {
+  roomId: string;
+  mode: GameMode;
+}
 
 const Game = (): JSX.Element => {
   const [gamestate, setGamestate] = useState<GameState>(GameState.Lobby);
@@ -29,9 +34,11 @@ const Game = (): JSX.Element => {
     clientSocket.on("out_of_queue", () => {
       setGamestate(GameState.Lobby);
     });
-    clientSocket.on("match_maked", (data: any) => {
+    clientSocket.on("match_maked", (data: MatchDTO) => {
       console.log("room :", data.roomId);
-      navigate("/game/play", { state: { room: data.roomId, isPlayer: true } });
+      navigate("/game/play", {
+        state: { room: data.roomId, isPlayer: true },
+      });
     });
     return () => {
       clientSocket.off("joined_to_queue");

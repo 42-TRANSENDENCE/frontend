@@ -13,6 +13,7 @@ import cancelButton from "../../../assets/bigButton/cancelButton.svg";
 import { GameMode, GameState } from "../../../pages/Game/enum";
 import { UserInfo } from "../../../hooks/query/user";
 import { useNavigate } from "react-router-dom";
+import { MatchDTO } from "../../../pages/Game/Game";
 
 interface spectateDto {
   roomId: string | null;
@@ -109,7 +110,7 @@ const GameInviteWindow = (props: any): JSX.Element => {
         console.log("invitation Canceled");
         setStatus(GameState.Lobby);
       });
-      socket.on("accepted", (data: any) => {
+      socket.on("accepted", (data: MatchDTO) => {
         console.log("accepted :", data.roomId);
         navigate("/game/play", {
           state: { room: data.roomId, isPlayer: true },
