@@ -17,6 +17,7 @@ import { SocketContext } from "../../contexts/ClientSocket";
 import { useNavigate } from "react-router-dom";
 import { MatchDTO } from "../../pages/Game/Game";
 import { GameMode } from "../../pages/Game/enum";
+import { toast } from "react-toastify";
 
 interface InvitationInfo {
   from: UserInfo;
@@ -85,11 +86,16 @@ function Notification() {
       navigate("/game/play", { state: { room: data.roomId, isPlayer: true } });
     });
 
+    clientSocket.on("accept_error", (data: string) => {
+      toast.warn(data);
+    });
+
     clientSocket.emit("getinvitaionlist");
 
     return () => {
       clientSocket.off("invited");
       clientSocket.off("match_maked");
+      clientSocket.off("accept_error");
     };
   }, []);
 

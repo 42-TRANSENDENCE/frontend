@@ -14,6 +14,7 @@ import { GameMode, GameState } from "../../../pages/Game/enum";
 import { UserInfo } from "../../../hooks/query/user";
 import { useNavigate } from "react-router-dom";
 import { MatchDTO } from "../../../pages/Game/Game";
+import { toast } from "react-toastify";
 
 interface spectateDto {
   roomId: string | null;
@@ -79,6 +80,15 @@ const GameInviteWindow = (props: any): JSX.Element => {
     socket.emit("cancleInvitation", inviteeInfo.id);
     setStatus(GameState.Lobby);
   }
+
+  useEffect(() => {
+    socket.on("invite_error", (data: string) => {
+      toast.warn(data);
+    });
+    return () => {
+      socket.off("invite_error");
+    };
+  });
 
   const InvitationLobby = (): JSX.Element => {
     return (
