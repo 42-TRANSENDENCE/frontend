@@ -59,14 +59,15 @@ const OnlineList = ({
   useEffect(() => {
     clientSocket.on("change_status", (data: Status) => {
       setFriendList((prevFriendList) => {
-        const newFriendList = prevFriendList.map((friend) => {
+        const newFriendList: User[] = prevFriendList.map((friend) => {
           if (friend.id === data.userId) {
             return {
               ...friend,
               status: data.status,
             };
+          } else {
+            return friend;
           }
-          return friend;
         });
         return newFriendList;
       });
