@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import pongBackgroundGray from "../assets/pongBackgroundGray.svg";
 
 const GlobalStyles = createGlobalStyle`
   html {
@@ -19,8 +20,8 @@ const GlobalStyles = createGlobalStyle`
     text-decoration: none;
 
     box-sizing: border-box;
-    background-color: rgb(50, 50, 50);
-    /* background-color: var(--color-yellow); */
+    /* background-color: rgb(50, 50, 50); */
+    background-image: url(${pongBackgroundGray});
     display: flex;
     justify-content: center;
     align-items: center;
