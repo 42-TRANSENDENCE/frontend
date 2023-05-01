@@ -55,7 +55,7 @@ export const SingleUser = styled.div`
   font-weight: 500;
   & .userName {
     overflow-x: scroll;
-    scrollbar-width: hidden;
+    scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
     }

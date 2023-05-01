@@ -23,7 +23,7 @@ export const Container = styled.div`
     display: flex;
     justify-content: flex-start;
     overflow-y: scroll;
-    scrollbar-width: hidden;
+    scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
     }
