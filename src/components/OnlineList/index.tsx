@@ -103,7 +103,7 @@ const OnlineList = ({
               return (
                 <SingleUser key={userinfo.id}>
                   <UserStatus status={userinfo.status} />
-                  {userinfo.nickname}
+                  <div className="userName">{userinfo.nickname}</div>
                   <IconButton
                     color="success"
                     size="small"

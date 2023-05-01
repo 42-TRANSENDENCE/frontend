@@ -42,25 +42,30 @@ export const Header = styled.div`
 
 export const SingleUser = styled.div`
   --singlefriend-height: calc(var(--friendlist-height) * 0.05);
-  width: var(--friendlist-width);
+  width: calc(var(--friendlist-width) - 2 * var(--boarder-width));
   height: var(--singlefriend-height);
-
   display: flex;
   flex-direction: row;
   justify-content: start;
   align-items: center;
   gap: calc(var(--friendlist-width) * 0.02);
-  margin-left: calc(var(--friendlist-width) * 0.02);
 
   line-height: var(--singlefriend-height);
   font-size: calc(var(--singlefriend-height) * 0.75);
   font-weight: 500;
+  & .userName {
+    overflow-x: scroll;
+    scrollbar-width: hidden;
+    &::-webkit-scrollbar {
+      display: none; // 크롬, 사파리, 오페라, 엣지
+    }
+  }
 
   & .icon {
     margin: 0;
     padding: 0;
-    width: calc(var(--singlefriend-height) * 0.75);
-    height: calc(var(--singlefriend-height) * 0.75);
+    width: calc(var(--singlefriend-height) * 0.7);
+    height: calc(var(--singlefriend-height) * 0.7);
   }
 `;
 
