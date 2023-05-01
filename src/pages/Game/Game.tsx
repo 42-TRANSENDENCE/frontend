@@ -7,6 +7,7 @@ import Lobby from "./Lobby";
 import Waiting from "./Waiting";
 import { GameContainer } from "./styles";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export interface MatchDTO {
   roomId: string;
@@ -27,6 +28,13 @@ const Game = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    clientSocket.on("socket_error", () => {
+      toast.warn("이미 로그인 되어있습니다.");
+      navigate("/");
+    });
+    clientSocket.on("join_error", (data: string) => {
+      toast.warn(data);
+    });
     clientSocket.on("joined_to_queue", () => {
       console.log("qeueue");
       setGamestate(GameState.Waiting);
@@ -40,7 +48,10 @@ const Game = (): JSX.Element => {
         state: { room: data.roomId, isPlayer: true },
       });
     });
+    clientSocket.emit("login_check");
     return () => {
+      clientSocket.off("socket_error");
+      clientSocket.off("join_error");
       clientSocket.off("joined_to_queue");
       clientSocket.off("out_of_queue");
       clientSocket.off("match_maked");

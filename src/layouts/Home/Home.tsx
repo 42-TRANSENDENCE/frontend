@@ -38,7 +38,15 @@ const Home = () => {
   });
 
   useEffect(() => {
+    clientSocket.on("socket_error", () => {
+      toast.warn("이미 로그인 되어있습니다.");
+      navigate("/");
+    });
+    clientSocket.emit("login_check");
     clientSocket.emit("friends_status");
+    return () => {
+      clientSocket.off("socket_error");
+    };
   }, []);
 
   useEffect(() => {
