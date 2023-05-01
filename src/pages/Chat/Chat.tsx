@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import useSocket from "../../hooks/useSocket";
 import { useSendDm } from "../../hooks/mutation/chat";
 import { useUserInfo, useUserSearch } from "../../hooks/query/user";
@@ -10,6 +10,8 @@ import { Channels, MyChannels } from "../../components/Channels";
 import { Container } from "../../layouts/Home/styles";
 import { ChatBody } from "./styles";
 import Notification from "../../components/Notification";
+import { SocketContext } from "../../contexts/ClientSocket";
+import { toast } from "react-toastify";
 
 const Chat = () => {
   const [channelId, setChannelId] = useState("");
@@ -18,8 +20,10 @@ const Chat = () => {
   const [popProfile, setPopProfile] = useState(false);
   const [user, setUser] = useState<ProfileProps | null>(null);
   const [userSearch, setUserSearch] = useState<string | null>(null);
+  const clientSocket = useContext(SocketContext);
   const userSearchTest = useUserSearch();
   const userInfoData = useUserInfo().data;
+  const navigate = useNavigate();
   const location = useLocation();
   const sendDM = useSendDm();
   const state = location.state as {
@@ -39,6 +43,11 @@ const Chat = () => {
   }, [userSearch]);
 
   useEffect(() => {
+    clientSocket.on("socket_error", () => {
+      toast.warn("이미 로그인 되어있습니다.");
+      navigate("/");
+    });
+    clientSocket.emit("login_check");
     history.replaceState(null, "", "/chat");
     if (state) {
       sendDM.mutate({
@@ -49,6 +58,7 @@ const Chat = () => {
       });
     }
     return () => {
+      clientSocket.off("socket_error");
       disconnect_chat_socket();
     };
   }, []);

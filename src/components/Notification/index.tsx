@@ -14,20 +14,14 @@ import { UserInfo } from "../../hooks/query/user";
 import { NotificationContainer } from "./styles";
 import Button from "@mui/material/Button";
 import { SocketContext } from "../../contexts/ClientSocket";
-import { GameMode } from "../../pages/Game/enum";
-import { ClientStatus } from "../OnlineList";
 import { useNavigate } from "react-router-dom";
-
-export interface ClientInfo {
-  socketId: string;
-  user: UserInfo;
-  roomId: string | undefined;
-  status: ClientStatus;
-}
+import { MatchDTO } from "../../pages/Game/Game";
+import { GameMode } from "../../pages/Game/enum";
+import { toast } from "react-toastify";
 
 interface InvitationInfo {
-  from: ClientInfo;
-  to: ClientInfo;
+  from: UserInfo;
+  to: UserInfo;
   mode: GameMode;
   roomId: string;
 }
@@ -79,7 +73,7 @@ function Notification() {
   };
 
   useEffect(() => {
-    clientSocket.emit("friends_status")
+    clientSocket.emit("friends_status");
   }, [userFriendList]);
 
   useEffect(() => {
@@ -87,9 +81,13 @@ function Notification() {
       setInvitationList(data);
     });
 
-    clientSocket.on("match_maked", (data: any) => {
+    clientSocket.on("match_maked", (data: MatchDTO) => {
       console.log("match_maked :", data.roomId);
       navigate("/game/play", { state: { room: data.roomId, isPlayer: true } });
+    });
+
+    clientSocket.on("accept_error", (data: string) => {
+      toast.warn(data);
     });
 
     clientSocket.emit("getinvitaionlist");
@@ -97,12 +95,13 @@ function Notification() {
     return () => {
       clientSocket.off("invited");
       clientSocket.off("match_maked");
+      clientSocket.off("accept_error");
     };
   }, []);
 
   return (
     <NotificationContainer>
-      <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
+      <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
         <h1>NOTIFICATION</h1>
         {friendReceivedList?.map((userinfo: any) => {
           return (
@@ -147,7 +146,7 @@ function Notification() {
           return (
             <div className="Notification" key={index}>
               <h3>
-                {inviteInfo.mode} game from "{inviteInfo.from.user.nickname}"
+                {inviteInfo.mode} game from "{inviteInfo.from.nickname}"
               </h3>
               <div>
                 <Button
