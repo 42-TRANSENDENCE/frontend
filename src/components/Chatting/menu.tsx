@@ -58,7 +58,7 @@ const ChatMenu = ({
 
   useEffect(() => {
     console.log(channelInfo.myType);
-  });
+  }, []);
 
   const OwnerRoll = (): JSX.Element => {
     return (

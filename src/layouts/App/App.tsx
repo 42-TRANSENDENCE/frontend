@@ -41,7 +41,7 @@ const App = () => {
               element={<PrivateRoute component={Socket} />}
             />
             <Route path="/home" element={<PrivateRoute component={Home} />} />
-            <Route path="/chat/*" element={<PrivateRoute component={Chat} />} />
+            <Route path="/chat" element={<PrivateRoute component={Chat} />} />
             <Route path="/game" element={<PrivateRoute component={Game} />} />
             <Route
               path="/game/play"

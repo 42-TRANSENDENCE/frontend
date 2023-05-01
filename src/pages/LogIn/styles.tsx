@@ -24,7 +24,7 @@ export const Container = styled.div`
     align-items: top;
     justify-content: top;
     overflow-y: scroll;
-    scrollbar-width: hidden;
+    scrollbar-width: none;
     &::-webkit-scrollbar {
       display: none; // 크롬, 사파리, 오페라, 엣지
     }
