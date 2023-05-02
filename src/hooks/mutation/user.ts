@@ -1,5 +1,10 @@
 import { useFetcher } from "../fetcher";
-import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from "react-query";
+import {
+  useMutation,
+  UseMutationResult,
+  MutationFunction,
+  useQueryClient,
+} from "react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -11,9 +16,16 @@ export interface TwoFactorData {
   setPassword: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export function useValidate2FA(): UseMutationResult<void, Error, TwoFactorData, MutationFunction<void, TwoFactorData>> {
+export function useValidate2FA(): UseMutationResult<
+  void,
+  Error,
+  TwoFactorData,
+  MutationFunction<void, TwoFactorData>
+> {
   const navigate = useNavigate();
-  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${import.meta.env.VITE_AWS_PORT}`;
+  const awsUrl = `http://${import.meta.env.VITE_AWS_URL}:${
+    import.meta.env.VITE_AWS_PORT
+  }`;
 
   async function validate2FA(data: TwoFactorData): Promise<void> {
     const { password, setTwoFactorError, setPassword } = data;
@@ -39,7 +51,12 @@ export function useValidate2FA(): UseMutationResult<void, Error, TwoFactorData, 
   return useMutation(validate2FA);
 }
 
-export function useUploadAvatar(): UseMutationResult<void, Error, ImageFile, MutationFunction<void, ImageFile>> {
+export function useUploadAvatar(): UseMutationResult<
+  void,
+  Error,
+  ImageFile,
+  MutationFunction<void, ImageFile>
+> {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
 
@@ -63,7 +80,12 @@ export function useUploadAvatar(): UseMutationResult<void, Error, ImageFile, Mut
   });
 }
 
-export function useSignup(): UseMutationResult<void, Error, string, MutationFunction<void, string>> {
+export function useSignup(): UseMutationResult<
+  void,
+  Error,
+  string,
+  MutationFunction<void, string>
+> {
   const fetcher = useFetcher();
   const navigate = useNavigate();
 
@@ -98,7 +120,12 @@ export function useSignup(): UseMutationResult<void, Error, string, MutationFunc
   return useMutation(signup);
 }
 
-export function useChangeNickname(): UseMutationResult<void, Error, string, MutationFunction<void, string>> {
+export function useChangeNickname(): UseMutationResult<
+  void,
+  Error,
+  string,
+  MutationFunction<void, string>
+> {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
 
