@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../../hooks/user";
-import useSocket from "../../hooks/useSocket";
 import { useUserInfo, useUserSearch } from "../../hooks/query/user";
 import Modal from "../../components/Modal";
 import { Container } from "./styles";
@@ -39,6 +38,15 @@ const Home = (): JSX.Element => {
   });
 
   useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Home] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Home] socket connection failed");
+      }
+    } else {
+      console.log("[Home] socket connected");
+    }
     console.log(` [ RENDERING ] : home page. socketid : ${clientSocket.id}`);
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
@@ -90,7 +98,11 @@ const Home = (): JSX.Element => {
         <div className="BodyOuter">
           <div className="Body">
             <div className="LeftSide Section">
-              <OnlineList isHome={true} setChannelId={null} setPopChatting={null} />
+              <OnlineList
+                isHome={true}
+                setChannelId={null}
+                setPopChatting={null}
+              />
             </div>
 
             <div className="MiddleSide Section">
@@ -99,7 +111,10 @@ const Home = (): JSX.Element => {
                 <BigButton img_url={gameButton} onClick={onClickGame} />
               </div>
               <div className="MidiumButtons">
-                <MiddleButton img_url={settingButton} onClick={onOpenSettingModal} />
+                <MiddleButton
+                  img_url={settingButton}
+                  onClick={onOpenSettingModal}
+                />
                 <MiddleButton img_url={logoutButton} onClick={onClickLogOut} />
               </div>
             </div>
@@ -133,7 +148,11 @@ const Home = (): JSX.Element => {
         </div>
       </Container>
 
-      <Modal show={showSettingModal} onCloseModal={onCloseSettingModal} showCloseButton>
+      <Modal
+        show={showSettingModal}
+        onCloseModal={onCloseSettingModal}
+        showCloseButton
+      >
         <SettingModal
           userAvatar={userAvatar}
           twoFactor={twoFactor}

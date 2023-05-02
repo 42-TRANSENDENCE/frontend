@@ -20,6 +20,15 @@ const Game = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Game] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Game] socket connection failed");
+      }
+    } else {
+      console.log("[Game] socket connected");
+    }
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
       navigate("/");

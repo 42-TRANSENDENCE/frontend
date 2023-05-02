@@ -43,6 +43,15 @@ const Chat = () => {
   }, [userSearch]);
 
   useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Home] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Home] socket connection failed");
+      }
+    } else {
+      console.log("[Home] socket connected");
+    }
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
       navigate("/");
