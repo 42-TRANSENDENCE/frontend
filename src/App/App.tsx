@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AppContainer } from "./styles";
 
-import PrivateRoute from "./PrivateRoute";
+import { PrivateRoute, TwoFactorRoute } from "./PrivateRoute";
 const LogIn = loadable(() => import("../pages/LogIn/LogIn"));
 const SignUp = loadable(() => import("../pages/LogIn/SignUp"));
 const TwoFactor = loadable(() => import("../pages/LogIn/TwoFactor"));
@@ -25,7 +25,7 @@ const App = () => {
             <Route path="/" element={<Navigate replace to="/login" />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/twofactor" element={<PrivateRoute component={TwoFactor} />} />
+            <Route path="/twofactor" element={<TwoFactorRoute component={TwoFactor} />} />
             <Route path="/home" element={<PrivateRoute component={Home} />} />
             <Route path="/chat" element={<PrivateRoute component={Chat} />} />
             <Route path="/game" element={<PrivateRoute component={Game} />} />
