@@ -7,7 +7,7 @@ import Profile, { ProfileProps } from "../../components/Profile";
 import OnlineList, { User } from "../../components/OnlineList";
 import Title from "../../components/Title";
 import { Channels, MyChannels } from "../../components/Channels";
-import { Container } from "../../layouts/Home/styles";
+import { Container } from "../Home/styles";
 import { ChatBody } from "./styles";
 import Notification from "../../components/Notification";
 import { SocketContext } from "../../contexts/ClientSocket";
@@ -43,6 +43,15 @@ const Chat = () => {
   }, [userSearch]);
 
   useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Home] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Home] socket connection failed");
+      }
+    } else {
+      console.log("[Home] socket connected");
+    }
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
       navigate("/");

@@ -20,14 +20,15 @@ const Game = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(` [ RENDERING ] : game page`);
-    return () => {
-      clientSocket.emit("leave_queue"); //quit_queue 에서 leave_qeuue로 바뀜
-      console.log(" [ STOP ] : game page");
-    };
-  }, []);
-
-  useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Game] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Game] socket connection failed");
+      }
+    } else {
+      console.log("[Game] socket connected");
+    }
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
       navigate("/");
@@ -40,6 +41,7 @@ const Game = (): JSX.Element => {
       setGamestate(GameState.Waiting);
     });
     clientSocket.on("out_of_queue", () => {
+      console.log("out queue");
       setGamestate(GameState.Lobby);
     });
     clientSocket.on("match_maked", (data: MatchDTO) => {
@@ -50,11 +52,13 @@ const Game = (): JSX.Element => {
     });
     clientSocket.emit("login_check");
     return () => {
+      clientSocket.emit("leave_queue"); //quit_queue 에서 leave_qeuue로 바뀜
       clientSocket.off("socket_error");
       clientSocket.off("join_error");
       clientSocket.off("joined_to_queue");
       clientSocket.off("out_of_queue");
       clientSocket.off("match_maked");
+      console.log(" [ STOP ] : game page");
     };
   }, []);
 
