@@ -1,8 +1,8 @@
-import { useFetcher } from '../fetcher';
-import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from 'react-query';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import React from 'react';
+import { useFetcher } from "../fetcher";
+import { useMutation, UseMutationResult, MutationFunction, useQueryClient } from "react-query";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import React from "react";
 type ImageFile = File | null;
 
 export interface TwoFactorData {
@@ -17,22 +17,22 @@ export function useValidate2FA(): UseMutationResult<void, Error, TwoFactorData, 
 
   async function validate2FA(data: TwoFactorData): Promise<void> {
     const { password, setTwoFactorError, setPassword } = data;
-    await fetch(awsUrl + '/2fa/validate', {
-      method: 'POST',
+    await fetch(awsUrl + "/2fa/validate", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      credentials: 'include',
+      credentials: "include",
       body: JSON.stringify({ token: password }),
     }).then((response) => {
       if (response.status === 200) {
         navigate("/home");
       } else if (response.status === 401) {
-        toast.error('Wrong password. Try again');
+        toast.error("Wrong password. Try again");
         setTwoFactorError(true);
-        setPassword('');
+        setPassword("");
       } else {
-        throw new Error('Unexpected response status code');
+        throw new Error("Unexpected response status code");
       }
     });
   }
@@ -48,18 +48,18 @@ export function useUploadAvatar(): UseMutationResult<void, Error, ImageFile, Mut
     const formData = new FormData();
     formData.append("file", file);
 
-    await fetcher('/users/avatar', {
-      method: 'PUT',
+    await fetcher("/users/avatar", {
+      method: "PUT",
       body: formData,
-      credentials: 'include',
-    })
+      credentials: "include",
+    });
   }
 
   return useMutation({
     mutationFn: uploadAvatar,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userInfo'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+    },
   });
 }
 
@@ -68,13 +68,29 @@ export function useSignup(): UseMutationResult<void, Error, string, MutationFunc
   const navigate = useNavigate();
 
   async function signup(nickname: string): Promise<void> {
-    await fetcher('/auth/signup', {
-      method: 'POST',
+    await fetcher("/auth/signup", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ nickname: nickname }),
+      credentials: "include",
+    }).then((response) => {
+      if (response.ok) {
         navigate("/home");
+        toast.success("Signed up successfully.");
+      } else {
+        response.json().then((data) => {
+          if (typeof data.message === "string") {
+            toast.error(data.message);
+          } else if (Array.isArray(data.message)) {
+            toast.error(data.message[0]);
+          } else {
+            toast.error("An error occurred.");
+          }
+        });
+      }
+    });
   }
 
   return useMutation(signup);
@@ -85,35 +101,34 @@ export function useChangeNickname(): UseMutationResult<void, Error, string, Muta
   const fetcher = useFetcher();
 
   async function changeNickname(newNickname: string): Promise<void> {
-    await fetcher('/users/nickname', {
-      method: 'PATCH',
+    await fetcher("/users/nickname", {
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ nickname: newNickname }),
-      credentials: 'include',
-    })
-      .then(response => {
-        if (response.ok) {
-          toast.success('Nickname changed successfully.');
-        } else {
-          response.json().then(data => {
-            if (typeof data.message === 'string') {
-              toast.error(data.message);
-            } else if (Array.isArray(data.message)) {
-              toast.error(data.message[0]);
-            } else {
-              toast.error('An error occurred.');
-            }
-          });
-        }
-      })
+      credentials: "include",
+    }).then((response) => {
+      if (response.ok) {
+        toast.success("Nickname changed successfully.");
+      } else {
+        response.json().then((data) => {
+          if (typeof data.message === "string") {
+            toast.error(data.message);
+          } else if (Array.isArray(data.message)) {
+            toast.error(data.message[0]);
+          } else {
+            toast.error("An error occurred.");
+          }
+        });
+      }
+    });
   }
 
   return useMutation({
     mutationFn: changeNickname,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userInfo'] })
-    }
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+    },
   });
 }
