@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import triangle from '../../assets/triangle.svg';
+import triangle from "../assets/triangle.svg";
 
 export const AppContainer = styled.div`
   padding: 0;
@@ -10,6 +10,5 @@ export const AppContainer = styled.div`
   background-image: url(${triangle});
   background-position: right bottom;
   background-repeat: no-repeat;
-  background-size: min(50vw, 50vh); 
-`
-
+  background-size: min(50vw, 50vh);
+`;

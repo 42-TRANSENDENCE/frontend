@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLogout } from "../../hooks/user";
-import { SocketContext } from "../../contexts/ClientSocket";
 import { useUserInfo, useUserSearch } from "../../hooks/query/user";
 import Modal from "../../components/Modal";
 import { Container } from "./styles";
@@ -16,11 +15,12 @@ import settingButton from "../../assets/middleButton/settingButton.svg";
 import logoutButton from "../../assets/middleButton/logoutButton.svg";
 import SettingModal from "./Modal/HomeModal";
 import { toast } from "react-toastify";
+import { SocketContext } from "../../contexts/ClientSocket";
 
-const Home = () => {
+const Home = (): JSX.Element => {
+  const clientSocket = useContext(SocketContext);
   const navigate = useNavigate();
   const onClickLogOut = useLogout();
-  const clientSocket = useContext(SocketContext);
   const [twoFactor, setTwoFactor] = useState(false);
   const [showSettingModal, setShowSettingModal] = useState(false);
   const [userSearch, setUserSearch] = useState<string | null>(null);
@@ -38,6 +38,16 @@ const Home = () => {
   });
 
   useEffect(() => {
+    if (clientSocket.connected === false) {
+      console.log("[Home] socket not connected");
+      clientSocket.connect();
+      if (clientSocket.connected == false) {
+        console.log("[Home] socket connection failed");
+      }
+    } else {
+      console.log("[Home] socket connected");
+    }
+    console.log(` [ RENDERING ] : home page. socketid : ${clientSocket.id}`);
     clientSocket.on("socket_error", () => {
       toast.warn("이미 로그인 되어있습니다.");
       navigate("/");
@@ -45,9 +55,9 @@ const Home = () => {
     clientSocket.emit("login_check");
     clientSocket.emit("friends_status");
     return () => {
-      clientSocket.off("socket_error");
+      clientSocket?.off("socket_error");
     };
-  }, []);
+  }, [clientSocket]);
 
   useEffect(() => {
     if (userSearch) {
