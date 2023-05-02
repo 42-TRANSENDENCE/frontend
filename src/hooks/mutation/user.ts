@@ -26,7 +26,7 @@ export function useValidate2FA(): UseMutationResult<void, Error, TwoFactorData, 
       body: JSON.stringify({ token: password }),
     }).then((response) => {
       if (response.status === 200) {
-        navigate('/socket');
+        navigate("/home");
       } else if (response.status === 401) {
         toast.error('Wrong password. Try again');
         setTwoFactorError(true);
@@ -74,24 +74,7 @@ export function useSignup(): UseMutationResult<void, Error, string, MutationFunc
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ nickname: nickname }),
-      credentials: 'include',
-    })
-      .then(response => {
-        if (response.ok) {
-          navigate('/socket');
-          toast.success('Signed up successfully.');
-        } else {
-          response.json().then(data => {
-            if (typeof data.message === 'string') {
-              toast.error(data.message);
-            } else if (Array.isArray(data.message)) {
-              toast.error(data.message[0]);
-            } else {
-              toast.error('An error occurred.');
-            }
-          });
-        }
-      })
+        navigate("/home");
   }
 
   return useMutation(signup);
