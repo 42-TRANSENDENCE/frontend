@@ -126,9 +126,9 @@ function Notification() {
             </div>
           );
         })}
-        {friendPendingList?.map((userinfo: any) => {
+        {friendPendingList?.map((userinfo: any, index: number) => {
           return (
-            <div className="Notification">
+            <div className="Notification" key={index}>
               <h3>Friend Pending ({userinfo.nickname})</h3>
               <div>
                 <Button
