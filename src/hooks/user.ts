@@ -1,11 +1,13 @@
 import { useFetcher } from './fetcher';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router';
-import { ClientSocket } from '../contexts/ClientSocket';
+import { useContext } from "react";
+import { SocketContext } from "../contexts/ClientSocket";
 
 export function useLogout() {
   const navigate = useNavigate();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   const logout = async () => {
     await fetcher('/auth/logout', {
@@ -14,7 +16,7 @@ export function useLogout() {
     }).then((response) => {
       if (response.status === 200) {
         toast.success('Logged out');
-        ClientSocket.disconnect();
+        clientSocket.disconnect();
         navigate('/');
       } else {
         throw new Error('Unexpected response status code');
@@ -27,6 +29,7 @@ export function useLogout() {
 export function useUserDelete() {
   const fetcher = useFetcher();
   const navigate = useNavigate();
+  const clientSocket = useContext(SocketContext);
 
   const userDelete = async () => {
     await fetcher('/users', {
@@ -35,7 +38,7 @@ export function useUserDelete() {
     })
       .then(response => {
         if (response.status === 200) {
-          ClientSocket.disconnect();
+          clientSocket.disconnect();
           navigate('/');
           toast.success('User deleted successfully.');
         } else {
