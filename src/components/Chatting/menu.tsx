@@ -80,13 +80,18 @@ const ChatMenu = ({
             String(member.userId) === userId &&
             member.type === MemberType.OWNER
           )
-            return <div>Channel Owner</div>;
+            return (
+              <>
+                <div>Channel Owner</div>
+                <div onClick={onClickProfile}>- See Profile</div>
+              </>
+            );
           else if (String(member.userId) === userId)
             return (
               <>
-                <div onClick={onKickOther}>Kick</div>
-                <div onClick={onBanOther}>Ban</div>
-                <div onClick={onMuteOther}>Mute</div>
+                <div onClick={onKickOther}>- Kick</div>
+                <div onClick={onBanOther}>- Ban</div>
+                <div onClick={onMuteOther}>- Mute</div>
                 <div onClick={onClickProfile}>- See Profile</div>
               </>
             );
