@@ -6,9 +6,10 @@ import { Container, Label, LongInput, Conflict } from './styles';
 import { BigButton } from '../../components/Button';
 import Title from '../../components/Title';
 import signupButton from '../../assets/bigButton/signupButton.svg';
+import { CircularProgress } from '@mui/material';
 
 const SignUp = () => {
-  const signup = useSignup();
+  const { mutate, isLoading } = useSignup();
 
   const nickname = useInput('', isValidNickname);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -18,9 +19,9 @@ const SignUp = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setNicknameConflict(false);
-      signup.mutate(nickname.value);
+      mutate(nickname.value);
     },
-    [nickname, signup]
+    [nickname]
   );
 
   const onNicknameChange = useCallback(
@@ -56,7 +57,8 @@ const SignUp = () => {
             </div>
 
             <div className='BigButtons'>
-              <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />
+              {isLoading ? <CircularProgress /> :
+                <BigButton img_url={signupButton} type='submit' disabled={isSubmitDisabled} />}
             </div>
           </form>
         </div>
