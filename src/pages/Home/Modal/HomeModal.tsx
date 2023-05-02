@@ -119,39 +119,6 @@ const SettingModal = (props: any): JSX.Element => {
       });
   };
 
-  const AvatarComp = (): JSX.Element => {
-    return (
-      <ModalAvatar>
-        <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
-        <div>
-          <label htmlFor='file-upload' className='custom-file-upload'>
-            <img src={avatarUploadButton} alt='Image' />
-          </label>
-          <input id='file-upload' type='file' onChange={handleFileChange} />
-          <MiddleButton img_url={avatarSubmitButton} onClick={onClickChangeProfileImage} />
-          {isLoading && <p>Uploading avatar...</p>}
-        </div>
-      </ModalAvatar>
-    )
-  }
-
-  const NickNameComp = (): JSX.Element => {
-    return (
-      <ModalNickName>
-        <form onSubmit={onSubmit}>
-          <Label id='nickname-label'>
-            <InputName
-              placeholder='new nickname'
-              {...newNickname}
-              onChange={onNicknameChange}
-            />
-          </Label>
-          <MiddleButton img_url={nicknameSubmitButton} type='submit' disabled={isSubmitDisabled} />
-        </form>
-      </ModalNickName>
-    )
-  }
-
   const TwoFactorComp = (): JSX.Element => {
     return (
       <TwoFactorPart>
@@ -167,7 +134,6 @@ const SettingModal = (props: any): JSX.Element => {
   return (
     <>
       <ModalContainer>
-        {/* <AvatarComp /> */}
         <ModalAvatar>
           <Avatar src={URL.createObjectURL(file ? file : userAvatar ? userAvatar : new Blob())} />
           <div>
@@ -179,7 +145,6 @@ const SettingModal = (props: any): JSX.Element => {
             {isLoading && <p>Uploading avatar...</p>}
           </div>
         </ModalAvatar>
-        {/* <NickNameComp /> */}
         <ModalNickName>
           <form onSubmit={onSubmit}>
             <Label id='nickname-label'>
