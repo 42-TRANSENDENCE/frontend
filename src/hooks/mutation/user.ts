@@ -83,8 +83,10 @@ export function useSignup(): UseMutationResult<void, Error, string, MutationFunc
         response.json().then((data) => {
           if (typeof data.message === "string") {
             toast.error(data.message);
+            navigate("/");
           } else if (Array.isArray(data.message)) {
             toast.error(data.message[0]);
+            navigate("/");
           } else {
             toast.error("An error occurred.");
           }
