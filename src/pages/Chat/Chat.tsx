@@ -7,7 +7,7 @@ import Profile, { ProfileProps } from "../../components/Profile";
 import OnlineList, { User } from "../../components/OnlineList";
 import Title from "../../components/Title";
 import { Channels, MyChannels } from "../../components/Channels";
-import { Container } from "../../layouts/Home/styles";
+import { Container } from "../Home/styles";
 import { ChatBody } from "./styles";
 import Notification from "../../components/Notification";
 import { SocketContext } from "../../contexts/ClientSocket";
