@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { Scrollbars } from "react-custom-scrollbars";
+import { useQueryClient } from 'react-query';
 import {
   useGetFriendList,
   useReceivedFriendList,
@@ -28,6 +29,7 @@ interface InvitationInfo {
 
 function Notification() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const clientSocket = useContext(SocketContext);
   const userFriendList = useGetFriendList().data;
   const userFriendReceived = useReceivedFriendList().data;
@@ -73,10 +75,12 @@ function Notification() {
   };
 
   useEffect(() => {
-    clientSocket.emit("friends_status");
-  }, [userFriendList]);
+    clientSocket.on("friends_request", () => {
+      queryClient.invalidateQueries({ queryKey: ["userReceivedFriendList"] });
+      queryClient.invalidateQueries({ queryKey: ["userPendingFriendList"] });
+      clientSocket.emit("friends_status");
+    });
 
-  useEffect(() => {
     clientSocket.on("updateInviteList", (data: InvitationInfo[] | null) => {
       setInvitationList(data);
     });
@@ -93,6 +97,7 @@ function Notification() {
     clientSocket.emit("getinvitaionlist");
 
     return () => {
+      clientSocket.off("friends_request");
       clientSocket.off("invited");
       clientSocket.off("match_maked");
       clientSocket.off("accept_error");
@@ -101,7 +106,7 @@ function Notification() {
 
   return (
     <NotificationContainer>
-      <Scrollbars autoHide style={{}} onScrollFrame={() => {}}>
+      <Scrollbars autoHide style={{}} onScrollFrame={() => { }}>
         <h1>NOTIFICATION</h1>
         {friendReceivedList?.map((userinfo: any) => {
           return (
