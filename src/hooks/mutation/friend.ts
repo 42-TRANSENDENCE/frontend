@@ -17,6 +17,7 @@ export function useAddFriend(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   async function addFriend(id: number): Promise<void> {
     await fetcher("/users/friends/request/" + id, {
@@ -26,7 +27,10 @@ export function useAddFriend(): UseMutationResult<
       },
       credentials: "include",
     }).then((response) => {
-      if (response.status === 201) toast.success("Friend requested");
+      if (response.status === 201) {
+        clientSocket.emit("sendFriendRequest", id);
+        toast.success("Friend requested");
+      }
     });
   }
 
@@ -58,6 +62,7 @@ export function useApproveFriend(): UseMutationResult<
     }).then((response) => {
       if (response.status === 200) {
         clientSocket.emit("friends_status");
+        clientSocket.emit("sendFriendRequest", id);
         toast.success("Approved request");
       }
     });
@@ -80,6 +85,7 @@ export function useRefuseFriend(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   async function refuseFriend(id: number): Promise<void> {
     await fetcher("/users/friends/received/" + id, {
@@ -89,7 +95,10 @@ export function useRefuseFriend(): UseMutationResult<
       },
       credentials: "include",
     }).then((response) => {
-      if (response.status === 200) toast.success("Refused request");
+      if (response.status === 200) {
+        toast.success("Refused request");
+        clientSocket.emit("sendFriendRequest", id);
+      }
     });
   }
 
@@ -109,6 +118,7 @@ export function useDeleteRequestFriend(): UseMutationResult<
 > {
   const queryClient = useQueryClient();
   const fetcher = useFetcher();
+  const clientSocket = useContext(SocketContext);
 
   async function deleteRequestFriend(id: number): Promise<void> {
     await fetcher("/users/friends/request/" + id, {
@@ -118,7 +128,10 @@ export function useDeleteRequestFriend(): UseMutationResult<
       },
       credentials: "include",
     }).then((response) => {
-      if (response.status === 200) toast.success("Request canceled");
+      if (response.status === 200) {
+        toast.success("Request canceled");
+        clientSocket.emit("sendFriendRequest", id);
+      }
     });
   }
 
@@ -150,6 +163,7 @@ export function useDeleteFriend(): UseMutationResult<
     }).then((response) => {
       if (response.status === 200) {
         clientSocket.emit("friends_status");
+        clientSocket.emit("sendFriendRequest", id);
         toast.success("Friend deleted");
       }
     });
