@@ -64,9 +64,7 @@ export const useChannelInfo = ({ id, setPopChatting }: { id: string, setPopChatt
         return await response.json();
       else if (response.status === 404)
         setPopChatting(false);
-    },
-    retry: 0,
-    refetchOnWindowFocus: false,
+    }
   });
   return data;
 };

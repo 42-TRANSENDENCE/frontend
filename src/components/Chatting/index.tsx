@@ -76,7 +76,6 @@ const ChatBubble = ({
           userNickname={chat.senderUserNickname}
           channelInfo={channelInfo}
           channelId={String(chat.channelId)}
-          socket={socket}
           setPopMenu={setPopMenu}
           setPopProfile={setPopProfile}
           setUser={setUser}

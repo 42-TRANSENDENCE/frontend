@@ -1,4 +1,3 @@
-import { Socket } from "socket.io-client";
 import { ChannelInfo, MemberType } from "./interface";
 import { useAdmin, useBan, useKick, useMute } from "../../hooks/mutation/chat";
 import { useUserProfile } from "../../hooks/query/user";
@@ -11,7 +10,6 @@ const ChatMenu = ({
   userNickname,
   channelInfo,
   channelId,
-  socket,
   setPopMenu,
   setPopProfile,
   setUser
@@ -20,7 +18,6 @@ const ChatMenu = ({
   userNickname: string;
   channelInfo: ChannelInfo;
   channelId: string;
-  socket: Socket | undefined;
   setPopMenu: React.Dispatch<React.SetStateAction<boolean>>;
   setPopProfile: React.Dispatch<React.SetStateAction<boolean>>;
   setUser: React.Dispatch<React.SetStateAction<ProfileProps | null>>;
@@ -35,19 +32,19 @@ const ChatMenu = ({
     .includes(true);
 
   const onAdminOther = () => {
-    admin.mutate({ id: channelId, user: userId, socket: socket });
+    admin.mutate({ id: channelId, user: userId });
     setPopMenu(false);
   };
   const onKickOther = () => {
-    kick.mutate({ id: channelId, user: userId, socket: socket });
+    kick.mutate({ id: channelId, user: userId });
     setPopMenu(false);
   };
   const onBanOther = () => {
-    ban.mutate({ id: channelId, user: userId, socket: socket });
+    ban.mutate({ id: channelId, user: userId });
     setPopMenu(false);
   };
   const onMuteOther = () => {
-    mute.mutate({ id: channelId, user: userId, socket: socket });
+    mute.mutate({ id: channelId, user: userId });
     setPopMenu(false);
   };
 
