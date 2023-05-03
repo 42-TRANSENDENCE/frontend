@@ -1,4 +1,3 @@
-import { Socket } from "socket.io-client";
 import { ChannelInfo, MemberType } from "./interface";
 import { useAdmin, useBan, useKick, useMute } from "../../hooks/mutation/chat";
 import { useUserProfile } from "../../hooks/query/user";
