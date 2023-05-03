@@ -36,7 +36,6 @@ interface SendDMData {
 interface AKBMData {
   id: string;
   user: string;
-  socket: Socket | undefined;
 }
 
 export function useCreateChannel(): UseMutationResult<void, Error, CreateChannelData, MutationFunction<void, CreateChannelData>> {
@@ -226,7 +225,7 @@ export function useKick(): UseMutationResult<void, Error, AKBMData, MutationFunc
   const queryClient = useQueryClient();
 
   async function kick(data: AKBMData): Promise<void> {
-    const { id, user, socket } = data;
+    const { id, user } = data;
     await fetcher('/channels/' + id + '/kick/' + user, {
       method: 'POST',
       headers: {
@@ -253,7 +252,7 @@ export function useBan(): UseMutationResult<void, Error, AKBMData, MutationFunct
   const queryClient = useQueryClient();
 
   async function ban(data: AKBMData): Promise<void> {
-    const { id, user, socket } = data;
+    const { id, user } = data;
     await fetcher('/channels/' + id + '/ban/' + user, {
       method: 'POST',
       headers: {
