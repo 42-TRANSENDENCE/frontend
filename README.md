@@ -35,7 +35,7 @@ It provides a nice user interface, a chat, and real-time multiplayer online game
 - Socket.io
 - Styled-component
 - Git
-- Docker Compose
+- Docker
 - Vite
 - Figma
 
@@ -44,9 +44,10 @@ It provides a nice user interface, a chat, and real-time multiplayer online game
 - Typescript
 - NestJS
 - PostgreSQL
+- TypeORM
 - Socket.io
 - Git
-- Docker Compose
+- Docker
 - Swagger
 
 ### **Main Features**
