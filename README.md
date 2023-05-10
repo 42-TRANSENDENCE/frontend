@@ -12,13 +12,13 @@ It provides a nice user interface, a chat, and real-time multiplayer online game
 
 **Frontend**
 
-- keokim
-- dkim2
+- [keokim](https://github.com/keonwoo98)
+- [dkim2](https://github.com/u-lo-l)
 
 **Backend**
 
-- minjkim2
-- junyopar
+- [minjkim2](https://github.com/minjune8506)
+- [junyopar](https://github.com/maindishes)
 
 ### **Period**
 
